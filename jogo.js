@@ -596,7 +596,7 @@ function mostrarFim() {
     <p class="aviso">${esc(t("beta"))}</p>
     <div class="cartao"><h2>${esc(t("fontesTit"))}</h2><ol class="fontes">${FONTES.map((f) => `<li>${esc(f)}</li>`).join("")}</ol></div>`;
   renderHud();
-  window.scrollTo(0, 0);
+  rolarTopo();
 }
 
 /* ---------- ranking do congresso ---------- */
@@ -700,10 +700,13 @@ function novoJogo() {
 }
 
 /* Depois de tocar no mapa, mostra o começo do painel se ele estiver escondido embaixo da tela */
+const rolador = () => { const el = $("#tela"); return el && getComputedStyle(el).overflowY === "auto" ? el : null; };
 function mostrarPainel() {
-  const topo = $("#painel").getBoundingClientRect().top;
-  if (topo > window.innerHeight * 0.8) window.scrollBy({ top: topo - window.innerHeight * 0.45, behavior: "smooth" });
+  const r = rolador(), alto = r ? r.clientHeight : window.innerHeight, base = r ? r.getBoundingClientRect().top : 0;
+  const topo = $("#painel").getBoundingClientRect().top - base;
+  if (topo > alto * 0.8) (r || window).scrollBy({ top: topo - alto * 0.45, behavior: "smooth" });
 }
+function rolarTopo() { window.scrollTo(0, 0); if (rolador()) rolador().scrollTop = 0; }
 
 function continuar() {
   S = ler(CHAVE);
