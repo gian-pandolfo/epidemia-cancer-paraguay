@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Epidemia: Paraguay contra el cáncer</title>
+<meta name="description" content="Juego educativo sobre la epidemiología del cáncer en Paraguay, 2015–2024, con datos reales del Atlas de Mortalidad por Cáncer.">
+<meta name="theme-color" content="#0d1514">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f07a5c'/%3E%3Cpath d='M20 44 32 14l12 30M24 35h16' stroke='%231b0d08' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<style>
+/* Jogo para celular (em pé): placar no topo, mapa, painel do departamento e botão de fechar o ano fixo embaixo.
+   Mesmas cores e fontes da página do mapa do congresso. */
+:root {
+  --bg: #f3f6f5; --surface: #ffffff; --surface-2: #e8efed; --ink: #10201e; --muted: #4c605d; --line: #d2dedb;
+  --accent: #cf4f35; --accent-ink: #ffffff; --accent-soft: rgba(207, 79, 53, .13);
+  --cob0: #e7ecea; --cob1: #8fd1c8; --cob2: #3aa99f; --cob3: #1d6b66;
+  --reg1: #fde3c8; --reg2: #f6b27a; --reg3: #e2733c; --reg4: #a8401c;
+  --nv-p: #2f8f5b; --nv-d: #3c6da3; --nv-t: #9a4fb5;
+  --map-stroke: #ffffff; --map-label: #10201e; --map-halo: rgba(255, 255, 255, .9);
+  --warn: #9a3412; --warn-soft: #fbece4; --ok: #1f7a4d;
+  --f-display: "Bricolage Grotesque", "Segoe UI", Roboto, Arial, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", Roboto, Arial, sans-serif;
+  --r: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1514; --surface: #141f1d; --surface-2: #1c2927; --ink: #e3eeeb; --muted: #9cb1ad; --line: #2a403c;
+    --accent: #f07a5c; --accent-ink: #1b0d08; --accent-soft: rgba(240, 122, 92, .18);
+    --cob0: #26332f; --cob1: #2a6b63; --cob2: #43a698; --cob3: #92dcd0;
+    --reg1: #3b2a20; --reg2: #7a4426; --reg3: #c2602f; --reg4: #f39a63;
+    --nv-p: #5cc48a; --nv-d: #6f9bd2; --nv-t: #c48ee0;
+    --map-stroke: #0d1514; --map-label: #eef6f4; --map-halo: rgba(0, 0, 0, .75);
+    --warn: #f3a37f; --warn-soft: rgba(243, 163, 127, .12); --ok: #6fd3a0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1514; --surface: #141f1d; --surface-2: #1c2927; --ink: #e3eeeb; --muted: #9cb1ad; --line: #2a403c;
+  --accent: #f07a5c; --accent-ink: #1b0d08; --accent-soft: rgba(240, 122, 92, .18);
+  --cob0: #26332f; --cob1: #2a6b63; --cob2: #43a698; --cob3: #92dcd0;
+  --reg1: #3b2a20; --reg2: #7a4426; --reg3: #c2602f; --reg4: #f39a63;
+  --nv-p: #5cc48a; --nv-d: #6f9bd2; --nv-t: #c48ee0;
+  --map-stroke: #0d1514; --map-label: #eef6f4; --map-halo: rgba(0, 0, 0, .75);
+  --warn: #f3a37f; --warn-soft: rgba(243, 163, 127, .12); --ok: #6fd3a0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 var(--f-body);
+  padding: 0 max(12px, env(safe-area-inset-right, 0px)) calc(96px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+}
+h1, h2, h3 { font-family: var(--f-display); margin: 0; text-wrap: balance; }
+button, select { font: inherit; color: inherit; }
+button:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+main { max-width: 640px; margin: 0 auto; }
+
+/* Placar */
+.hud {
+  position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  max-width: 640px; margin: 0 auto; padding: calc(8px + env(safe-area-inset-top, 0px)) 0 8px; background: var(--bg);
+}
+.hud .marca { font: 800 1rem var(--f-display); margin-right: auto; line-height: 1.1; }
+.hud .marca small { display: block; font: 400 .72rem var(--f-body); color: var(--muted); }
+.hud .marca[hidden] + .chip { margin-right: auto; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.chip.dinheiro { color: var(--ink); }
+.btn-ico { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; min-width: 40px; height: 36px; padding: 0 10px; font-weight: 700; cursor: pointer; }
+
+/* Telas */
+.cartao { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; }
+.inicio { display: grid; gap: 14px; padding-top: 8px; }
+.inicio h1 { font-size: clamp(1.9rem, 8vw, 2.6rem); font-weight: 800; line-height: 1.02; }
+.inicio .sub { margin: 0; color: var(--muted); }
+.passos { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.aviso { margin: 0; font-size: .82rem; color: var(--muted); }
+.btn { border: 0; border-radius: 999px; padding: 13px 22px; min-height: 50px; font-weight: 800; font-size: 1.05rem; cursor: pointer; background: var(--accent); color: var(--accent-ink); }
+.btn.sec { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* Mapa */
+.mapa-wrap { position: relative; margin-top: 4px; }
+#mapa { display: block; width: 100%; height: auto; max-height: 52vh; touch-action: manipulation; }
+.dep { stroke: var(--map-stroke); stroke-width: 3; stroke-linejoin: round; cursor: pointer; transition: fill .35s ease; }
+.dep.sel { stroke: var(--accent); stroke-width: 10; }
+.dep-marker { stroke-width: 5; }
+.lbl { font: 700 44px var(--f-body); fill: var(--map-label); stroke: var(--map-halo); stroke-width: 9px; paint-order: stroke; pointer-events: none; }
+.lbl.sel { font-size: 52px; }
+.alerta circle { fill: var(--accent); stroke: var(--map-stroke); stroke-width: 5; }
+.alerta text { font: 800 46px var(--f-body); fill: var(--accent-ink); text-anchor: middle; pointer-events: none; }
+.modos { display: flex; gap: 6px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin: 6px 0 4px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+.seg button { border: 0; background: transparent; border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: .88rem; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: .78rem; color: var(--muted); }
+.legenda span { display: inline-flex; align-items: center; gap: 4px; }
+.legenda i { width: 14px; height: 10px; border-radius: 3px; border: 1px solid var(--line); display: inline-block; }
+select.escolher { width: 100%; margin: 6px 0 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-weight: 700; }
+
+/* Painel do departamento */
+.painel { display: grid; gap: 12px; }
+.painel h2 { font-size: 1.45rem; font-weight: 800; }
+.meta { margin: 2px 0 0; color: var(--muted); font-size: .9rem; }
+.numeros { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.num { background: var(--surface-2); border-radius: 12px; padding: 8px 10px; }
+.num b { display: block; font: 800 1.25rem var(--f-display); font-variant-numeric: tabular-nums; }
+.num span { font-size: .78rem; color: var(--muted); line-height: 1.25; display: block; }
+.fila { margin: 0; padding: 8px 10px; border-radius: 10px; background: var(--warn-soft); color: var(--warn); font-weight: 700; font-size: .9rem; }
+.nivel h3 { font-size: 1rem; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.nivel h3 .barras { display: inline-flex; gap: 3px; }
+.nivel h3 .barras i { width: 14px; height: 8px; border-radius: 3px; background: var(--surface-2); border: 1px solid var(--line); }
+.nivel[data-n="P"] { --nv: var(--nv-p); } .nivel[data-n="D"] { --nv: var(--nv-d); } .nivel[data-n="T"] { --nv: var(--nv-t); }
+.nivel h3 .barras i.on { background: var(--nv); border-color: var(--nv); }
+.acoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.acao { display: grid; align-content: start; gap: 2px; text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 8px; min-height: 92px; cursor: pointer; }
+.acao .ico { font-size: 1.3rem; line-height: 1; }
+.acao .nome { font-weight: 700; font-size: .8rem; line-height: 1.15; }
+.acao .alvo { font-size: .7rem; color: var(--muted); line-height: 1.2; }
+.acao .custo { font-weight: 800; font-size: .8rem; margin-top: 2px; }
+.acao.feita { border-color: var(--nv); box-shadow: inset 0 0 0 2px var(--nv); background: color-mix(in srgb, var(--nv) 14%, var(--surface)); }
+.acao.feita .custo { color: var(--nv); }
+.acao:disabled { opacity: .45; cursor: not-allowed; }
+.acao.desfaz .custo::after { content: " ↺"; }
+.radio-op { display: grid; gap: 6px; }
+.radio-op .acao { min-height: 0; }
+.extra .acao { grid-column: 1 / -1; min-height: 0; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 10px; }
+.extra .acao .alvo { grid-column: 2; }
+
+/* Barra de baixo */
+.barra {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line);
+  padding: 10px max(12px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+}
+.barra-in { max-width: 640px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+.barra .dica { flex: 1 1 auto; font-size: .8rem; color: var(--muted); line-height: 1.25; }
+.barra .btn { flex: none; }
+
+/* Janelas */
+.overlay { position: fixed; inset: 0; z-index: 50; background: rgba(5, 12, 11, .62); display: flex; align-items: flex-end; justify-content: center; padding: 12px; }
+.janela { background: var(--surface); color: var(--ink); border-radius: 18px; width: min(600px, 100%); max-height: calc(100vh - 24px); overflow: auto; padding: 18px; display: grid; gap: 12px; margin-bottom: env(safe-area-inset-bottom, 0px); }
+.janela .ano { font: 800 .8rem var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.janela h2 { font-size: 1.4rem; font-weight: 800; }
+.janela p { margin: 0; }
+.efeito { padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); font-weight: 700; }
+.fonte { font-size: .76rem; color: var(--muted); }
+.licao { border-left: 4px solid var(--nv-d); padding: 6px 10px; background: var(--surface-2); border-radius: 0 10px 10px 0; }
+.linhas { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.placar { font: 800 clamp(2.6rem, 12vw, 3.6rem) var(--f-display); line-height: 1; font-variant-numeric: tabular-nums; }
+.fontes { margin: 0; padding-left: 18px; font-size: .78rem; color: var(--muted); display: grid; gap: 4px; }
+.toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: .9rem; max-width: 92vw; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .dep { transition: none; } }
+</style>
+</head>
+<body>
+<header class="hud">
+  <div class="marca"><span id="h-titulo">Epidemia</span><small id="h-sub">Paraguay contra el cáncer</small></div>
+  <span class="chip" id="h-ano" hidden></span>
+  <span class="chip dinheiro" id="h-dinheiro" hidden></span>
+  <span class="chip" id="h-pontos" hidden></span>
+  <button class="btn-ico" id="btn-ajuda" type="button" aria-label="Ayuda">?</button>
+  <button class="btn-ico" id="btn-idioma" type="button">PT</button>
+</header>
+
+<main>
+  <section id="tela-inicio" class="inicio"></section>
+  <section id="tela-jogo" hidden>
+    <div class="mapa-wrap" id="mapa-wrap"></div>
+    <div class="modos">
+      <div class="seg" role="group" id="modos">
+        <button type="button" data-modo="cob" aria-pressed="true"></button>
+        <button type="button" data-modo="reg" aria-pressed="false"></button>
+      </div>
+      <div class="legenda" id="legenda"></div>
+    </div>
+    <select class="escolher" id="escolher" aria-label="Departamento"></select>
+    <div id="painel" class="painel cartao"></div>
+  </section>
+  <section id="tela-fim" class="inicio" hidden></section>
+</main>
+
+<footer class="barra" id="barra" hidden>
+  <div class="barra-in">
+    <p class="dica" id="dica"></p>
+    <button class="btn" id="btn-fechar" type="button"></button>
+  </div>
+</footer>
+
+<div id="modal" class="overlay" hidden><div class="janela" id="janela" role="dialog" aria-modal="true"></div></div>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script src="dados.js"></script>
+<script src="jogo.js"></script>
+</body>
+</html>
