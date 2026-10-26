@@ -2,6 +2,8 @@
 
 Juego educativo para celular sobre la epidemiología del cáncer en Paraguay. El jugador conduce el control del cáncer de 2015 a 2024: cada año recibe un presupuesto y elige acciones de **prevención**, **diagnóstico** y **tratamiento** en los 18 departamentos.
 
+Cada año dura 12 meses en tiempo real (unos 24 segundos, con pausa). El mapa y los contadores del país muestran incidencia, prevalencia, muertes y curas mientras el año corre. Cada año trae un hecho real, a veces un imprevisto (royalties de Itaipú, epidemias, inversión extranjera) y una demanda de la sociedad, que el jugador atiende, rechaza o promete cumplir. Las respuestas cambian la confianza, y la confianza cambia el presupuesto. Los convenios con instituciones privadas, fundaciones o universidades cuestan menos al principio, pero se pagan todos los años.
+
 **Jugar:** https://gian-pandolfo.github.io/epidemia-cancer-paraguay/
 
 ## Créditos
@@ -12,8 +14,8 @@ Juego educativo para celular sobre la epidemiología del cáncer en Paraguay. El
 
 ## Qué es real y qué es simulación
 
-- **Real, con fuente:** las tasas de partida de cada departamento (Atlas de Mortalidad por Cáncer en Paraguay 2015–2019), la población (Censo 2022), la 1.ª causa de muerte por cáncer por sexo y el evento de cada año (ley, decreto, pandemia, misiones, servicios inaugurados).
-- **Simulación (ilustrativa):** el efecto de cada acción, los casos ocultos (subregistro) y los puntos. Sirven para enseñar, no son estimaciones epidemiológicas.
+- **Real, con fuente:** las tasas y las muertes de partida de cada departamento (Atlas de Mortalidad por Cáncer en Paraguay 2015–2019), la población (Censo 2022), la proporción entre casos y muertes (GLOBOCAN 2022: 13.783 casos y 6.581 muertes) y el hecho de cada año (ley, decreto, pandemia, misiones, servicios inaugurados). Los imprevistos y demandas que traen «ejemplo real» o «inspirado en» citan su fuente.
+- **Simulación (ilustrativa):** el efecto de cada acción, los casos ocultos (subregistro), la incidencia, la prevalencia, las muertes y las curas en tiempo real, los imprevistos, las demandas, la confianza y los puntos. Sirven para enseñar, no son estimaciones epidemiológicas.
 
 ## Base
 

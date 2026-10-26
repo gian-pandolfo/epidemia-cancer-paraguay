@@ -18,6 +18,7 @@
   --accent: #cf4f35; --accent-ink: #ffffff; --accent-soft: rgba(207, 79, 53, .13);
   --cob0: #e7ecea; --cob1: #8fd1c8; --cob2: #3aa99f; --cob3: #1d6b66;
   --reg1: #fde3c8; --reg2: #f6b27a; --reg3: #e2733c; --reg4: #a8401c;
+  --cur1: #dcf1e5; --cur2: #96d3b1; --cur3: #46a774; --cur4: #1d6a45;
   --nv-p: #2f8f5b; --nv-d: #3c6da3; --nv-t: #9a4fb5;
   --map-stroke: #ffffff; --map-label: #10201e; --map-halo: rgba(255, 255, 255, .9);
   --warn: #9a3412; --warn-soft: #fbece4; --ok: #1f7a4d;
@@ -30,7 +31,7 @@
     --bg: #0d1514; --surface: #141f1d; --surface-2: #1c2927; --ink: #e3eeeb; --muted: #9cb1ad; --line: #2a403c;
     --accent: #f07a5c; --accent-ink: #1b0d08; --accent-soft: rgba(240, 122, 92, .18);
     --cob0: #26332f; --cob1: #2a6b63; --cob2: #43a698; --cob3: #92dcd0;
-    --reg1: #3b2a20; --reg2: #7a4426; --reg3: #c2602f; --reg4: #f39a63;
+    --reg1: #3b2a20; --reg2: #7a4426; --reg3: #c2602f; --reg4: #f39a63; --cur1: #1b3127; --cur2: #2a6a4a; --cur3: #45a574; --cur4: #93dcb5;
     --nv-p: #5cc48a; --nv-d: #6f9bd2; --nv-t: #c48ee0;
     --fora: #050a09; --map-stroke: #0d1514; --map-label: #eef6f4; --map-halo: rgba(0, 0, 0, .75);
     --warn: #f3a37f; --warn-soft: rgba(243, 163, 127, .12); --ok: #6fd3a0;
@@ -41,7 +42,7 @@
   --bg: #0d1514; --surface: #141f1d; --surface-2: #1c2927; --ink: #e3eeeb; --muted: #9cb1ad; --line: #2a403c;
   --accent: #f07a5c; --accent-ink: #1b0d08; --accent-soft: rgba(240, 122, 92, .18);
   --cob0: #26332f; --cob1: #2a6b63; --cob2: #43a698; --cob3: #92dcd0;
-  --reg1: #3b2a20; --reg2: #7a4426; --reg3: #c2602f; --reg4: #f39a63;
+  --reg1: #3b2a20; --reg2: #7a4426; --reg3: #c2602f; --reg4: #f39a63; --cur1: #1b3127; --cur2: #2a6a4a; --cur3: #45a574; --cur4: #93dcb5;
   --nv-p: #5cc48a; --nv-d: #6f9bd2; --nv-t: #c48ee0;
   --fora: #050a09; --map-stroke: #0d1514; --map-label: #eef6f4; --map-halo: rgba(0, 0, 0, .75);
   --warn: #f3a37f; --warn-soft: rgba(243, 163, 127, .12); --ok: #6fd3a0;
@@ -69,6 +70,9 @@ main { max-width: 640px; margin: 0 auto; }
 .hud .marca[hidden] + .chip { margin-right: auto; }
 .chip { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .chip.dinheiro { color: var(--ink); }
+/* O chip da data também é o botão de pausa */
+.chip.ano { cursor: pointer; color: var(--ink); }
+.chip.ano[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
 .btn-ico { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; min-width: 40px; height: 36px; padding: 0 10px; font-weight: 700; cursor: pointer; }
 
 /* Telas */
@@ -106,16 +110,32 @@ main { max-width: 640px; margin: 0 auto; }
 .lbl.sel { font-size: 52px; }
 .alerta circle { fill: var(--accent); stroke: var(--map-stroke); stroke-width: 5; }
 .alerta text { font: 800 46px var(--f-body); fill: var(--accent-ink); text-anchor: middle; pointer-events: none; }
-.canto-ne { grid-column: 2; grid-row: 1; justify-self: end; align-self: start; z-index: 2; width: 34cqw; display: grid; gap: 4px; }
+.canto-ne { grid-column: 2; grid-row: 1; justify-self: end; align-self: start; z-index: 2; width: 34cqw; display: grid; gap: 3px; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
 .seg button { border: 0; background: transparent; border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: .88rem; cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 .seg.mini { display: grid; grid-template-columns: 1fr 1fr; border-radius: 10px; padding: 2px; }
-.seg.mini button { padding: 5px 2px; font-size: .68rem; border-radius: 8px; }
+.seg.mini button { padding: 4px 2px; font-size: .68rem; border-radius: 8px; }
 .legenda { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; font-size: .64rem; color: var(--muted); padding: 4px 6px; border-radius: 8px; background: color-mix(in srgb, var(--bg) 80%, transparent); }
-.legenda .leg-tit { grid-column: 1 / -1; font-weight: 700; color: var(--ink); line-height: 1.2; }
+.legenda .leg-tit { grid-column: 1 / -1; font-weight: 700; color: var(--ink); line-height: 1.2; white-space: normal; }
 .legenda span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+.legenda.q4 { grid-template-columns: repeat(4, auto); justify-content: start; }
 .legenda i { width: 12px; height: 9px; border-radius: 3px; border: 1px solid var(--line); display: inline-block; flex: none; }
+/* Números do país em tempo real, logo abaixo de Equilíbrio | Taxas: cada um também vira a camada do mapa */
+.vivo { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+.vivo button { display: grid; text-align: left; min-width: 0; padding: 2px 5px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); cursor: pointer; line-height: 1.1; }
+.vivo span { font-size: .56rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vivo b { font-size: .76rem; font-variant-numeric: tabular-nums; }
+.vivo .v-mort b { color: var(--warn); }
+.vivo .v-cura b { color: var(--ok); }
+.vivo button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); }
+.vivo button[aria-pressed="true"] span, .vivo button[aria-pressed="true"] b { color: var(--bg); }
+/* Cada ação faz o departamento piscar e o ícone subir */
+.dep.pulso { animation: pulso .8s ease-in-out 2; }
+@keyframes pulso { 50% { fill-opacity: .35; stroke: var(--accent); stroke-width: 16; } }
+#g-fx text { font-size: 110px; text-anchor: middle; pointer-events: none; animation: sobe 1.5s ease-out forwards; }
+@keyframes sobe { 0% { opacity: 0; transform: translateY(30px); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-170px); } }
+.alerta .pino { font-size: 64px; }
 
 /* Departamento: informações no canto sudoeste, ao lado do mapa; ações logo abaixo do mapa, na largura toda */
 .painel-info {
@@ -132,7 +152,7 @@ main { max-width: 640px; margin: 0 auto; }
 .info b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .meta { margin: 2px 0 0; color: var(--muted); font-size: .9rem; }
 .fila { margin: 0; padding: 5px 6px; border-radius: 8px; background: var(--warn-soft); color: var(--warn); font-weight: 700; }
-.nivel h3 { font: 800 .72rem var(--f-body); display: flex; align-items: center; justify-content: space-between; gap: 4px; margin: 0 0 3px; }
+.nivel h3 { font: 800 .72rem var(--f-body); display: flex; align-items: center; justify-content: space-between; gap: 4px; margin: 0 0 2px; }
 .nivel h3 .barras { display: inline-flex; gap: 2px; }
 .nivel h3 .barras i { width: 10px; height: 6px; border-radius: 2px; background: var(--surface-2); border: 1px solid var(--line); }
 .nivel[data-n="P"] { --nv: var(--nv-p); } .nivel[data-n="D"] { --nv: var(--nv-d); } .nivel[data-n="T"] { --nv: var(--nv-t); } .nivel[data-n="X"] { --nv: var(--nv-d); }
@@ -149,6 +169,12 @@ main { max-width: 640px; margin: 0 auto; }
 .acao.feita .custo { color: var(--nv); }
 .acao:disabled { opacity: .45; cursor: not-allowed; }
 .acao.desfaz .custo::after { content: " ↺"; }
+/* 🤝 convênio: botão pequeno no canto da ação; quando ativo, a ação fica tracejada */
+.slot { position: relative; display: grid; min-width: 0; }
+.conv { position: absolute; right: 4px; bottom: 4px; z-index: 1; min-height: 20px; padding: 0 6px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-2); color: var(--ink); font-size: .62rem; font-weight: 800; line-height: 18px; cursor: pointer; }
+.conv:disabled { opacity: .45; cursor: not-allowed; }
+.acao.conv-on { border: 2px dashed var(--nv); box-shadow: none; }
+.info .eq { color: var(--ink); }
 
 /* Barra de baixo */
 .barra {
@@ -167,6 +193,12 @@ main { max-width: 640px; margin: 0 auto; }
 .janela p { margin: 0; }
 .efeito { padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); font-weight: 700; }
 .fonte { font-size: .76rem; color: var(--muted); }
+.imprevisto { display: grid; gap: 8px; padding: 12px; border: 2px dashed var(--line); border-radius: 14px; }
+.imprevisto h3 { font-size: 1.1rem; }
+.opcoes { display: grid; gap: 8px; }
+.opcoes button { display: grid; gap: 2px; text-align: left; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); font-weight: 700; cursor: pointer; }
+.opcoes small { font-weight: 400; font-size: .8rem; color: var(--muted); }
+.opcoes button:disabled { opacity: .5; cursor: not-allowed; }
 .licao { border-left: 4px solid var(--nv-d); padding: 6px 10px; background: var(--surface-2); border-radius: 0 10px 10px 0; }
 .linhas { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
 .placar { font: 800 clamp(2.6rem, 12vw, 3.6rem) var(--f-display); line-height: 1; font-variant-numeric: tabular-nums; }
@@ -203,15 +235,27 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .hud { gap: 5px; }
   .chip { padding: 4px 8px; font-size: .9rem; }
   .btn-ico { min-width: 34px; height: 34px; padding: 0 8px; }
+  .acao { min-height: 40px; padding: 5px; }
+  .painel-acoes { gap: 5px; margin-top: 6px; }
+  .barra .btn { padding: 10px 16px; min-height: 46px; font-size: 1rem; }
 }
-@media (prefers-reduced-motion: reduce) { .dep { transition: none; } }
+@media (max-width: 370px) {
+  .hud { gap: 4px; }
+  .chip { padding: 3px 6px; font-size: .84rem; }
+  .btn-ico { min-width: 30px; height: 32px; padding: 0 6px; }
+  .painel-info { font-size: .64rem; }
+  .legenda { font-size: .58rem; }
+  .barra .dica { font-size: .74rem; }
+  .barra .btn { padding: 9px 12px; font-size: .92rem; }
+}
+@media (prefers-reduced-motion: reduce) { .dep { transition: none; } .dep.pulso { animation: none; } #g-fx text { display: none; } }
 </style>
 </head>
 <body>
 <div class="aparelho"><div class="tela" id="tela">
 <header class="hud">
   <div class="marca"><span id="h-titulo">Epidemia</span><small id="h-sub">Paraguay contra el cáncer</small></div>
-  <span class="chip" id="h-ano" hidden></span>
+  <button class="chip ano" id="h-ano" type="button" hidden></button>
   <span class="chip dinheiro" id="h-dinheiro" hidden></span>
   <span class="chip" id="h-pontos" hidden></span>
   <button class="btn-ico" id="btn-ajuda" type="button" aria-label="Ayuda">?</button>
@@ -228,6 +272,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
           <button type="button" data-modo="cob" aria-pressed="true"></button>
           <button type="button" data-modo="reg" aria-pressed="false"></button>
         </div>
+        <div class="vivo" id="vivo" role="group"></div>
         <div class="legenda" id="legenda"></div>
       </div>
       <div id="painel-info" class="painel-info"></div>
