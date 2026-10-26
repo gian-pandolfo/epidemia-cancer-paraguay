@@ -92,9 +92,13 @@ main { max-width: 640px; margin: 0 auto; }
 .btn.sec { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); }
 .btns { display: flex; flex-wrap: wrap; gap: 10px; }
 
-/* Mapa */
-.mapa-wrap { position: relative; margin-top: 4px; }
-#mapa { display: block; width: 100%; height: auto; max-height: 52vh; touch-action: manipulation; }
+/* Mapa e painel na mesma tela, sem rolar: o painel do departamento ocupa o canto vazio de baixo à esquerda
+   (Argentina: abaixo de Boquerón e Presidente Hayes, à esquerda de Asunción e Ñeembucú) e a legenda o de cima à
+   direita (Brasil). Medidas em cqw = % da largura da tela do jogo; o desenho do mapa mede 1600 x 1720. */
+#tela-jogo { container-type: inline-size; }
+.palco { display: grid; grid-template-columns: 46cqw minmax(0, 1fr); grid-template-rows: 77cqw auto auto; margin-top: 4px; }
+.mapa-wrap { grid-column: 1 / -1; grid-row: 1 / span 2; align-self: start; position: relative; }
+#mapa { display: block; width: 100%; height: auto; touch-action: manipulation; }
 .dep { stroke: var(--map-stroke); stroke-width: 3; stroke-linejoin: round; cursor: pointer; transition: fill .35s ease; }
 .dep.sel { stroke: var(--accent); stroke-width: 10; }
 .dep-marker { stroke-width: 5; }
@@ -102,43 +106,49 @@ main { max-width: 640px; margin: 0 auto; }
 .lbl.sel { font-size: 52px; }
 .alerta circle { fill: var(--accent); stroke: var(--map-stroke); stroke-width: 5; }
 .alerta text { font: 800 46px var(--f-body); fill: var(--accent-ink); text-anchor: middle; pointer-events: none; }
-.modos { display: flex; gap: 6px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin: 6px 0 4px; }
+.canto-ne { grid-column: 2; grid-row: 1; justify-self: end; align-self: start; z-index: 2; width: 34cqw; display: grid; gap: 4px; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
 .seg button { border: 0; background: transparent; border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: .88rem; cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-.legenda { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: .78rem; color: var(--muted); }
-.legenda span { display: inline-flex; align-items: center; gap: 4px; }
-.legenda i { width: 14px; height: 10px; border-radius: 3px; border: 1px solid var(--line); display: inline-block; }
-select.escolher { width: 100%; margin: 6px 0 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-weight: 700; }
+.seg.mini { display: grid; grid-template-columns: 1fr 1fr; border-radius: 10px; padding: 2px; }
+.seg.mini button { padding: 5px 2px; font-size: .68rem; border-radius: 8px; }
+.legenda { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; font-size: .64rem; color: var(--muted); padding: 4px 6px; border-radius: 8px; background: color-mix(in srgb, var(--bg) 80%, transparent); }
+.legenda .leg-tit { grid-column: 1 / -1; font-weight: 700; color: var(--ink); line-height: 1.2; }
+.legenda span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+.legenda i { width: 12px; height: 9px; border-radius: 3px; border: 1px solid var(--line); display: inline-block; flex: none; }
 
-/* Painel do departamento */
-.painel { display: grid; gap: 12px; }
-.painel h2 { font-size: 1.45rem; font-weight: 800; }
+/* Departamento: informações no canto sudoeste, ao lado do mapa; ações logo abaixo do mapa, na largura toda */
+.painel-info {
+  grid-column: 1; grid-row: 2; align-self: start; z-index: 2; min-width: 0; display: grid; gap: 4px; padding: 7px 8px;
+  border: 1px solid var(--line); border-radius: 12px; background: color-mix(in srgb, var(--surface) 94%, transparent); font-size: .68rem; line-height: 1.25;
+}
+.painel-acoes { grid-column: 1 / -1; grid-row: 3; display: grid; gap: 6px; margin-top: 8px; }
+.dep-tit {
+  width: 100%; border: 0; color: var(--ink); font: 800 1.02rem var(--f-display); padding: 0 16px 0 0; cursor: pointer; -webkit-appearance: none; appearance: none;
+  background: transparent linear-gradient(45deg, transparent 50%, var(--muted) 50%) no-repeat calc(100% - 7px) 55% / 5px 5px,
+              transparent linear-gradient(135deg, var(--muted) 50%, transparent 50%) no-repeat calc(100% - 2px) 55% / 5px 5px;
+}
+.info { margin: 0; color: var(--muted); display: grid; gap: 2px; }
+.info b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .meta { margin: 2px 0 0; color: var(--muted); font-size: .9rem; }
-.numeros { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.num { background: var(--surface-2); border-radius: 12px; padding: 8px 10px; }
-.num b { display: block; font: 800 1.25rem var(--f-display); font-variant-numeric: tabular-nums; }
-.num span { font-size: .78rem; color: var(--muted); line-height: 1.25; display: block; }
-.fila { margin: 0; padding: 8px 10px; border-radius: 10px; background: var(--warn-soft); color: var(--warn); font-weight: 700; font-size: .9rem; }
-.nivel h3 { font-size: 1rem; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.nivel h3 .barras { display: inline-flex; gap: 3px; }
-.nivel h3 .barras i { width: 14px; height: 8px; border-radius: 3px; background: var(--surface-2); border: 1px solid var(--line); }
-.nivel[data-n="P"] { --nv: var(--nv-p); } .nivel[data-n="D"] { --nv: var(--nv-d); } .nivel[data-n="T"] { --nv: var(--nv-t); }
+.fila { margin: 0; padding: 5px 6px; border-radius: 8px; background: var(--warn-soft); color: var(--warn); font-weight: 700; }
+.nivel h3 { font: 800 .72rem var(--f-body); display: flex; align-items: center; justify-content: space-between; gap: 4px; margin: 0 0 3px; }
+.nivel h3 .barras { display: inline-flex; gap: 2px; }
+.nivel h3 .barras i { width: 10px; height: 6px; border-radius: 2px; background: var(--surface-2); border: 1px solid var(--line); }
+.nivel[data-n="P"] { --nv: var(--nv-p); } .nivel[data-n="D"] { --nv: var(--nv-d); } .nivel[data-n="T"] { --nv: var(--nv-t); } .nivel[data-n="X"] { --nv: var(--nv-d); }
 .nivel h3 .barras i.on { background: var(--nv); border-color: var(--nv); }
-.acoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-.acao { display: grid; align-content: start; gap: 2px; text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 8px; min-height: 92px; cursor: pointer; }
-.acao .ico { font-size: 1.3rem; line-height: 1; }
-.acao .nome { font-weight: 700; font-size: .8rem; line-height: 1.15; }
-.acao .alvo { font-size: .7rem; color: var(--muted); line-height: 1.2; }
-.acao .custo { font-weight: 800; font-size: .8rem; margin-top: 2px; }
+.acoes { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 5px; }
+.acao {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "ico nome" "ico custo"; column-gap: 4px; align-items: center;
+  text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 6px; min-height: 42px; cursor: pointer; min-width: 0;
+}
+.acao .ico { grid-area: ico; font-size: .95rem; line-height: 1; }
+.acao .nome { grid-area: nome; font-weight: 700; font-size: .7rem; line-height: 1.1; }
+.acao .custo { grid-area: custo; font-weight: 800; font-size: .7rem; }
 .acao.feita { border-color: var(--nv); box-shadow: inset 0 0 0 2px var(--nv); background: color-mix(in srgb, var(--nv) 14%, var(--surface)); }
 .acao.feita .custo { color: var(--nv); }
 .acao:disabled { opacity: .45; cursor: not-allowed; }
 .acao.desfaz .custo::after { content: " ↺"; }
-.radio-op { display: grid; gap: 6px; }
-.radio-op .acao { min-height: 0; }
-.extra .acao { grid-column: 1 / -1; min-height: 0; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 10px; }
-.extra .acao .alvo { grid-column: 2; }
 
 /* Barra de baixo */
 .barra {
@@ -188,7 +198,6 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .hud { gap: 5px; }
   .chip { padding: 4px 8px; font-size: .9rem; }
   .btn-ico { min-width: 34px; height: 34px; padding: 0 8px; }
-  #mapa { max-height: 46vh; }
 }
 @media (max-width: 400px) {
   .hud { gap: 5px; }
@@ -212,16 +221,18 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 <main>
   <section id="tela-inicio" class="inicio"></section>
   <section id="tela-jogo" hidden>
-    <div class="mapa-wrap" id="mapa-wrap"></div>
-    <div class="modos">
-      <div class="seg" role="group" id="modos">
-        <button type="button" data-modo="cob" aria-pressed="true"></button>
-        <button type="button" data-modo="reg" aria-pressed="false"></button>
+    <div class="palco">
+      <div class="mapa-wrap" id="mapa-wrap"></div>
+      <div class="canto-ne">
+        <div class="seg mini" role="group" id="modos">
+          <button type="button" data-modo="cob" aria-pressed="true"></button>
+          <button type="button" data-modo="reg" aria-pressed="false"></button>
+        </div>
+        <div class="legenda" id="legenda"></div>
       </div>
-      <div class="legenda" id="legenda"></div>
+      <div id="painel-info" class="painel-info"></div>
+      <div id="painel" class="painel-acoes"></div>
     </div>
-    <select class="escolher" id="escolher" aria-label="Departamento"></select>
-    <div id="painel" class="painel cartao"></div>
   </section>
   <section id="tela-fim" class="inicio" hidden></section>
 </main>

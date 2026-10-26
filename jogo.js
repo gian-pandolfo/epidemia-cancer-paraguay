@@ -53,8 +53,16 @@ const T = {
     comecar: "Empezar", continuar: "Continuar partida", nova: "Nueva partida",
     ajuda: "Cómo se juega", fechar: "Cerrar",
     anoDe: (a, i) => `${a} · año ${i} de 10`,
-    modoCob: "Cobertura", modoReg: "Casos registrados",
-    legCob: "Niveles en equilibrio:", legReg: "Tasa estandarizada registrada, por 100 mil:",
+    modoCob: "Equilibrio", modoReg: "Tasas",
+    legCob: "Niveles en equilibrio", legReg: "Tasa estandarizada /100 mil",
+    curtas: { vacuna: "Vacuna VPH", tabaco: "Antitabaco", habitos: "Hábitos", vph: "Test VPH", mamo: "Mamógrafo", registro: "Registro",
+      quimio: "Hospital Día", radio: "Acelerador", privado: "Convenio", paliativos: "Paliativos", pesquisa: "Centro de investigación" },
+    infoPop: (p) => `${p} hab. (Censo 2022)`,
+    infoTaxa: (a, b) => `Tasa estandarizada /100 mil (Atlas 2015–19): <b>${a} → ${b}</b>`,
+    infoOculto: (x) => `Casos ocultos: <b>${x}</b>`,
+    infoCausa: (h, m) => `1.ª causa: ${h} (H) · ${m} (M)`,
+    filaCurta: "⚠ Fila: hay diagnóstico pero no tratamiento cerca; rinde la mitad.",
+    compra: (ico, n, a) => `${ico} ${n} → ${a}`,
     escolher: "Elegir departamento…",
     hab: "hab. (Censo 2022)",
     causa: (h, m) => `1.ª causa de muerte por cáncer: ${h} (hombres), ${m} (mujeres) · Atlas 2015–2019`,
@@ -144,8 +152,16 @@ const T = {
     comecar: "Começar", continuar: "Continuar partida", nova: "Nova partida",
     ajuda: "Como se joga", fechar: "Fechar",
     anoDe: (a, i) => `${a} · ano ${i} de 10`,
-    modoCob: "Cobertura", modoReg: "Casos registrados",
-    legCob: "Níveis em equilíbrio:", legReg: "Taxa padronizada registrada, por 100 mil:",
+    modoCob: "Equilíbrio", modoReg: "Taxas",
+    legCob: "Níveis em equilíbrio", legReg: "Taxa padronizada /100 mil",
+    curtas: { vacuna: "Vacina HPV", tabaco: "Antitabaco", habitos: "Hábitos", vph: "Teste HPV", mamo: "Mamógrafo", registro: "Registro",
+      quimio: "Hospital Día", radio: "Acelerador", privado: "Convênio", paliativos: "Paliativos", pesquisa: "Centro de pesquisa" },
+    infoPop: (p) => `${p} hab. (Censo 2022)`,
+    infoTaxa: (a, b) => `Taxa padronizada /100 mil (Atlas 2015–19): <b>${a} → ${b}</b>`,
+    infoOculto: (x) => `Casos ocultos: <b>${x}</b>`,
+    infoCausa: (h, m) => `1ª causa: ${h} (H) · ${m} (M)`,
+    filaCurta: "⚠ Fila: há diagnóstico mas não há tratamento perto; rende a metade.",
+    compra: (ico, n, a) => `${ico} ${n} → ${a}`,
     escolher: "Escolher departamento…",
     hab: "hab. (Censo 2022)",
     causa: (h, m) => `1ª causa de morte por câncer: ${h} (homens), ${m} (mulheres) · Atlas 2015–2019`,
@@ -442,6 +458,8 @@ function comprar(id, a) {
   (S.compradasAno = S.compradasAno || []).push(a);
   salvar();
   render();
+  const [nomeA, alvoA] = t("acoes")[a];
+  toast(t("compra")(ACOES[a].ico, nomeA, alvoA));
 }
 
 function desfazer(id, a, valor) {
@@ -491,8 +509,8 @@ function pintarMapa() {
     return `<circle cx="${x}" cy="${y}" r="30"/><text x="${x}" y="${y + 16}">!</text>`;
   }).join("");
   $("#legenda").innerHTML = S.modo === "cob"
-    ? `${esc(t("legCob"))} ${[0, 1, 2, 3].map((n) => `<span><i style="background:var(--cob${n})"></i>${n}</span>`).join("")}`
-    : `${esc(t("legReg"))} ${["< 60", "60–80", "80–100", "≥ 100"].map((r, i) => `<span><i style="background:var(--reg${i + 1})"></i>${r}</span>`).join("")}`;
+    ? `<span class="leg-tit">${esc(t("legCob"))}</span>${[0, 1, 2, 3].map((n) => `<span><i style="background:var(--cob${n})"></i>${n}</span>`).join("")}`
+    : `<span class="leg-tit">${esc(t("legReg"))}</span>${["<60", "60–80", "80–100", "≥100"].map((r, i) => `<span><i style="background:var(--reg${i + 1})"></i>${r}</span>`).join("")}`;
   document.querySelectorAll("#modos button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.modo === S.modo)));
 }
 
@@ -500,13 +518,14 @@ function pintarMapa() {
 function botaoAcao(id, a, extra = "") {
   const d = S.deps[id];
   const [nome, alvo] = t("acoes")[a];
+  const curto = t("curtas")[a];
   const ativo = ativa(d, a), desfazivel = ativo && pagoNoAno(d, a) > 0;
   const preco = ativo ? t("ativo") : a === "privado" ? t("custoAno")(custo(a)) : t("custo")(custo(a));
   const semDinheiro = !ativo && custo(a) > S.orc;
   const nv = ACOES[a].nivel;
   return `<button type="button" class="acao${ativo ? " feita" : ""}${desfazivel ? " desfaz" : ""} ${extra}" data-acao="${a}" ${semDinheiro ? "disabled" : ""}
-    style="--nv: var(--nv-${nv === "X" ? "d" : nv.toLowerCase()})" aria-pressed="${ativo}" title="${desfazivel ? esc(t("desfazer")) : ""}">
-    <span class="ico" aria-hidden="true">${ACOES[a].ico}</span><span class="nome">${esc(nome)}</span><span class="alvo">${esc(alvo)}</span><span class="custo">${esc(preco)}</span></button>`;
+    style="--nv: var(--nv-${nv === "X" ? "d" : nv.toLowerCase()})" aria-pressed="${ativo}" aria-label="${esc(`${nome} (${alvo}): ${preco}`)}" title="${esc(`${nome} → ${alvo}`)}">
+    <span class="ico" aria-hidden="true">${ACOES[a].ico}</span><span class="nome">${esc(curto)}</span><span class="custo">${esc(preco)}</span></button>`;
 }
 
 function renderPainel() {
@@ -517,23 +536,21 @@ function renderPainel() {
     const v = nivel(d, n);
     let botoes;
     if (n === "T") {
-      const radio = d.feitas.radio !== undefined ? botaoAcao(id, "radio")
-        : `<div class="radio-op">${botaoAcao(id, "radio")}${botaoAcao(id, "privado")}</div>`;
+      const radio = d.feitas.radio !== undefined ? botaoAcao(id, "radio") : botaoAcao(id, "radio") + botaoAcao(id, "privado");
       botoes = botaoAcao(id, "quimio") + radio + botaoAcao(id, "paliativos");
     } else botoes = SLOTS[n].map((a) => botaoAcao(id, a)).join("");
     return `<div class="nivel" data-n="${n}"><h3>${esc(t("niveis")[n])} <span class="barras" aria-label="${v}/3">${[0, 1, 2].map((i) => `<i class="${i < v ? "on" : ""}"></i>`).join("")}</span></h3><div class="acoes">${botoes}</div></div>`;
   };
-  $("#painel").innerHTML = `
-    <div><h2>${esc(dd.nome)}</h2>
-      <p class="meta">${fmtInt(dd.pop)} ${esc(t("hab"))}</p>
-      <p class="meta">${esc(t("causa")(causa[dd.primH] || dd.primH, causa[dd.primM] || dd.primM))}</p></div>
-    <div class="numeros">
-      <div class="num"><b>${fmt1(dd.tee)} → ${fmt1(taxaReg(id))}</b><span>${esc(t("kReg"))}</span></div>
-      <div class="num"><b>${esc(oculto)}</b><span>${esc(t("kOculto"))}${ocultoConhecido(id) ? "" : ` · ${esc(t("ocultoDica"))}`}</span></div>
-    </div>
-    ${dd.poucos ? `<p class="meta">${esc(t("poucos"))}</p>` : ""}
-    ${temFila(id) ? `<p class="fila">${esc(t("fila"))}</p>` : ""}
-    ${linhaNivel("P")}${linhaNivel("D")}${linhaNivel("T")}
+  const opcoes = [...DEPS].sort((a, b) => a.nome.localeCompare(b.nome)).map((x) => `<option value="${x.id}" ${x.id === id ? "selected" : ""}>${esc(x.nome)}</option>`).join("");
+  $("#painel-info").innerHTML = `
+    <select class="dep-tit" id="dep-tit" aria-label="${esc(t("escolher"))}">${opcoes}</select>
+    <p class="info"><span>${esc(t("infoPop")(fmtInt(dd.pop)))}</span>
+      <span>${t("infoTaxa")(fmt1(dd.tee), fmt1(taxaReg(id)))}</span>
+      <span>${t("infoOculto")(esc(oculto))}</span>
+      <span>${esc(t("infoCausa")(causa[dd.primH] || dd.primH, causa[dd.primM] || dd.primM))}</span>
+      ${dd.poucos ? `<span>${esc(t("poucos"))}</span>` : ""}</p>
+    ${temFila(id) ? `<p class="fila">${esc(t("filaCurta"))}</p>` : ""}`;
+  $("#painel").innerHTML = `${linhaNivel("P")}${linhaNivel("D")}${linhaNivel("T")}
     <div class="nivel extra" data-n="X"><h3>${esc(t("niveis").X)}</h3><div class="acoes">${botaoAcao(id, "pesquisa")}</div></div>`;
 }
 
@@ -555,8 +572,6 @@ function render() {
   if (!S || S.fim) return renderHud();
   $("#tela-inicio").hidden = true; $("#tela-fim").hidden = true; $("#tela-jogo").hidden = false; $("#barra").hidden = false;
   document.querySelectorAll("#modos button").forEach((b) => { b.textContent = b.dataset.modo === "cob" ? t("modoCob") : t("modoReg"); });
-  const sel = $("#escolher");
-  sel.innerHTML = `<option value="">${esc(t("escolher"))}</option>` + [...DEPS].sort((a, b) => a.nome.localeCompare(b.nome)).map((d) => `<option value="${d.id}" ${d.id === S.sel ? "selected" : ""}>${esc(d.nome)}</option>`).join("");
   pintarMapa();
   renderPainel();
   renderHud();
@@ -718,11 +733,6 @@ function novoJogo() {
 
 /* Depois de tocar no mapa, mostra o começo do painel se ele estiver escondido embaixo da tela */
 const rolador = () => { const el = $("#tela"); return el && getComputedStyle(el).overflowY === "auto" ? el : null; };
-function mostrarPainel() {
-  const r = rolador(), alto = r ? r.clientHeight : window.innerHeight, base = r ? r.getBoundingClientRect().top : 0;
-  const topo = $("#painel").getBoundingClientRect().top - base;
-  if (topo > alto * 0.8) (r || window).scrollBy({ top: topo - alto * 0.45, behavior: "smooth" });
-}
 function rolarTopo() { window.scrollTo(0, 0); if (rolador()) rolador().scrollTop = 0; }
 
 function continuar() {
@@ -738,7 +748,7 @@ function continuar() {
 document.addEventListener("click", (ev) => {
   const alvo = ev.target;
   const dep = alvo.closest && alvo.closest("#mapa .dep");
-  if (dep && S && !S.fim) { S.sel = dep.dataset.dep; salvar(); render(); mostrarPainel(); return; }
+  if (dep && S && !S.fim) { S.sel = dep.dataset.dep; salvar(); render(); return; }
   const ac = alvo.closest && alvo.closest("#painel .acao");
   if (ac && !ac.disabled) { comprar(S.sel, ac.dataset.acao); return; }
   if (dep === null && alvo.closest && alvo.closest("#mapa")) return;
@@ -770,7 +780,7 @@ document.addEventListener("keydown", (ev) => {
   const dep = ev.target.closest && ev.target.closest("#mapa .dep");
   if (dep && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); S.sel = dep.dataset.dep; salvar(); render(); }
 });
-$("#escolher").addEventListener("change", (ev) => { if (ev.target.value) { S.sel = ev.target.value; salvar(); render(); $("#painel").scrollIntoView({ behavior: "smooth", block: "start" }); } });
+document.addEventListener("change", (ev) => { if (ev.target.id === "dep-tit" && ev.target.value) { S.sel = ev.target.value; salvar(); render(); } });
 
 async function compartilhar() {
   const url = CFG.jogoUrl || location.href.split("#")[0];   // sempre o link público, também na cópia de revisão
