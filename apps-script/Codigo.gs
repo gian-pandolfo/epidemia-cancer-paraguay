@@ -66,10 +66,10 @@ function doPost(e) {
     const id = texto_(d.id, 40);
     const cache = CacheService.getScriptCache();
     const chave = "envio_" + Utilities.base64EncodeWebSafe(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, id || nome + "|" + turma));
-    if (cache.get(chave)) return json_({ ok: false, erro: "repetido" });
     const trava = LockService.getScriptLock();
     trava.waitLock(10000);
     try {
+      if (cache.get(chave)) return json_({ ok: false, erro: "repetido" });  // dentro da trava: dois reenvios juntos não gravam em dobro
       const aba = aba_();
       aba.appendRow([new Date(), nome, faculdade, turma, pontos, anos.join(" "), texto_(d.idioma, 5), texto_(d.versao, 20), id]);
       cache.put(chave, "1", 21600);
