@@ -753,7 +753,7 @@ document.addEventListener("keydown", (ev) => {
 $("#escolher").addEventListener("change", (ev) => { if (ev.target.value) { S.sel = ev.target.value; salvar(); render(); $("#painel").scrollIntoView({ behavior: "smooth", block: "start" }); } });
 
 async function compartilhar() {
-  const url = location.href.split("#")[0];
+  const url = CFG.jogoUrl || location.href.split("#")[0];   // sempre o link público, também na cópia de revisão
   try {
     if (navigator.share) await navigator.share({ title: t("h1"), text: t("shareTxt"), url });
     else { await navigator.clipboard.writeText(url); toast(t("copiado")); }
