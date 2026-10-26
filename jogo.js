@@ -561,7 +561,7 @@ function telaInicio() {
   $("#tela-inicio").innerHTML = `
     <h1>${esc(t("h1"))}</h1>
     <p class="sub">${esc(t("intro"))}</p>
-    <div class="cartao"><ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol></div>
+    <details class="cartao regras"><summary>${esc(t("ajuda"))}</summary><ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol></details>
     <div class="btns">${temSalvo ? `<button class="btn" id="btn-continuar" type="button">${esc(t("continuar"))}</button><button class="btn sec" id="btn-nova" type="button">${esc(t("nova"))}</button>`
       : `<button class="btn" id="btn-nova" type="button">${esc(t("comecar"))}</button>`}${ultimoFim ? `<button class="btn sec" id="btn-ultimo" type="button">${esc(t("ultimo"))}</button>` : ""}</div>
     <p class="aviso">${esc(t("aviso"))}</p>`;
