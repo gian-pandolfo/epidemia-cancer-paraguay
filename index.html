@@ -152,6 +152,12 @@ select.escolher { width: 100%; margin: 6px 0 10px; padding: 10px 12px; border-ra
 .placar { font: 800 clamp(2.6rem, 12vw, 3.6rem) var(--f-display); line-height: 1; font-variant-numeric: tabular-nums; }
 .fontes { margin: 0; padding-left: 18px; font-size: .78rem; color: var(--muted); display: grid; gap: 4px; }
 .toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: .9rem; max-width: 92vw; text-align: center; }
+/* Celulares estreitos: placar numa linha só */
+@media (max-width: 400px) {
+  .hud { gap: 5px; }
+  .chip { padding: 4px 8px; font-size: .9rem; }
+  .btn-ico { min-width: 34px; height: 34px; padding: 0 8px; }
+}
 @media (prefers-reduced-motion: reduce) { .dep { transition: none; } }
 </style>
 </head>
