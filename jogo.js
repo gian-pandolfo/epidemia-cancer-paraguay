@@ -43,7 +43,13 @@ const T = {
       "Diagnóstico sin tratamiento cerca forma fila: ese departamento rinde la mitad.",
       "Cada año trae un hecho real de la historia del cáncer en Paraguay.",
     ],
-    aviso: "Simulación educativa (beta). Los efectos de las acciones y los puntos son ilustrativos; los datos de partida y los eventos son reales, con fuente. Basado en la revisión sistemática de Silva, Pandolfo et al. (2026) y sus fuentes.",
+    aviso: "Simulación educativa (beta). Los efectos de las acciones y los puntos son ilustrativos; los datos de partida y los eventos son reales, con fuente.",
+    creditosTit: "Créditos",
+    creditos: [
+      "<b>Desarrollo:</b> Gianmarlon Pandolfo, estudiante de Medicina (UNINTER Tres Fronteras).",
+      "<b>Trabajo base:</b> Silva GIS, Pandolfo GA, et al. <i>Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control</i>. Revisión sistemática, 2026.",
+      "<b>Coautoría:</b> Claude Opus 5.5 (Anthropic), en el diseño del juego, la programación y la verificación de las fuentes.",
+    ],
     comecar: "Empezar", continuar: "Continuar partida", nova: "Nueva partida",
     ajuda: "Cómo se juega", fechar: "Cerrar",
     anoDe: (a, i) => `${a} · año ${i} de 10`,
@@ -128,7 +134,13 @@ const T = {
       "Diagnóstico sem tratamento perto forma fila: esse departamento rende a metade.",
       "Cada ano traz um fato real da história do câncer no Paraguai.",
     ],
-    aviso: "Simulação educativa (beta). Os efeitos das ações e os pontos são ilustrativos; os dados de partida e os eventos são reais, com fonte. Baseado na revisão sistemática de Silva, Pandolfo et al. (2026) e nas suas fontes.",
+    aviso: "Simulação educativa (beta). Os efeitos das ações e os pontos são ilustrativos; os dados de partida e os eventos são reais, com fonte.",
+    creditosTit: "Créditos",
+    creditos: [
+      "<b>Desenvolvimento:</b> Gianmarlon Pandolfo, estudante de Medicina (UNINTER Tres Fronteras).",
+      "<b>Trabalho base:</b> Silva GIS, Pandolfo GA, et al. <i>Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control</i>. Revisão sistemática, 2026.",
+      "<b>Coautoria:</b> Claude Opus 5.5 (Anthropic), no desenho do jogo, na programação e na conferência das fontes.",
+    ],
     comecar: "Começar", continuar: "Continuar partida", nova: "Nova partida",
     ajuda: "Como se joga", fechar: "Fechar",
     anoDe: (a, i) => `${a} · ano ${i} de 10`,
@@ -564,7 +576,8 @@ function telaInicio() {
     <details class="cartao regras"><summary>${esc(t("ajuda"))}</summary><ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol></details>
     <div class="btns">${temSalvo ? `<button class="btn" id="btn-continuar" type="button">${esc(t("continuar"))}</button><button class="btn sec" id="btn-nova" type="button">${esc(t("nova"))}</button>`
       : `<button class="btn" id="btn-nova" type="button">${esc(t("comecar"))}</button>`}${ultimoFim ? `<button class="btn sec" id="btn-ultimo" type="button">${esc(t("ultimo"))}</button>` : ""}</div>
-    <p class="aviso">${esc(t("aviso"))}</p>`;
+    <p class="aviso">${esc(t("aviso"))}</p>
+    ${creditosHTML(false)}`;
   renderHud();
 }
 
@@ -594,6 +607,7 @@ function mostrarFim() {
     <div class="cartao"><h2>${esc(t("realTit"))}</h2><ul class="linhas">${t("real").map((l) => `<li>${esc(l)}</li>`).join("")}</ul></div>
     <div class="btns"><button class="btn" id="btn-nova" type="button">${esc(t("denovo"))}</button><button class="btn sec" id="btn-compartir" type="button">${esc(t("compartir"))}</button></div>
     <p class="aviso">${esc(t("beta"))}</p>
+    <div class="cartao">${creditosHTML(true)}</div>
     <div class="cartao"><h2>${esc(t("fontesTit"))}</h2><ol class="fontes">${FONTES.map((f) => `<li>${esc(f)}</li>`).join("")}</ol></div>`;
   renderHud();
   rolarTopo();
@@ -642,6 +656,8 @@ async function enviarRanking() {
   }
 }
 
+const creditosHTML = (comTitulo) => `<div class="creditos">${comTitulo ? `<h2>${esc(t("creditosTit"))}</h2>` : ""}${t("creditos").map((c) => `<p>${c}</p>`).join("")}</div>`;
+
 /* ---------- janelas ---------- */
 function abrirModal(html) { $("#janela").innerHTML = html; $("#modal").hidden = false; $("#janela").scrollTop = 0; const b = $("#janela .btn"); if (b) b.focus(); }
 function fecharModal() { $("#modal").hidden = true; }
@@ -680,6 +696,7 @@ function mostrarAjuda() {
     <ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol>
     <p class="aviso">${esc(t("aviso"))}</p>
     <h2>${esc(t("fontesTit"))}</h2><ol class="fontes">${FONTES.map((f) => `<li>${esc(f)}</li>`).join("")}</ol>
+    ${creditosHTML(true)}
     <button class="btn" type="button" data-fechar>${esc(t("fechar"))}</button>`);
 }
 

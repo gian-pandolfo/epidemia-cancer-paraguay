@@ -4,6 +4,12 @@ Juego educativo para celular sobre la epidemiología del cáncer en Paraguay. El
 
 **Jugar:** https://gian-pandolfo.github.io/epidemia-cancer-paraguay/
 
+## Créditos
+
+- **Desarrollo:** Gianmarlon Pandolfo, estudiante de Medicina (UNINTER Tres Fronteras).
+- **Trabajo base:** Silva GIS, Pandolfo GA, et al. *Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control*. Revisión sistemática, 2026.
+- **Coautoría:** Claude Opus 5.5 (Anthropic), en el diseño del juego, la programación y la verificación de las fuentes.
+
 ## Qué es real y qué es simulación
 
 - **Real, con fuente:** las tasas de partida de cada departamento (Atlas de Mortalidad por Cáncer en Paraguay 2015–2019), la población (Censo 2022), la 1.ª causa de muerte por cáncer por sexo y el evento de cada año (ley, decreto, pandemia, misiones, servicios inaugurados).
