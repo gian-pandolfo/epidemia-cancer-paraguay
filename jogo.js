@@ -9,7 +9,8 @@ const ANOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
 const ORC_BASE = 12;
 const SEG_MES = 2;                 // relógio: 1 mês a cada 2 s (24 s por ano)
 const RAZAO_INC = 2.1;             // incidência ≈ 2,1 × óbitos (GLOBOCAN 2022: 13.783 casos / 6.581 óbitos)
-const CHAVE = "epidemia-py-v2";    // v2: relógio, convênios e demandas (partidas salvas da v1 não continuam)
+const CHAVE = "epidemia-py-v3";    // v3: missões, conquistas e desafios (partidas salvas de versões anteriores não continuam)
+const CHAVE_LOGROS = "epidemia-py-logros";   // conquistas deste celular, entre partidas
 const MODOS_VIVOS = ["inc", "prev", "mort", "cura"];
 const DEP = Object.fromEntries(DEPS.map((d) => [d.id, d]));
 const TEE_MIN = Math.min(...DEPS.map((d) => d.tee)), TEE_MAX = Math.max(...DEPS.map((d) => d.tee));
@@ -47,6 +48,7 @@ const T = {
       "Tres niveles: <b>1.º Prevención</b>, <b>2.º Diagnóstico</b> y <b>3.º Tratamiento</b>. El <b>equilibrio</b> de un departamento es su nivel más bajo: solo los tres juntos curan más y multiplican los puntos (por la población). Diagnóstico sin tratamiento forma fila.",
       "Arriba a la derecha: incidencia, prevalencia, muertes y curas del país, en tiempo real. Tócalas para ver el mapa de cada una.",
       "🤝 Convenios: más baratos para empezar, pero se pagan todos los años.",
+      "🎯 Misiones, ⚡ desafíos relámpago y 🏅 logros dan premios. ❤️ Vidas salvadas, 🍎 casos evitados y 🕯️ muertes sin diagnóstico muestran el efecto de tus decisiones (modelo del juego, comparado con no hacer nada).",
       "Cada año trae un hecho real, a veces un imprevisto (royalties de Itaipú, epidemias, inversión extranjera) y una demanda de la sociedad. Tus respuestas cambian la confianza 👍, y la confianza cambia el presupuesto.",
       "Donde la estadística es baja, falta diagnóstico, no cáncer: diagnosticar revela casos ocultos y la tasa registrada sube. ¡Es buena señal!",
     ],
@@ -86,7 +88,6 @@ const T = {
       pesquisa: ["Centro de investigación y registro", "revela la carga real aquí y en los vecinos; +20% de puntos aquí"],
     },
     custo: (c) => (c ? `💰 ${c}` : "gratis"), custoAno: (c) => `💰 ${c}/año`, ativo: "✓ activo",
-    dica1: "Pista: Central ya tiene tratamiento (INCAN). Suma ahí prevención y diagnóstico.",
     semOrc: "Presupuesto insuficiente", jaAtivo: "Ya está activo (de años anteriores)", desfeito: (c) => `Deshecho: vuelven 💰 ${c}`,
     evBtn: "Jugar el año", evOrc: (o) => `Presupuesto disponible: 💰 ${o}`, fonte: "Fuente",
     fimAno: (a) => `Fin de ${a}`, ptsAno: (p) => `+${p} puntos`, prox: (a) => `Siguiente: ${a}`, verRes: "Ver resultado",
@@ -137,10 +138,29 @@ const T = {
     infoEq: (n) => `Equilibrio <b>${n}/3</b>`,
     eqFalta: (l) => `↑ Para subir: ${l}`, os3: "los 3 niveles",
     eqCompleto: "✓ Los 3 niveles completos",
+    missoesTit: "Misiones", missaoOk: "¡Misión cumplida!", recompensa: "Premio", feitasTit: "Cumplidas", semMissao: "🎯 Todas las misiones cumplidas",
+    voltar: "Volver al juego",
+    premio: (p) => [p.orc ? `+💰 ${p.orc}` : "", p.conf ? `+👍 ${p.conf}` : "", p.mult ? `⭐×${String(p.mult).replace(".", ",")} este año` : ""].filter(Boolean).join(" · "),
+    logrosTit: "Logros de este celular", logroOk: "¡Logro!", logrosConta: (n, m) => `${n} de ${m}`,
+    inicioLogros: (n, m) => `🏅 Logros: ${n} de ${m}`, inicioRecorde: (r) => `🏆 Tu récord: ${r}`,
+    quizTit: "Desafío relámpago", quizSub: "¿Verdadero o falso?", verdadeiro: "Verdadero", falso: "Falso",
+    quizCerto: "¡Correcto! +💰 2", quizErrado: "No era así.", quizSeguir: "Seguir",
+    racha: (n) => `Racha de ${n} aciertos 🔥`, rachaPremio: "+👍 5 por la racha",
+    nivelSobe: (n) => `¡Equilibrio ${n}/3!`, novoRecorde: "¡Nuevo récord!", recordeTxt: "Superaste tu mejor puntaje en este celular.",
+    rodapeV3: (c, v, p) => `👍 ${c} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Confianza · vidas salvadas (modelo) · puntos que suma este año",
+    consTit: "Consecuencia de tus decisiones",
+    metVidas: "vidas salvadas", vidasPerd: "vidas perdidas", metEvit: "casos evitados por la prevención", metSemDx: "murieron sin diagnóstico",
+    metModelo: "Modelo del juego, comparado con no hacer nada.",
+    misAno: (l) => `🎯 Misiones cumplidas: ${l}`, quizAno: (ok) => `⚡ Desafío relámpago: ${ok ? "acertaste" : "fallaste"}`,
+    titulos: ["Promotor/a de salud", "Epidemiólogo/a", "Director/a regional", "Director/a nacional", "Ministro/a de Salud"],
+    cargo: (c) => `Tu cargo: ${c}`,
+    resImpacto: (v, e, s) => `En 10 años (modelo): <b>${v}</b> vidas salvadas, <b>${e}</b> casos evitados por la prevención y <b>${s}</b> personas que murieron sin diagnóstico.`,
+    resMis: (n, m) => `Misiones cumplidas: <b>${n}</b> de ${m}`, resQuiz: (n, m) => `Desafíos relámpago: <b>${n}</b> de ${m} correctos`,
+    estrelasAria: (n) => `${n} de 3 estrellas (población en equilibrio)`,
     infoVivo: {
       inc: (n, x) => `Incidencia (modelo): <b>${n}</b> casos este año · <b>${x}</b>/100 mil`,
       prev: (n, x) => `Prevalencia (modelo): <b>${n}</b> personas · <b>${x}</b>/100 mil`,
-      mort: (n, x) => `Muertes (modelo): <b>${n}</b> este año · <b>${x}</b>/100 mil`,
+      mort: (n, x, s) => `Muertes (modelo): <b>${n}</b> este año, ${s} sin diagnóstico · <b>${x}</b>/100 mil`,
       cura: (n, x) => `Curas (modelo): <b>${n}</b> este año · <b>${x}</b>/100 mil`,
     },
     infoComp: (n, a) => `📌 Prometiste ${n} hasta ${a}`,
@@ -176,6 +196,7 @@ const T = {
       "Três níveis: <b>1º Prevenção</b>, <b>2º Diagnóstico</b> e <b>3º Tratamento</b>. O <b>equilíbrio</b> de um departamento é o seu nível mais baixo: só os três juntos curam mais e multiplicam os pontos (pela população). Diagnóstico sem tratamento forma fila.",
       "No alto à direita: incidência, prevalência, óbitos e curas do país, em tempo real. Toque nelas para ver o mapa de cada uma.",
       "🤝 Convênios: mais baratos para começar, mas se pagam todo ano.",
+      "🎯 Missões, ⚡ desafios relâmpago e 🏅 conquistas dão prêmios. ❤️ Vidas salvas, 🍎 casos evitados e 🕯️ óbitos sem diagnóstico mostram o efeito das suas decisões (modelo do jogo, comparado com não fazer nada).",
       "Cada ano traz um fato real, às vezes um imprevisto (royalties de Itaipu, epidemias, investimento estrangeiro) e uma demanda da sociedade. Suas respostas mudam a confiança 👍, e a confiança muda o orçamento.",
       "Onde a estatística é baixa, falta diagnóstico, não câncer: diagnosticar revela casos ocultos e a taxa registrada sobe. É bom sinal!",
     ],
@@ -215,7 +236,6 @@ const T = {
       pesquisa: ["Centro de pesquisa e registro", "revela a carga real aqui e nos vizinhos; +20% de pontos aqui"],
     },
     custo: (c) => (c ? `💰 ${c}` : "grátis"), custoAno: (c) => `💰 ${c}/ano`, ativo: "✓ ativo",
-    dica1: "Dica: Central já tem tratamento (INCAN). Some ali prevenção e diagnóstico.",
     semOrc: "Orçamento insuficiente", jaAtivo: "Já está ativo (de anos anteriores)", desfeito: (c) => `Desfeito: voltam 💰 ${c}`,
     evBtn: "Jogar o ano", evOrc: (o) => `Orçamento disponível: 💰 ${o}`, fonte: "Fonte",
     fimAno: (a) => `Fim de ${a}`, ptsAno: (p) => `+${p} pontos`, prox: (a) => `Próximo: ${a}`, verRes: "Ver resultado",
@@ -266,10 +286,29 @@ const T = {
     infoEq: (n) => `Equilíbrio <b>${n}/3</b>`,
     eqFalta: (l) => `↑ Para subir: ${l}`, os3: "os 3 níveis",
     eqCompleto: "✓ Os 3 níveis completos",
+    missoesTit: "Missões", missaoOk: "Missão cumprida!", recompensa: "Prêmio", feitasTit: "Cumpridas", semMissao: "🎯 Todas as missões cumpridas",
+    voltar: "Voltar ao jogo",
+    premio: (p) => [p.orc ? `+💰 ${p.orc}` : "", p.conf ? `+👍 ${p.conf}` : "", p.mult ? `⭐×${String(p.mult).replace(".", ",")} neste ano` : ""].filter(Boolean).join(" · "),
+    logrosTit: "Conquistas deste celular", logroOk: "Conquista!", logrosConta: (n, m) => `${n} de ${m}`,
+    inicioLogros: (n, m) => `🏅 Conquistas: ${n} de ${m}`, inicioRecorde: (r) => `🏆 Seu recorde: ${r}`,
+    quizTit: "Desafio relâmpago", quizSub: "Verdadeiro ou falso?", verdadeiro: "Verdadeiro", falso: "Falso",
+    quizCerto: "Correto! +💰 2", quizErrado: "Não era assim.", quizSeguir: "Continuar",
+    racha: (n) => `Sequência de ${n} acertos 🔥`, rachaPremio: "+👍 5 pela sequência",
+    nivelSobe: (n) => `Equilíbrio ${n}/3!`, novoRecorde: "Novo recorde!", recordeTxt: "Você superou sua melhor pontuação neste celular.",
+    rodapeV3: (c, v, p) => `👍 ${c} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Confiança · vidas salvas (modelo) · pontos que soma neste ano",
+    consTit: "Consequência das suas decisões",
+    metVidas: "vidas salvas", vidasPerd: "vidas perdidas", metEvit: "casos evitados pela prevenção", metSemDx: "morreram sem diagnóstico",
+    metModelo: "Modelo do jogo, comparado com não fazer nada.",
+    misAno: (l) => `🎯 Missões cumpridas: ${l}`, quizAno: (ok) => `⚡ Desafio relâmpago: ${ok ? "você acertou" : "você errou"}`,
+    titulos: ["Agente de saúde", "Epidemiologista", "Diretor/a regional", "Diretor/a nacional", "Ministro/a da Saúde"],
+    cargo: (c) => `Seu cargo: ${c}`,
+    resImpacto: (v, e, s) => `Em 10 anos (modelo): <b>${v}</b> vidas salvas, <b>${e}</b> casos evitados pela prevenção e <b>${s}</b> pessoas que morreram sem diagnóstico.`,
+    resMis: (n, m) => `Missões cumpridas: <b>${n}</b> de ${m}`, resQuiz: (n, m) => `Desafios relâmpago: <b>${n}</b> de ${m} corretos`,
+    estrelasAria: (n) => `${n} de 3 estrelas (população em equilíbrio)`,
     infoVivo: {
       inc: (n, x) => `Incidência (modelo): <b>${n}</b> casos neste ano · <b>${x}</b>/100 mil`,
       prev: (n, x) => `Prevalência (modelo): <b>${n}</b> pessoas · <b>${x}</b>/100 mil`,
-      mort: (n, x) => `Óbitos (modelo): <b>${n}</b> neste ano · <b>${x}</b>/100 mil`,
+      mort: (n, x, s) => `Óbitos (modelo): <b>${n}</b> neste ano, ${s} sem diagnóstico · <b>${x}</b>/100 mil`,
       cura: (n, x) => `Curas (modelo): <b>${n}</b> neste ano · <b>${x}</b>/100 mil`,
     },
     infoComp: (n, a) => `📌 Você prometeu ${n} até ${a}`,
@@ -331,7 +370,7 @@ const EVENTOS = {
     pt: ["Pandemia de COVID-19", "Os serviços se voltam para a pandemia e cai a vacinação contra o HPV.", "Vacina, teste de HPV e mamógrafo custam 💰 1 a mais neste ano.", "Pediatría (Asunción) 2024;51(2):72-80"],
   },
   2021: {
-    aplicar: () => { for (const id in S.deps) S.deps[id].carga *= 1.05; },
+    aplicar: () => { for (const id in S.deps) { S.deps[id].carga *= 1.05; S.deps[id].cargaBase *= 1.05; } },
     es: ["La pandemia continúa", "La vacuna contra el VPH llega a 23% de las niñas con la 1.ª dosis y a 17% con la última; la meta de la OMS es 90%.", "Diagnósticos atrasados: la carga real sube 5% en todo el país (efecto ilustrativo).", "ICO/IARC HPV Information Centre, 2023"],
     pt: ["A pandemia continua", "A vacina contra o HPV chega a 23% das meninas na 1ª dose e a 17% na última; a meta da OMS é 90%.", "Diagnósticos atrasados: a carga real sobe 5% no país inteiro (efeito ilustrativo).", "ICO/IARC HPV Information Centre, 2023"],
   },
@@ -470,6 +509,136 @@ const DEMANDAS = [
     ] },
 ];
 
+/* ---------- missões paralelas: 3 em curso; cumprir dá prêmio (dinheiro, confiança ou pontos em dobro no ano, que não se ganham desfazendo) ---------- */
+const COLO = DEPS.filter((d) => d.primM === "colo").map((d) => d.id);       // 8 departamentos (Atlas 2015-2019)
+const PULMAO = DEPS.filter((d) => d.primH === "pulmao").map((d) => d.id);   // 11 departamentos (Atlas 2015-2019)
+const CHACO = ["boqueron", "presidente-hayes", "alto-paraguay"];
+const INTERIOR = DEPS.map((d) => d.id).filter((id) => id !== "asuncion" && id !== "central");
+const contar = (ids, f) => ids.filter(f).length;
+const pct = (p, m) => `${p}% / ${m}%`;
+const MISSOES = [
+  { id: "central", meta: 1, alvo: () => (equil("central") >= 1 ? [] : ["central"]), prog: () => (equil("central") >= 1 ? 1 : 0), premio: { orc: 2 },
+    es: ["Equilibrio en Central", "Central ya tiene tratamiento (INCAN). Súmale prevención y diagnóstico."],
+    pt: ["Equilíbrio em Central", "Central já tem tratamento (INCAN). Some prevenção e diagnóstico."] },
+  { id: "colo", meta: 3, alvo: () => COLO.filter((id) => !temSlot(S.deps[id], "vph")), prog: () => contar(COLO, (id) => temSlot(S.deps[id], "vph")), premio: { orc: 3, conf: 4 }, fonte: "Atlas 2015–2019",
+    es: ["La 1.ª causa evitable", "Test de VPH en 3 de los 8 departamentos donde el cuello uterino es la 1.ª causa de muerte por cáncer en las mujeres (🎯 en el mapa)."],
+    pt: ["A 1ª causa evitável", "Teste de HPV em 3 dos 8 departamentos onde o colo do útero é a 1ª causa de morte por câncer nas mulheres (🎯 no mapa)."] },
+  { id: "pulmao", meta: 4, alvo: () => PULMAO.filter((id) => !temSlot(S.deps[id], "tabaco")), prog: () => contar(PULMAO, (id) => temSlot(S.deps[id], "tabaco")), premio: { orc: 2, conf: 3 }, fonte: "Atlas 2015–2019",
+    es: ["Pulmón: 1.ª causa en los hombres", "Campaña antitabaco en 4 de los 11 departamentos donde el pulmón es la 1.ª causa de muerte por cáncer en los hombres (🎯 en el mapa)."],
+    pt: ["Pulmão: 1ª causa nos homens", "Campanha antitabaco em 4 dos 11 departamentos onde o pulmão é a 1ª causa de morte por câncer nos homens (🎯 no mapa)."] },
+  { id: "radio", meta: 1, alvo: () => ["alto-parana", "itapua"], prog: () => (["alto-parana", "itapua"].some((id) => temSlot(S.deps[id], "radio")) ? 1 : 0), premio: { conf: 6, mult: 1.2 }, fonte: "La Nación, 23/07/2024",
+    es: ["Radioterapia fuera de Capiatá", "Acelerador (público o por convenio) en Alto Paraná o Itapúa, donde el Ministerio anunció aceleradores en 2024."],
+    pt: ["Radioterapia fora de Capiatá", "Acelerador (público ou por convênio) em Alto Paraná ou Itapúa, onde o Ministério anunciou aceleradores em 2024."] },
+  { id: "chaco", meta: 1, alvo: () => CHACO, prog: () => (CHACO.some((id) => equil(id) >= 1) ? 1 : 0), premio: { orc: 1, conf: 8 },
+    es: ["El Chaco también cuenta", "Equilibrio en Boquerón, Presidente Hayes o Alto Paraguay."],
+    pt: ["O Chaco também conta", "Equilíbrio em Boquerón, Presidente Hayes ou Alto Paraguay."] },
+  { id: "pesquisa", meta: 1, prog: () => (INTERIOR.some((id) => temPesq(S.deps[id])) ? 1 : 0), premio: { orc: 2, conf: 4 }, fonte: "DGVS/MSPBS, 05/02/2024",
+    es: ["Datos fuera de la capital", "Centro de investigación (o convenio con una universidad) fuera de Asunción y Central: el único registro poblacional cubre solo esos dos."],
+    pt: ["Dados fora da capital", "Centro de pesquisa (ou convênio com universidade) fora de Asunción e Central: o único registro populacional cobre só esses dois."] },
+  { id: "ocultos", meta: 40, fmt: pct, prog: () => Math.floor(revelados()), premio: { orc: 3 },
+    es: ["Sacar a la luz", "Revela el 40% de los casos ocultos del país con diagnóstico, registro e investigación."],
+    pt: ["Trazer à luz", "Revele 40% dos casos ocultos do país com diagnóstico, registro e pesquisa."] },
+  { id: "eq9", meta: 9, prog: () => DEPS.filter((d) => equil(d.id) >= 1).length, premio: { mult: 1.3 },
+    es: ["Medio país en equilibrio", "Equilibrio en 9 departamentos."],
+    pt: ["Meio país em equilíbrio", "Equilíbrio em 9 departamentos."] },
+  { id: "conf", meta: 75, fmt: (p, m) => `👍 ${p}/${m}`, prog: () => S.conf, premio: { orc: 4 },
+    es: ["La gente confía", "Llega a 👍 75 de confianza atendiendo las demandas y cumpliendo las promesas."],
+    pt: ["O povo confia", "Chegue a 👍 75 de confiança atendendo às demandas e cumprindo as promessas."] },
+  { id: "pop75", meta: 75, fmt: pct, prog: () => Math.floor(popEqPct()), premio: { mult: 1.5 },
+    es: ["Tres de cada cuatro", "75% de la población viviendo en departamentos en equilibrio."],
+    pt: ["Três em cada quatro", "75% da população vivendo em departamentos em equilíbrio."] },
+];
+
+/* ---------- conquistas: ficam guardadas neste celular (nenhum dado pessoal) ---------- */
+const META_VIDAS = 5000;
+const LOGROS = [
+  { id: "eq1", ico: "🌱", teste: () => DEPS.some((d) => equil(d.id) >= 1), es: ["Primer equilibrio", "Un departamento con los 3 niveles."], pt: ["Primeiro equilíbrio", "Um departamento com os 3 níveis."] },
+  { id: "eq3", ico: "🏥", teste: () => DEPS.some((d) => equil(d.id) >= 3), es: ["Sistema completo", "Un departamento con 3/3 en los 3 niveles."], pt: ["Sistema completo", "Um departamento com 3/3 nos 3 níveis."] },
+  { id: "eq9", ico: "🗺️", teste: () => DEPS.filter((d) => equil(d.id) >= 1).length >= 9, es: ["Medio país", "9 departamentos en equilibrio."], pt: ["Meio país", "9 departamentos em equilíbrio."] },
+  { id: "eq18", ico: "🇵🇾", teste: () => DEPS.every((d) => equil(d.id) >= 1), es: ["Paraguay en equilibrio", "Los 18 departamentos en equilibrio."], pt: ["Paraguai em equilíbrio", "Os 18 departamentos em equilíbrio."] },
+  { id: "ocultos", ico: "🔍", teste: () => revelados() >= 50, es: ["Cazador de lo oculto", "La mitad de los casos ocultos salió a la luz."], pt: ["Caçador do oculto", "Metade dos casos ocultos veio à luz."] },
+  { id: "radio", ico: "☢️", teste: () => INTERIOR.some((id) => temSlot(S.deps[id], "radio")), es: ["Radioterapia en el interior", "Un acelerador fuera de Asunción y Central."], pt: ["Radioterapia no interior", "Um acelerador fora de Asunción e Central."] },
+  { id: "vacuna", ico: "💉", teste: () => DEPS.filter((d) => temSlot(S.deps[d.id], "vacuna")).length >= 9, es: ["Generación protegida", "Vacuna VPH en 9 departamentos."], pt: ["Geração protegida", "Vacina HPV em 9 departamentos."] },
+  { id: "conv", ico: "🤝", teste: () => DEPS.reduce((s, d) => s + Object.keys(S.deps[d.id].conv).length, 0) >= 5, es: ["Buen socio", "5 convenios al mismo tiempo."], pt: ["Bom parceiro", "5 convênios ao mesmo tempo."] },
+  { id: "conf", ico: "👍", teste: () => S.conf >= 80, es: ["Confianza de la gente", "👍 80 de confianza."], pt: ["Confiança do povo", "👍 80 de confiança."] },
+  { id: "quiz", ico: "🧠", teste: () => S.quiz.racha >= 5, es: ["Sabio del cáncer", "5 desafíos relámpago seguidos sin errar."], pt: ["Sábio do câncer", "5 desafios relâmpago seguidos sem errar."] },
+  { id: "mis", ico: "🎯", teste: () => S.mis.feitas.length >= 6, es: ["Misionero/a", "6 misiones cumplidas en una partida."], pt: ["Missionário/a", "6 missões cumpridas numa partida."] },
+  { id: "vidas", ico: "❤️", teste: () => vidasTotal() >= META_VIDAS, es: ["5.000 vidas", "5.000 vidas salvadas en una partida (modelo)."], pt: ["5.000 vidas", "5.000 vidas salvas numa partida (modelo)."] },
+  { id: "recorde", ico: "🏆", teste: () => S.recordeBatido, es: ["Nuevo récord", "Superaste tu récord en este celular."], pt: ["Novo recorde", "Você superou seu recorde neste celular."] },
+];
+
+/* ---------- desafio relâmpago: um por ano, no meio do ano; só fatos que o jogo já cita, com a mesma fonte ---------- */
+const QUIZ = [
+  { v: false, fonte: "Atlas 2015–2019",
+    es: ["El pulmón es la 1.ª causa de muerte por cáncer en las mujeres paraguayas.", "En las mujeres lideran la mama y el cuello uterino; el pulmón es la 1.ª causa en los hombres."],
+    pt: ["O pulmão é a 1ª causa de morte por câncer nas mulheres paraguaias.", "Nas mulheres lideram a mama e o colo do útero; o pulmão é a 1ª causa nos homens."] },
+  { v: true, fonte: "MSPBS, 2024",
+    es: ["La radioterapia pública está en un único lugar del país: el INCAN, en Capiatá.", "Un único lugar para todo el país, con 3 aceleradores lineales."],
+    pt: ["A radioterapia pública está num único lugar do país: o INCAN, em Capiatá.", "Um único lugar para o país inteiro, com 3 aceleradores lineares."] },
+  { v: false, fonte: "Atlas 2015–2019",
+    es: ["Una tasa de mortalidad por cáncer baja siempre significa riesgo bajo.", "Puede ser subregistro: Canindeyú tiene la menor tasa estandarizada (41,3) y la mayor proporción de muertes femeninas por cuello uterino (36,8%)."],
+    pt: ["Uma taxa de mortalidade por câncer baixa sempre significa risco baixo.", "Pode ser sub-registro: Canindeyú tem a menor taxa padronizada (41,3) e a maior proporção de mortes femininas por colo do útero (36,8%)."] },
+  { v: true, fonte: "IARC, GLOBOCAN 2022",
+    es: ["GLOBOCAN 2022 estimó 13.783 casos nuevos de cáncer en Paraguay.", "Y 6.581 muertes por cáncer."],
+    pt: ["O GLOBOCAN 2022 estimou 13.783 casos novos de câncer no Paraguai.", "E 6.581 mortes por câncer."] },
+  { v: true, fonte: "MSPBS, 2024",
+    es: ["Desde el 01/08/2024 basta una dosis de la vacuna contra el VPH.", "Paraguay pasó a la dosis única en agosto de 2024."],
+    pt: ["Desde 01/08/2024 basta uma dose da vacina contra o HPV.", "O Paraguai passou para a dose única em agosto de 2024."] },
+  { v: false, fonte: "ICO/IARC HPV Information Centre, 2023",
+    es: ["En 2021, la vacuna contra el VPH llegó al 90% de las niñas, la meta de la OMS.", "Llegó a 23% con la 1.ª dosis y a 17% con la última."],
+    pt: ["Em 2021, a vacina contra o HPV chegou a 90% das meninas, a meta da OMS.", "Chegou a 23% na 1ª dose e a 17% na última."] },
+  { v: true, fonte: "ICO/IARC HPV Information Centre, 2023",
+    es: ["En Paraguay, 58,9% de los cánceres de cuello uterino se deben a los tipos 16 y 18 del VPH.", "Es el dato del ICO/IARC para el país."],
+    pt: ["No Paraguai, 58,9% dos cânceres do colo do útero se devem aos tipos 16 e 18 do HPV.", "É o dado do ICO/IARC para o país."] },
+  { v: false, fonte: "ENFR 2022",
+    es: ["La mayoría de los adultos come 5 porciones de frutas y verduras por día.", "Solo 3,9% lo hace."],
+    pt: ["A maioria dos adultos come 5 porções de frutas e verduras por dia.", "Só 3,9% fazem isso."] },
+  { v: true, fonte: "Leite et al., 2025",
+    es: ["El colorrectal es el cáncer que más crece en Paraguay: cerca de 3% por año desde 1990.", "Es el que más crece en el país."],
+    pt: ["O colorretal é o câncer que mais cresce no Paraguai: cerca de 3% ao ano desde 1990.", "É o que mais cresce no país."] },
+  { v: true, fonte: "Atlas 2015–2019",
+    es: ["En 2017, cerca de 1 de cada 4 muertes no entraba en las estadísticas.", "Subregistro de 26,2%."],
+    pt: ["Em 2017, cerca de 1 em cada 4 mortes não entrava nas estatísticas.", "Sub-registro de 26,2%."] },
+  { v: false, fonte: "Torres-Roman et al., BMC Public Health 2022",
+    es: ["La mortalidad por cuello uterino en mujeres de 20 a 44 años está bajando.", "Sube 3,7% por año (1997–2017)."],
+    pt: ["A mortalidade por colo do útero em mulheres de 20 a 44 anos está caindo.", "Sobe 3,7% ao ano (1997–2017)."] },
+  { v: true, fonte: "ENFR 2022",
+    es: ["12,5% de los adultos fuman cigarrillo y 17% usan alguna forma de tabaco.", "Datos de la Encuesta Nacional de Factores de Riesgo."],
+    pt: ["12,5% dos adultos fumam cigarro e 17% usam alguma forma de tabaco.", "Dados da Encuesta Nacional de Factores de Riesgo."] },
+  { v: true, fonte: "Atlas 2015–2019",
+    es: ["En 8 de los 18 departamentos, el cuello uterino es la 1.ª causa de muerte por cáncer en las mujeres.", "Un cáncer evitable."],
+    pt: ["Em 8 dos 18 departamentos, o colo do útero é a 1ª causa de morte por câncer nas mulheres.", "Um câncer evitável."] },
+  { v: false, fonte: "DGVS/MSPBS, 05/02/2024",
+    es: ["El registro de cáncer de base poblacional cubre todo el país.", "Se creó en 2020 solo para Asunción y Central."],
+    pt: ["O registro de câncer de base populacional cobre o país inteiro.", "Foi criado em 2020 só para Asunción e Central."] },
+  { v: true, fonte: "Ley N° 6266/2018",
+    es: ["La Ley 6.266/2018 garantiza atención integral a las personas con cáncer, de la prevención a los cuidados paliativos.", "También prevé un Fondo Solidario."],
+    pt: ["A Ley 6.266/2018 garante atenção integral às pessoas com câncer, da prevenção aos cuidados paliativos.", "Também prevê um Fundo Solidário."] },
+];
+
+/* ---------- consequências: o jogo reage às escolhas (modelo do jogo; no máximo uma por ano, cada uma uma vez) ---------- */
+const nPrev = () => DEPS.reduce((s, d) => s + nivel(S.deps[d.id], "P"), 0);
+const CONSEQ = [
+  { id: "modelo", achar: () => DEPS.find((d) => equil(d.id) >= 3)?.id, aplicar: () => { S.conf = limitar(S.conf + 6); S.orc += 2; },
+    es: ["{dep}, modelo nacional", "{dep} tiene prevención, diagnóstico y tratamiento completos. Otros departamentos quieren copiarlo.", "+👍 6 y +💰 2."],
+    pt: ["{dep}, modelo nacional", "{dep} tem prevenção, diagnóstico e tratamento completos. Outros departamentos querem copiá-lo.", "+👍 6 e +💰 2."] },
+  { id: "fila", achar: () => { const [a, b] = S.log.slice(-2); return a && b ? DEPS.find((d) => temFila(d.id) && a.filas.includes(d.nome) && b.filas.includes(d.nome))?.id : undefined; },
+    aplicar: () => { S.conf = limitar(S.conf - 6); },
+    es: ["La fila crece en {dep}", "Hace dos años que {dep} diagnostica pero no trata: los pacientes viajan a Capiatá y la prensa lo muestra.", "−👍 6. Pon tratamiento en {dep}."],
+    pt: ["A fila cresce em {dep}", "Há dois anos {dep} diagnostica mas não trata: os pacientes viajam a Capiatá e a imprensa mostra.", "−👍 6. Ponha tratamento em {dep}."] },
+  { id: "semdx", achar: () => { const r = S.log[S.log.length - 1]; return r && S.anoIdx >= 2 && r.ind.semdx >= 0.08 * r.ind.mortes ? "" : undefined; }, aplicar: () => {},
+    es: ["Muertes sin diagnóstico", "En {ano} murieron {n} personas sin saber que tenían cáncer. Sin diagnóstico, ni siquiera entran en las estadísticas.", "Invierte en diagnóstico: test de VPH, mamógrafo y registro."],
+    pt: ["Óbitos sem diagnóstico", "Em {ano} morreram {n} pessoas sem saber que tinham câncer. Sem diagnóstico, nem entram nas estatísticas.", "Invista em diagnóstico: teste de HPV, mamógrafo e registro."] },
+  { id: "semprev", achar: () => (S.anoIdx >= 4 && nPrev() <= 3 ? "" : undefined),
+    aplicar: () => { for (const d of DEPS) if (nivel(S.deps[d.id], "P") === 0) S.deps[d.id].carga *= 1.02; },
+    es: ["Sin prevención, el cáncer avanza", "Casi no hubo campañas contra el tabaco, por la alimentación ni vacunación: los casos siguen subiendo.", "+2% de casos donde no hay prevención."],
+    pt: ["Sem prevenção, o câncer avança", "Quase não houve campanhas contra o tabaco, pela alimentação nem vacinação: os casos continuam subindo.", "+2% de casos onde não há prevenção."] },
+  { id: "prevok", achar: () => (nPrev() >= 12 ? "" : undefined),
+    aplicar: () => { for (const d of DEPS) if (nivel(S.deps[d.id], "P") >= 1) S.deps[d.id].carga *= 0.98; S.conf = limitar(S.conf + 4); },
+    es: ["La prevención da frutos", "Tus campañas llegan a escuelas, comedores y centros de salud: menos tabaco, mejor alimentación y más niñas vacunadas.", "−2% de casos donde hay prevención y +👍 4."],
+    pt: ["A prevenção dá frutos", "Suas campanhas chegam a escolas, refeitórios e postos de saúde: menos tabaco, melhor alimentação e mais meninas vacinadas.", "−2% de casos onde há prevenção e +👍 4."] },
+];
+
 /* ---------- lições (fatos com fonte) ---------- */
 const LICOES = {
   vacuna: { es: ["El VPH causa casi todos los cánceres de cuello uterino; en Paraguay, 58,9% de los casos son por los tipos 16 y 18.", "ICO/IARC HPV Information Centre, 2023"], pt: ["O HPV causa quase todos os cânceres do colo do útero; no Paraguai, 58,9% dos casos são pelos tipos 16 e 18.", "ICO/IARC HPV Information Centre, 2023"] },
@@ -513,14 +682,16 @@ let S = null;
 let tAnterior = performance.now(), acumulado = 0;   // relógio do jogo
 const LIM = {};                                     // limites das classes das camadas ao vivo (fixos, do começo do jogo)
 
+const novoInd = () => ({ casos: 0, mortes: 0, curas: 0, vidas: 0, evit: 0, semdx: 0 });
+
 function novoEstado() {
   const deps = {};
   for (const d of DEPS) {
     const vis0 = 0.55 + 0.45 * (d.tee - TEE_MIN) / (TEE_MAX - TEE_MIN);   // onde a taxa é baixa, falta diagnóstico
     deps[d.id] = {
-      vis0, visEv: 0, carga: d.tee / vis0, carga0: d.tee / vis0,
+      vis0, visEv: 0, carga: d.tee / vis0, carga0: d.tee / vis0, cargaBase: d.tee / vis0,   // cargaBase: sem nenhuma prevenção (comparação)
       mort0: d.obitos / 5 / vis0,   // óbitos por ano: os registrados no Atlas 2015-2019 divididos pela parte visível
-      feitas: {}, pago: {}, conv: {}, ind: { casos: 0, mortes: 0, curas: 0 }, prev: 0, pc0: 0,
+      feitas: {}, pago: {}, conv: {}, ind: novoInd(), prev: 0, pc0: 0,
     };
   }
   // Situação inicial simplificada: tratamento concentrado no INCAN (Central) e no IPS (Asunción)
@@ -531,7 +702,10 @@ function novoEstado() {
     anoIdx: 0, mes: 0, orc: 0, orcExtra: 0, pontos: 0, ptsAno: 0, conf: 50, confInicio: 50,
     mod: {}, modProx: {}, cupons: [], regiao: null, descTrat: null, comp: [], usadas: [], aleatUsados: [], evAleat: null, demanda: null,
     sel: "central", modo: "cob", fase: "evento", pausa: false, gasto: { P: 0, D: 0, T: 0, X: 0 },
-    tot: { casos: 0, mortes: 0, curas: 0 }, licoesVistas: [], log: [], compradasAno: [], fim: false,
+    tot: novoInd(), licoesVistas: [], log: [], compradasAno: [], fim: false,
+    mis: { ativas: MISSOES.slice(0, 3).map((m) => m.id), feitas: [], prox: 3 }, quiz: { ordem: embaralhar(QUIZ.map((q, i) => i)), i: 0, racha: 0, acertos: 0, feitos: 0 },
+    quizAno: -1, quizResp: null, quizOk: null, quizDepois: false, multAno: 1, cons: null, consUsadas: [], logrosPartida: [],
+    recordeAntes: ler("epidemia-py-recorde") || 0, recordeBatido: false,
   };
 }
 
@@ -658,9 +832,9 @@ function escolherDemanda() {
 
 /* ---------- ano: fato real (+ imprevisto) → demanda → 12 meses → resumo ---------- */
 function iniciarAno() {
-  S.mes = 0; S.ptsAno = 0; acumulado = 0;
+  S.mes = 0; S.ptsAno = 0; acumulado = 0; S.multAno = 1; S.quizOk = null;
   S.mod = { ...S.modProx }; S.modProx = {}; S.cupons = []; S.regiao = null; S.compradasAno = []; S.confInicio = S.conf;
-  for (const id in S.deps) { S.deps[id].ind = { casos: 0, mortes: 0, curas: 0 }; S.deps[id].eqInicio = equil(id); }
+  for (const id in S.deps) { S.deps[id].ind = novoInd(); S.deps[id].eqInicio = equil(id); }
   const bonus = bonusConf();
   S.orc = Math.max(0, S.orc + ORC_BASE + S.orcExtra + bonus);
   S.avisoOrc = { bonus, convPago: 0, convN: 0, convCancel: 0 };
@@ -671,6 +845,7 @@ function iniciarAno() {
     const e = sortear(livres), dep = e.alvo ? e.alvo() : null;
     if (dep !== undefined) { e.aplicar(dep); S.evAleat = { id: e.id, dep }; S.aleatUsados.push(e.id); }
   }
+  S.cons = escolherConsequencia();   // o jogo reage ao que o jogador fez (ou não fez)
   // convênios: a anuidade vence no começo do ano; sem dinheiro, o convênio acaba
   for (const id in S.deps) {
     const d = S.deps[id];
@@ -691,26 +866,33 @@ function simularMes() {
   for (const d of DEPS) {
     const st = S.deps[d.id], f = fluxos(d.id);
     st.ind.casos += f.casos / 12; st.ind.mortes += f.mortes / 12; st.ind.curas += f.curas / 12;
+    const base = st.mort0 * st.cargaBase / st.carga0;   // óbitos se nada tivesse sido feito
+    st.ind.vidas += (base - f.mortes) / 12;
+    st.ind.evit += st.mort0 * RAZAO_INC * (st.cargaBase - st.carga) / st.carga0 / 12;   // casos que a prevenção evitou
+    st.ind.semdx += f.mortes * (1 - f.v) / 12;   // morreram sem saber que tinham câncer
     st.prev = Math.max(0, st.prev + (f.casos - f.mortes * f.v - st.prev / 5) / 12);   // entra quem é diagnosticado; sai quem morre ou passa de 5 anos
   }
-  S.ptsAno += pontosAno() / 12;
+  S.ptsAno += pontosAno() * S.multAno / 12;
 }
 
 function avancarMes() {
   simularMes();
   S.mes++;
+  maisPontos(pontosAno() * S.multAno / 12);
   if (S.mes >= 12) { fecharAno(); return; }
+  if (S.mes === 6 && S.quizAno !== S.anoIdx) { abrirQuiz(); return; }   // desafio relâmpago no meio do ano
   salvar();
-  renderVivo();
+  if (verificar()) render(); else renderVivo();
 }
 
 function fecharAno() {
   if (!S || S.fase !== "jogando") return;
+  if (S.quizAno !== S.anoIdx) { S.quizDepois = true; abrirQuiz(); return; }   // o desafio do ano vem antes do resumo
   while (S.mes < 12) { simularMes(); S.mes++; }   // ⏩ termina o ano com o que já está feito
-  const pts = Math.round(S.ptsAno);
+  const pts = Math.min(3000, Math.round(S.ptsAno));   // teto por ano do ranking
   S.pontos += pts;
   S.ptsAno = 0;
-  const subiu = [], filas = [], comp = [], ind = { casos: 0, mortes: 0, curas: 0 };
+  const subiu = [], filas = [], comp = [], ind = novoInd();
   let novosEq = 0;
   for (const d of DEPS) {
     const st = S.deps[d.id];
@@ -721,6 +903,7 @@ function fecharAno() {
     st.visAnterior = vis(d.id);
     for (const k in ind) ind[k] += st.ind[k];
     st.carga *= 1 + 0.012 - 0.006 * nivel(st, "P");   // envelhecimento sobe a carga; prevenção freia (ilustrativo)
+    st.cargaBase *= 1.012;   // comparação: o mesmo envelhecimento, sem prevenção
   }
   for (const k in ind) { ind[k] = Math.round(ind[k]); S.tot[k] += ind[k]; }
   for (const c of S.comp) {
@@ -731,7 +914,8 @@ function fecharAno() {
   S.conf = limitar(S.conf + 2 * novosEq - 2 * filas.length);
   const n3 = DEPS.filter((d) => equil(d.id) >= 1).length;
   const licao = escolherLicao(filas.length > 0);
-  S.log.push({ ano: ano(), pts, subiu, filas, n3, licao, ind, comp, conf0: S.confInicio, conf1: S.conf });
+  S.log.push({ ano: ano(), pts, subiu, filas, n3, licao, ind, comp, conf0: S.confInicio, conf1: S.conf,
+    mis: S.mis.feitas.filter((f) => f.ano === ano()).map((f) => f.id), quiz: S.quizOk, est: estrelas(popEqPct()) });
   S.compradasAno = [];
   S.fase = "resumo";
   salvar();
@@ -774,6 +958,7 @@ function comprar(id, a) {
   if (d.conv[a] && convNoAno(d, a) > 0) return desfazerConv(id, a);
   const c = custo(a, id);
   if (c > S.orc) return toast(t("semOrc"));
+  const eq0 = equil(id);
   S.orc -= c;
   S.gasto[ACOES[a].nivel] += c;
   const tinhaConv = !!d.conv[a];
@@ -785,6 +970,7 @@ function comprar(id, a) {
   const [nome, alvo] = t("acoes")[a];
   toast(tinhaConv ? t("convTroca") : t("compra")(ACOES[a].ico, nome, alvo));
   destacar(id, ACOES[a].ico);
+  if (equil(id) > eq0) festejarNivel(id, equil(id));
 }
 
 function contratar(id, a) {
@@ -792,6 +978,7 @@ function contratar(id, a) {
   if (temSlot(d, a)) return toast(t("jaAtivo"));
   const c = custoConv(a, id);
   if (c > S.orc) return toast(t("semOrc"));
+  const eq0 = equil(id);
   S.orc -= c;
   S.gasto[ACOES[a].nivel] += c;
   d.conv[a] = { ano: S.anoIdx, pago: c };
@@ -800,6 +987,7 @@ function contratar(id, a) {
   render();
   toast(t("compra")("🤝", t("convNomes")[a], t("custoAno")(ACOES[a].conv)));
   destacar(id, "🤝");
+  if (equil(id) > eq0) festejarNivel(id, equil(id));
 }
 
 function tirarCompra(a) { const i = S.compradasAno.lastIndexOf(a); if (i >= 0) S.compradasAno.splice(i, 1); }
@@ -869,6 +1057,9 @@ function pintarMapa() {
   }).join("") + S.comp.filter((c) => c.estado === "aberto").map((c) => {
     const [x, y] = posLbl(c.dep);
     return `<text class="pino" x="${x + 80}" y="${y - 30}">📌</text>`;
+  }).join("") + alvosMissao().map((id) => {
+    const [x, y] = posLbl(id);
+    return `<text class="alvo" x="${x - 85}" y="${y - 30}">🎯</text>`;
   }).join("");
   $("#legenda").innerHTML = legendaHTML();
   $("#legenda").classList.toggle("q4", S.modo === "cob");   // 0 1 2 3 cabem numa linha só
@@ -914,7 +1105,7 @@ function linhaDep() {
   const id = S.sel, st = S.deps[id];
   if (!MODOS_VIVOS.includes(S.modo)) return t("infoTaxa")(fmt1(DEP[id].tee), fmt1(taxaReg(id)));
   const n = S.modo === "inc" ? st.ind.casos : S.modo === "prev" ? st.prev : S.modo === "mort" ? st.ind.mortes : st.ind.curas;
-  return t("infoVivo")[S.modo](fmtInt(n), fmtInt(valorVivo(S.modo, id)));
+  return t("infoVivo")[S.modo](fmtInt(n), fmtInt(valorVivo(S.modo, id)), fmtInt(st.ind.semdx));
 }
 
 function renderPainel() {
@@ -971,12 +1162,13 @@ function renderVivo() {
   for (const id in S.deps) { const st = S.deps[id]; tot.inc += st.ind.casos; tot.prev += st.prev; tot.mort += st.ind.mortes; tot.cura += st.ind.curas; }
   for (const m of MODOS_VIVOS) { const b = document.querySelector(`#vivo [data-modo="${m}"] b`); if (b) b.textContent = fmtInt(tot[m]); }
   if (MODOS_VIVOS.includes(S.modo)) { pintarMapa(); const el = $("#dep-linha"); if (el) el.innerHTML = linhaDep(); }
-  $("#dica").textContent = S.anoIdx === 0 && !S.compradasAno.length ? t("dica1") : t("rodape")(S.conf, fmtInt(S.ptsAno + pontosAno() * (12 - S.mes) / 12));
+  renderRodape();
   $("#btn-fechar").textContent = t("terminar")(ano());
 }
 
 function render() {
   if (!S || S.fim) return renderHud();
+  verificar();
   $("#tela-inicio").hidden = true; $("#tela-fim").hidden = true; $("#tela-jogo").hidden = false; $("#barra").hidden = false;
   document.querySelectorAll("#modos button").forEach((b) => { b.textContent = b.dataset.modo === "cob" ? t("modoCob") : t("modoReg"); });
   montarVivo();
@@ -997,6 +1189,7 @@ function telaInicio() {
     <details class="cartao regras"><summary>${esc(t("ajuda"))}</summary><ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol></details>
     <div class="btns">${temSalvo ? `<button class="btn" id="btn-continuar" type="button">${esc(t("continuar"))}</button><button class="btn sec" id="btn-nova" type="button">${esc(t("nova"))}</button>`
       : `<button class="btn" id="btn-nova" type="button">${esc(t("comecar"))}</button>`}${ultimoFim ? `<button class="btn sec" id="btn-ultimo" type="button">${esc(t("ultimo"))}</button>` : ""}</div>
+    ${inicioExtra()}
     <p class="aviso">${esc(t("aviso"))}</p>
     ${creditosHTML(false)}`;
   renderHud();
@@ -1023,13 +1216,20 @@ function mostrarFim() {
     revelados: fmtInt(Math.max(0, Math.min(100, 100 * achado / faltava))),
     gP: S.gasto.P, gD: S.gasto.D, gT: S.gasto.T, gX: S.gasto.X,
   };
-  const linhas = [...t("resLinhas")(x), t("resConf")(S.conf), t("resComp")(S.comp.filter((c) => c.estado === "cumprido").length, S.comp.length),
-    t("resTot")(fmtInt(S.tot.casos), fmtInt(S.tot.mortes), fmtInt(S.tot.curas))];
+  const linhas = [...t("resLinhas")(x), t("resMis")(S.mis.feitas.length, MISSOES.length), t("resQuiz")(S.quiz.acertos, S.quiz.feitos), t("resConf")(S.conf),
+    t("resComp")(S.comp.filter((c) => c.estado === "cumprido").length, S.comp.length), t("resTot")(fmtInt(S.tot.casos), fmtInt(S.tot.mortes), fmtInt(S.tot.curas))];
+  const cargo = t("titulos")[[5000, 9000, 12000, 15000].filter((p) => S.pontos >= p).length];
+  const nL = LOGROS.filter((l) => logros[l.id]).length;
   $("#tela-fim").innerHTML = `
     <h1>${esc(t("resTit"))}</h1>
-    <div class="cartao"><div class="placar">⭐ ${fmtInt(S.pontos)}</div><p class="meta">${esc(t("pontos"))} · ${novo ? esc(t("novoRec")) : esc(t("recorde")(fmtInt(Math.max(recAnt, S.pontos))))}</p></div>
+    <div class="cartao"><div class="topo-res"><div class="placar">⭐ ${fmtInt(S.pontos)}</div>${estrelasHTML(estrelas(popEqPct()))}</div>
+      <p class="cargo">${esc(t("cargo")(cargo))}</p>
+      <p class="meta">${esc(t("pontos"))} · ${novo ? esc(t("novoRec")) : esc(t("recorde")(fmtInt(Math.max(recAnt, S.pontos))))}</p></div>
+    <div class="cartao"><div class="metricas">${metrica("❤️", Math.abs(S.tot.vidas), S.tot.vidas >= 0 ? t("metVidas") : t("vidasPerd"), "ok")}${metrica("🍎", S.tot.evit, t("metEvit"), "ok")}${metrica("🕯️", S.tot.semdx, t("metSemDx"))}</div>
+      <p class="fonte">${esc(t("metModelo"))}</p></div>
     ${cartaoRanking()}
     <div class="cartao"><ul class="linhas">${linhas.map((l) => `<li>${l}</li>`).join("")}</ul></div>
+    <div class="cartao"><h2>🏅 ${esc(t("logrosTit"))}</h2><p class="meta">${esc(t("logrosConta")(nL, LOGROS.length))}</p><div class="logros">${LOGROS.map(selo).join("")}</div></div>
     <div class="cartao"><h2>${esc(t("realTit"))}</h2><ul class="linhas">${t("real").map((l) => `<li>${esc(l)}</li>`).join("")}</ul></div>
     <div class="btns"><button class="btn" id="btn-nova" type="button">${esc(t("denovo"))}</button><button class="btn sec" id="btn-compartir" type="button">${esc(t("compartir"))}</button></div>
     <p class="aviso">${esc(t("beta"))} ${esc(t("modeloNota"))}</p>
@@ -1037,6 +1237,179 @@ function mostrarFim() {
     <div class="cartao"><h2>${esc(t("fontesTit"))}</h2><ol class="fontes">${FONTES.map((f) => `<li>${esc(f)}</li>`).join("")}</ol></div>`;
   renderHud();
   rolarTopo();
+  if (novo && recAnt > 0 && !S.festaFim) { S.festaFim = true; salvar(); confete(); faixa("🏆", t("novoRecorde"), t("recordeTxt"), "ouro"); }
+}
+
+/* ---------- metas, prêmios e festa ---------- */
+let logros = ler(CHAVE_LOGROS) || {};
+const missao = (id) => MISSOES.find((m) => m.id === id);
+const popEqPct = () => 100 * DEPS.reduce((s, d) => s + (equil(d.id) >= 1 ? d.pop : 0), 0) / DEPS.reduce((s, d) => s + d.pop, 0);
+function revelados() {
+  const faltava = DEPS.reduce((s, d) => s + (1 - S.deps[d.id].vis0) * d.pop, 0);
+  const achado = DEPS.reduce((s, d) => s + (vis(d.id) - S.deps[d.id].vis0) * d.pop, 0);
+  return Math.max(0, Math.min(100, 100 * achado / faltava));
+}
+const vidasTotal = () => S.tot.vidas + DEPS.reduce((s, d) => s + S.deps[d.id].ind.vidas, 0);
+const estrelas = (p) => (p >= 30) + (p >= 50) + (p >= 75);   // população em equilíbrio: 30%, 50% e 75%
+const estrelasHTML = (n) => `<span class="estrelas" role="img" aria-label="${esc(t("estrelasAria")(n))}">${[0, 1, 2].map((i) => `<span class="${i < n ? "on" : ""}" style="animation-delay:${0.3 + i * 0.2}s">★</span>`).join("")}</span>`;
+const progTxt = (m) => { const p = Math.min(m.prog(), m.meta); return (m.fmt || ((a, b) => `${a}/${b}`))(p, m.meta); };
+const alvosMissao = () => { const m = S.mis.ativas.length ? missao(S.mis.ativas[0]) : null; return m && m.alvo ? m.alvo() : []; };
+const vibrar = () => { try { if (navigator.vibrate) navigator.vibrate(40); } catch (e) { /* sem vibração */ } };
+
+/* Confere missões, conquistas e recorde; devolve true se algo mudou o orçamento */
+function verificar() {
+  if (!S || S.fim) return false;
+  let mudou = false;
+  for (const id of [...S.mis.ativas]) {
+    const m = missao(id);
+    if (m.prog() >= m.meta) { cumprirMissao(m); mudou = true; }
+  }
+  for (const l of LOGROS) if (!logros[l.id] && l.teste()) desbloquear(l);
+  if (!S.recordeBatido && S.recordeAntes > 0 && S.pontos + S.ptsAno > S.recordeAntes) {
+    S.recordeBatido = true;
+    faixa("🏆", t("novoRecorde"), t("recordeTxt"), "ouro");
+    confete();
+  }
+  return mudou;
+}
+function cumprirMissao(m) {
+  S.mis.ativas = S.mis.ativas.filter((x) => x !== m.id);
+  S.mis.feitas.push({ id: m.id, ano: ano() });
+  if (S.mis.prox < MISSOES.length) S.mis.ativas.push(MISSOES[S.mis.prox++].id);
+  const p = m.premio;
+  if (p.orc) S.orc += p.orc;
+  if (p.conf) S.conf = limitar(S.conf + p.conf);
+  if (p.mult) S.multAno = Math.max(S.multAno, p.mult);
+  faixa("🎯", `${t("missaoOk")} ${m[lang][0]}`, t("premio")(p));
+  confete();
+  vibrar();
+}
+function desbloquear(l) {
+  logros[l.id] = new Date().toISOString().slice(0, 10);
+  guardar(CHAVE_LOGROS, logros);
+  S.logrosPartida.push(l.id);
+  faixa(l.ico, `${t("logroOk")} ${l[lang][0]}`, l[lang][1], "ouro");
+  confete();
+  vibrar();
+}
+
+/* Faixa de prêmio no alto da tela, uma de cada vez */
+const filaFaixas = [];
+let faixaAtiva = false;
+function faixa(ico, tit, txt, tipo = "") {
+  filaFaixas.push({ ico, tit, txt, tipo });
+  if (!faixaAtiva) proximaFaixa();
+}
+function proximaFaixa() {
+  const f = filaFaixas.shift(), el = $("#faixa");
+  if (!f) { faixaAtiva = false; return; }
+  faixaAtiva = true;
+  el.className = `faixa ${f.tipo}`;
+  el.innerHTML = `<span class="ico" aria-hidden="true">${f.ico}</span><span><b>${esc(f.tit)}</b><small>${esc(f.txt)}</small></span>`;
+  el.hidden = false;
+  void el.offsetWidth;
+  el.classList.add("on");
+  setTimeout(() => { el.classList.remove("on"); setTimeout(() => { el.hidden = true; proximaFaixa(); }, 400); }, 2600);
+}
+
+/* Confete: na moldura de celular (tela larga) os elementos fixos se posicionam pela moldura */
+const CORES = ["#f07a5c", "#3aa99f", "#f6b27a", "#6f9bd2", "#c48ee0", "#5cc48a", "#f2c14e"];
+function confete(px, py, n = 26) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const box = $(".aparelho"), cs = getComputedStyle(box), r = box.getBoundingClientRect();
+  const moldura = cs.transform !== "none";
+  const ox = moldura ? r.left + parseFloat(cs.borderLeftWidth) : 0, oy = moldura ? r.top + parseFloat(cs.borderTopWidth) : 0;
+  const x = (px ?? ox + (moldura ? box.clientWidth : innerWidth) / 2) - ox, y = (py ?? oy + 90) - oy;
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement("i"), ang = Math.random() * Math.PI * 2, dist = 50 + Math.random() * 120;
+    c.className = "confete";
+    c.style.cssText = `left:${x}px;top:${y}px;background:${CORES[i % CORES.length]};--dx:${Math.round(Math.cos(ang) * dist)}px;--dy:${Math.round(Math.sin(ang) * dist + 80)}px;--rot:${Math.round(Math.random() * 720 - 360)}deg`;
+    box.appendChild(c);
+    setTimeout(() => c.remove(), 1500);
+  }
+}
+
+/* O equilíbrio de um departamento subiu: texto dourado no mapa e confete */
+function festejarNivel(id, n) {
+  const l = document.querySelector(`#mapa .lbl[data-dep="${id}"]`);
+  if (!l) return;
+  const r = l.getBoundingClientRect();
+  confete(r.left + r.width / 2, r.top, n >= 3 ? 36 : 18);
+  const [x, y] = posLbl(id);
+  const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  tx.setAttribute("x", x);
+  tx.setAttribute("y", y - 100);
+  tx.setAttribute("class", "sobe-nivel");
+  tx.textContent = t("nivelSobe")(n);
+  $("#g-fx").appendChild(tx);
+  setTimeout(() => tx.remove(), 1600);
+  vibrar();
+}
+
+/* "+N" saindo da estrela do placar a cada mês */
+function maisPontos(n) {
+  const chip = $("#h-pontos"), hud = $(".hud");
+  if (n < 1 || chip.hidden) return;
+  const r = chip.getBoundingClientRect(), h = hud.getBoundingClientRect();
+  const m = document.createElement("span");
+  m.className = "mais";
+  m.textContent = `+${fmtInt(n)}`;
+  m.style.left = `${r.left - h.left + r.width / 2}px`;
+  m.style.top = `${r.bottom - h.top}px`;
+  hud.appendChild(m);
+  setTimeout(() => m.remove(), 1200);
+}
+
+function contarAte(el, alvo, fmt, ms = 900) {
+  if (!el) return;
+  const t0 = performance.now();
+  const passo = (agora) => {
+    const k = Math.min(1, (agora - t0) / ms);
+    el.textContent = fmt(Math.round(alvo * (1 - (1 - k) ** 3)));
+    if (k < 1 && el.isConnected) requestAnimationFrame(passo);
+  };
+  requestAnimationFrame(passo);
+}
+
+/* Missão em destaque no rodapé + confiança, vidas salvas e pontos do ano */
+function renderRodape() {
+  const m = S.mis.ativas.length ? missao(S.mis.ativas[0]) : null, b = $("#btn-missoes");
+  if (m) {
+    const p = Math.min(m.prog(), m.meta);
+    b.innerHTML = `<span class="m-tit">🎯 ${esc(m[lang][0])}</span><span class="m-n">${esc(progTxt(m))}</span><i class="m-barra"><i style="width:${Math.round(100 * p / m.meta)}%"></i></i>`;
+  } else b.innerHTML = `<span class="m-tit">${esc(t("semMissao"))}</span>`;
+  b.setAttribute("aria-label", `${t("missoesTit")}: ${m ? `${m[lang][0]} ${progTxt(m)}` : t("semMissao")}`);
+  const txt = $("#dica-txt");
+  txt.textContent = t("rodapeV3")(S.conf, fmtInt(Math.max(0, vidasTotal())), fmtInt(S.ptsAno + pontosAno() * S.multAno * (12 - S.mes) / 12));
+  txt.title = t("rodapeTit");
+}
+
+function escolherConsequencia() {
+  for (const c of CONSEQ) {
+    if (S.consUsadas.includes(c.id)) continue;
+    const dep = c.achar();
+    if (dep === undefined) continue;
+    const r = S.log[S.log.length - 1];
+    S.consUsadas.push(c.id);
+    c.aplicar(dep);
+    return { id: c.id, dep, n: r ? Math.round(r.ind.semdx) : 0, ano: r ? r.ano : "" };
+  }
+  return null;
+}
+function consHTML() {
+  const c = S.cons && CONSEQ.find((x) => x.id === S.cons.id);
+  if (!c) return "";
+  const sub = (s) => s.replaceAll("{dep}", S.cons.dep ? DEP[S.cons.dep].nome : "").replaceAll("{n}", fmtInt(S.cons.n || 0)).replaceAll("{ano}", S.cons.ano || "");
+  const [tit, txt, ef] = c[lang];
+  return `<div class="imprevisto cons"><p class="ano">🔁 ${esc(t("consTit"))}</p><h3>${esc(sub(tit))}</h3><p>${esc(sub(txt))}</p><p class="efeito">${esc(sub(ef))}</p><p class="fonte">${esc(t("escenario"))}</p></div>`;
+}
+
+const selo = (l) => `<div class="selo${logros[l.id] ? " on" : ""}${S && S.logrosPartida.includes(l.id) ? " novo" : ""}" title="${esc(l[lang][1])}"><span aria-hidden="true">${logros[l.id] ? l.ico : "🔒"}</span><small>${esc(l[lang][0])}</small></div>`;
+const metrica = (ico, n, txt, cls = "") => `<div class="met ${cls}"><span aria-hidden="true">${ico}</span><b>${fmtInt(Math.max(0, n))}</b><small>${esc(txt)}</small></div>`;
+function inicioExtra() {
+  const rec = ler("epidemia-py-recorde") || 0, n = LOGROS.filter((l) => logros[l.id]).length;
+  const partes = [rec ? t("inicioRecorde")(fmtInt(rec)) : "", n ? t("inicioLogros")(n, LOGROS.length) : ""].filter(Boolean);
+  return partes.length ? `<p class="meta trofeus">${esc(partes.join(" · "))}</p>` : "";
 }
 
 /* ---------- ranking do congresso ---------- */
@@ -1085,10 +1458,12 @@ async function enviarRanking() {
 const creditosHTML = (comTitulo) => `<div class="creditos">${comTitulo ? `<h2>${esc(t("creditosTit"))}</h2>` : ""}${t("creditos").map((c) => `<p>${c}</p>`).join("")}</div>`;
 
 /* ---------- janelas ---------- */
+let janela = null;   // qual janela está aberta (para trocar de idioma sem perder o lugar)
 function abrirModal(html) { $("#janela").innerHTML = html; $("#modal").hidden = false; $("#janela").scrollTop = 0; const b = $("#janela .btn, #janela [data-opcao]:not([disabled])"); if (b) b.focus(); }
-function fecharModal() { $("#modal").hidden = true; }
+function fecharModal() { $("#modal").hidden = true; janela = null; }
 
 function mostrarEvento() {
+  janela = "evento";
   const [tit, txt, efeito, fonte] = EVENTOS[ano()][lang];
   const ev = S.evAleat && EVENTOS_ALEAT.find((e) => e.id === S.evAleat.id);
   const nomeDep = S.evAleat && S.evAleat.dep ? DEP[S.evAleat.dep].nome : "";
@@ -1105,6 +1480,7 @@ function mostrarEvento() {
     <p class="efeito">${esc(efeito)}</p>
     <p class="fonte">${esc(t("fonte"))}: ${esc(fonte)}</p>
     ${imp}
+    ${consHTML()}
     ${ao.bonus ? `<p class="meta">${esc(t("confOrc")(ao.bonus))}</p>` : ""}
     ${ao.convPago ? `<p class="meta">${esc(t("convPago")(ao.convPago, ao.convN))}</p>` : ""}${ao.convCancel ? `<p class="fila">${esc(t("convCancel")(ao.convCancel))}</p>` : ""}
     <p><b>${esc(t("evOrc")(S.orc))}</b></p>
@@ -1118,6 +1494,7 @@ function opcaoCusto(o, dep) {
 }
 
 function mostrarDemanda() {
+  janela = "demanda";
   const dm = DEMANDAS.find((x) => x.id === S.demanda.id), dep = S.demanda.dep;
   const sub = (s) => s.replaceAll("{dep}", dep ? DEP[dep].nome : "").replaceAll("{ano2}", ANOS[Math.min(9, S.anoIdx + 2)]).replaceAll("{ano3}", ANOS[Math.min(9, S.anoIdx + 3)]);
   const ops = dm.opcoes.map((o, i) => {
@@ -1139,6 +1516,7 @@ function escolherOpcao(i) {
   const dm = DEMANDAS.find((x) => x.id === S.demanda.id), dep = S.demanda.dep, o = dm.opcoes[i];
   const c = opcaoCusto(o, dep);
   if (c.valor > S.orc) return;
+  const eq0 = dep ? equil(dep) : 0;
   S.orc -= c.valor;
   if (o.compra) { const d = S.deps[dep]; S.gasto[ACOES[o.compra].nivel] += c.valor; d.feitas[o.compra] = S.anoIdx; d.pago[o.compra] = 0; delete d.conv[o.compra]; S.compradasAno.push(o.compra); }
   else if (o.conv) { S.gasto[ACOES[o.conv].nivel] += c.valor; S.deps[dep].conv[o.conv] = { ano: S.anoIdx, pago: 0 }; S.compradasAno.push(licaoDe(o.conv, true)); }
@@ -1153,28 +1531,95 @@ function escolherOpcao(i) {
   render();
   if (dep) destacar(dep, o.conv ? "🤝" : o.compra ? ACOES[o.compra].ico : "📣");
   if (S.evAleat && S.evAleat.dep && S.evAleat.dep !== dep) destacar(S.evAleat.dep, "⚡");
+  if (dep && equil(dep) > eq0) festejarNivel(dep, equil(dep));
 }
 
 function mostrarResumo(r) {
+  janela = "resumo";
   const [licao, fonte] = LICOES[r.licao][lang];
+  const mis = (r.mis || []).map((id) => missao(id)[lang][0]).join(", ");
   const ultimo = S.anoIdx >= ANOS.length - 1;
   const comps = (r.comp || []).map((c) => `<li>${esc((c.ok ? t("compOk") : t("compFalhou"))(t("curtas")[c.a], DEP[c.dep].nome))}</li>`).join("");
   abrirModal(`
     <p class="ano">${esc(t("fimAno")(r.ano))}</p>
-    <h2>${esc(t("ptsAno")(fmtInt(r.pts)))}</h2>
+    <div class="topo-res"><h2 id="pts-ano">${esc(t("ptsAno")(0))}</h2>${estrelasHTML(r.est || 0)}</div>
+    <div class="metricas">${metrica("❤️", Math.abs(r.ind.vidas), r.ind.vidas >= 0 ? t("metVidas") : t("vidasPerd"), "ok")}${metrica("🍎", r.ind.evit, t("metEvit"), "ok")}${metrica("🕯️", r.ind.semdx, t("metSemDx"))}</div>
+    <p class="fonte">${esc(t("metModelo"))}</p>
     <ul class="linhas">
       <li>${esc(t("resPais")(fmtInt(r.ind.casos), fmtInt(r.ind.mortes), fmtInt(r.ind.curas)))}</li>
       ${r.subiu.length ? `<li>${esc(t("resSubiu")(r.subiu.length > 6 ? `${r.subiu.slice(0, 6).join(", ")} +${r.subiu.length - 6}` : r.subiu.join(", ")))}</li>` : ""}
       ${r.filas.length ? `<li>${esc(t("resFila")(r.filas.join(", ")))}</li>` : ""}
       <li>${esc(t("resEquil")(r.n3))}</li>
       ${comps}
+      ${mis ? `<li>${esc(t("misAno")(mis))}</li>` : ""}
+      ${r.quiz != null ? `<li>${esc(t("quizAno")(r.quiz))}</li>` : ""}
       <li>${esc(t("resConfAno")(r.conf0, r.conf1))}</li>
     </ul>
     <div class="licao"><p>${esc(licao)}</p><p class="fonte">${esc(t("fonte"))}: ${esc(fonte)}</p></div>
     <button class="btn" type="button" data-proximo>${esc(ultimo ? t("verRes") : t("prox")(ANOS[S.anoIdx + 1]))}</button>`);
+  contarAte($("#pts-ano"), r.pts, (v) => t("ptsAno")(fmtInt(v)));
 }
 
+function mostrarMissoes() {
+  janela = "missoes";
+  const cartao = (id) => {
+    const m = missao(id), p = Math.min(m.prog(), m.meta);
+    return `<div class="missao"><b>🎯 ${esc(m[lang][0])}</b><p>${esc(m[lang][1])}</p><div class="prog"><i style="width:${Math.round(100 * p / m.meta)}%"></i></div>
+      <p class="meta">${esc(progTxt(m))} · ${esc(t("recompensa"))}: ${esc(t("premio")(m.premio))}${m.fonte ? ` · ${esc(t("fonte"))}: ${esc(m.fonte)}` : ""}</p></div>`;
+  };
+  const feitas = S.mis.feitas.map((f) => `<li>✓ ${esc(missao(f.id)[lang][0])} (${f.ano})</li>`).join("");
+  const nL = LOGROS.filter((l) => logros[l.id]).length;
+  abrirModal(`
+    <h2>🎯 ${esc(t("missoesTit"))}</h2>
+    ${S.mis.ativas.map(cartao).join("") || `<p>${esc(t("semMissao"))}</p>`}
+    ${feitas ? `<h3>${esc(t("feitasTit"))}</h3><ul class="linhas feitas">${feitas}</ul>` : ""}
+    <h3>🏅 ${esc(t("logrosTit"))} · ${esc(t("logrosConta")(nL, LOGROS.length))}</h3>
+    <div class="logros">${LOGROS.map(selo).join("")}</div>
+    <button class="btn" type="button" data-fechar>${esc(t("voltar"))}</button>`);
+}
+
+/* Desafio relâmpago: o relógio para; acertar dá 💰 2 e sequências de 3 dão 👍 5 */
+function abrirQuiz() { S.fase = "quiz"; S.quizResp = null; salvar(); renderVivo(); mostrarQuiz(); }
+function mostrarQuiz() {
+  janela = "quiz";
+  const q = QUIZ[S.quiz.ordem[S.quiz.i % QUIZ.length]], [frase, expl] = q[lang], r = S.quizResp;
+  abrirModal(`
+    <p class="ano">⚡ ${esc(t("quizTit"))}</p>
+    <h2>${esc(t("quizSub"))}</h2>
+    <p class="quiz-frase">${esc(frase)}</p>
+    ${r == null ? `<div class="quiz-op"><button type="button" class="btn sec" data-quiz="1">${esc(t("verdadeiro"))}</button><button type="button" class="btn sec" data-quiz="0">${esc(t("falso"))}</button></div>`
+      : `<div class="quiz-res ${r === q.v ? "ok" : "erro"}"><b>${esc(r === q.v ? t("quizCerto") : t("quizErrado"))}</b> ${esc(q.v ? t("verdadeiro") : t("falso"))}: ${esc(expl)}</div>
+      ${r === q.v && S.quiz.racha >= 2 ? `<p class="meta">${esc(t("racha")(S.quiz.racha))}</p>` : ""}
+      <p class="fonte">${esc(t("fonte"))}: ${esc(q.fonte)}</p>
+      <button class="btn" type="button" data-quiz-seguir>${esc(t("quizSeguir"))}</button>`}`);
+}
+function responderQuiz(v) {
+  const q = QUIZ[S.quiz.ordem[S.quiz.i % QUIZ.length]];
+  S.quizResp = v;
+  S.quizOk = v === q.v;
+  S.quiz.feitos++;
+  if (S.quizOk) {
+    S.orc += 2; S.quiz.acertos++; S.quiz.racha++;
+    if (S.quiz.racha % 3 === 0) { S.conf = limitar(S.conf + 5); faixa("🔥", t("racha")(S.quiz.racha), t("rachaPremio"), "ouro"); }
+    confete();
+    vibrar();
+  } else S.quiz.racha = 0;
+  verificar();
+  salvar();
+  renderVivo();
+  mostrarQuiz();
+}
+function seguirQuiz() {
+  S.quiz.i++; S.quizResp = null; S.quizAno = S.anoIdx; S.fase = "jogando";
+  fecharModal();
+  if (S.quizDepois) { S.quizDepois = false; fecharAno(); return; }   // o ⏩ tinha pedido para terminar o ano
+  salvar();
+  render();
+}
+
+
 function mostrarAjuda() {
+  janela = "ajuda";
   abrirModal(`
     <h2>${esc(t("ajuda"))}</h2>
     <ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol>
@@ -1202,7 +1647,8 @@ function novoJogo() {
 }
 
 function mostrarModalDaFase() {
-  if (S.fase === "evento") mostrarEvento();
+  if (S.fase === "quiz") mostrarQuiz();
+  else if (S.fase === "evento") mostrarEvento();
   else if (S.fase === "demanda") mostrarDemanda();
   else if (S.fase === "resumo") mostrarResumo(S.log[S.log.length - 1]);
 }
@@ -1226,6 +1672,10 @@ document.addEventListener("click", (ev) => {
   if (ac && !ac.disabled) { comprar(S.sel, ac.dataset.acao); return; }
   const op = alvo.closest("[data-opcao]");
   if (op && !op.disabled) { escolherOpcao(+op.dataset.opcao); return; }
+  const qz = alvo.closest("[data-quiz]");
+  if (qz && S && S.fase === "quiz" && S.quizResp == null) { responderQuiz(qz.dataset.quiz === "1"); return; }
+  if (alvo.closest("[data-quiz-seguir]") && S && S.fase === "quiz") { seguirQuiz(); return; }
+  if (alvo.closest("#btn-missoes") && S && !S.fim) { mostrarMissoes(); return; }
   const modo = alvo.closest("[data-modo]");
   if (modo && S && !S.fim) { S.modo = modo.dataset.modo; salvar(); pintarMapa(); const el = $("#dep-linha"); if (el) el.innerHTML = linhaDep(); return; }
   if (alvo.closest("[data-fechar]")) {
@@ -1233,7 +1683,11 @@ document.addEventListener("click", (ev) => {
     if (eraEvento && S.demanda) { S.fase = "demanda"; salvar(); mostrarDemanda(); return; }
     if (eraEvento) S.fase = "jogando";
     fecharModal();
-    if (S && !S.fim) { salvar(); render(); if (eraEvento && S.evAleat && S.evAleat.dep) destacar(S.evAleat.dep, "⚡"); }
+    if (S && !S.fim) {
+      salvar(); render();
+      if (eraEvento && S.evAleat && S.evAleat.dep) destacar(S.evAleat.dep, "⚡");
+      if (eraEvento && S.cons && S.cons.dep) destacar(S.cons.dep, "🔁");
+    }
     return;
   }
   if (alvo.closest("[data-proximo]")) { proximoAno(); return; }
@@ -1248,7 +1702,7 @@ document.addEventListener("click", (ev) => {
   if (alvo.id === "btn-idioma") {
     lang = lang === "es" ? "pt" : "es"; guardar("epidemia-py-lang", lang);
     document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
-    if (!$("#modal").hidden) { if (S && !S.fim && S.fase !== "jogando") mostrarModalDaFase(); else mostrarAjuda(); }
+    if (!$("#modal").hidden) ({ evento: mostrarEvento, demanda: mostrarDemanda, quiz: mostrarQuiz, missoes: mostrarMissoes, resumo: () => mostrarResumo(S.log[S.log.length - 1]) }[janela] || mostrarAjuda)();
     if (!S) telaInicio();
     else if (S.fim) {
       const ids = ["#r-nome", "#r-fac", "#r-turma"], campos = ids.map((c) => $(c) && $(c).value), ok = $("#r-ok") && $("#r-ok").checked;

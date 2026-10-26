@@ -4,6 +4,8 @@ Juego educativo para celular sobre la epidemiología del cáncer en Paraguay. El
 
 Cada año dura 12 meses en tiempo real (unos 24 segundos, con pausa). El mapa y los contadores del país muestran incidencia, prevalencia, muertes y curas mientras el año corre. Cada año trae un hecho real, a veces un imprevisto (royalties de Itaipú, epidemias, inversión extranjera) y una demanda de la sociedad, que el jugador atiende, rechaza o promete cumplir. Las respuestas cambian la confianza, y la confianza cambia el presupuesto. Los convenios con instituciones privadas, fundaciones o universidades cuestan menos al principio, pero se pagan todos los años.
 
+Para que den ganas de volver a jugar: **misiones** con premio (por ejemplo, test de VPH donde el cuello uterino es la 1.ª causa de muerte en las mujeres), un **desafío relámpago** por año (verdadero o falso, con fuente), **logros** que quedan guardados en el celular, estrellas por año, cargo final y récord. El juego también reacciona a las decisiones: muestra las vidas salvadas, los casos evitados por la prevención y las personas que murieron sin diagnóstico (modelo del juego, comparado con no hacer nada).
+
 **Jugar:** https://gian-pandolfo.github.io/epidemia-cancer-paraguay/
 
 ## Créditos
