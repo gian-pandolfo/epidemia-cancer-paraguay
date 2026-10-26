@@ -48,11 +48,11 @@ const T = {
     ajuda: "Cómo se juega", fechar: "Cerrar",
     anoDe: (a, i) => `${a} · año ${i} de 10`,
     modoCob: "Cobertura", modoReg: "Casos registrados",
-    legCob: "Niveles en equilibrio:", legReg: "Tasa registrada por 100 mil:",
+    legCob: "Niveles en equilibrio:", legReg: "Tasa estandarizada registrada, por 100 mil:",
     escolher: "Elegir departamento…",
     hab: "hab. (Censo 2022)",
     causa: (h, m) => `1.ª causa de muerte por cáncer: ${h} (hombres), ${m} (mujeres) · Atlas 2015–2019`,
-    kReg: "tasa registrada por 100 mil (Atlas 2015–2019 → hoy)",
+    kReg: "tasa estandarizada registrada por 100 mil (Atlas 2015–2019 → hoy)",
     kOculto: "casos ocultos (estimación del juego)",
     ocultoQ: "?", ocultoDica: "diagnostica o investiga aquí para saber",
     poucos: "Pocas muertes en 5 años: la tasa es inestable.",
@@ -133,11 +133,11 @@ const T = {
     ajuda: "Como se joga", fechar: "Fechar",
     anoDe: (a, i) => `${a} · ano ${i} de 10`,
     modoCob: "Cobertura", modoReg: "Casos registrados",
-    legCob: "Níveis em equilíbrio:", legReg: "Taxa registrada por 100 mil:",
+    legCob: "Níveis em equilíbrio:", legReg: "Taxa padronizada registrada, por 100 mil:",
     escolher: "Escolher departamento…",
     hab: "hab. (Censo 2022)",
     causa: (h, m) => `1ª causa de morte por câncer: ${h} (homens), ${m} (mulheres) · Atlas 2015–2019`,
-    kReg: "taxa registrada por 100 mil (Atlas 2015–2019 → hoje)",
+    kReg: "taxa padronizada registrada por 100 mil (Atlas 2015–2019 → hoje)",
     kOculto: "casos ocultos (estimativa do jogo)",
     ocultoQ: "?", ocultoDica: "diagnostique ou pesquise aqui para saber",
     poucos: "Poucos óbitos em 5 anos: a taxa é instável.",
@@ -253,8 +253,8 @@ const EVENTOS = {
   },
   2024: {
     aplicar: () => { S.mod.vacuna = -1; S.mod.registro = -1; darGratis("concepcion", "quimio"); },
-    es: ["Dosis única de la vacuna VPH y notificación obligatoria", "Desde el 01/08/2024 basta una dosis de la vacuna; en noviembre, todo cáncer confirmado pasa a ser de notificación obligatoria (Res. S.G. N° 752). Concepción inaugura el 10.º Hospital Día oncológico del país.", "Vacuna 💰 1 más barata, registro gratis y Hospital Día gratis en Concepción.", "MSPBS, 2024"],
-    pt: ["Dose única da vacina HPV e notificação obrigatória", "Desde 01/08/2024 basta uma dose da vacina; em novembro, todo câncer confirmado passa a ser de notificação obrigatória (Res. S.G. N° 752). Concepción inaugura o 10º Hospital Día oncológico do país.", "Vacina 💰 1 mais barata, registro grátis e Hospital Día grátis em Concepción.", "MSPBS, 2024"],
+    es: ["Dosis única de la vacuna VPH y notificación obligatoria", "Desde el 01/08/2024 basta una dosis de la vacuna; en noviembre, el Ministerio anunció la notificación obligatoria de todo cáncer confirmado (Res. S.G. N° 752). Concepción inaugura el 10.º Hospital Día oncológico del país.", "Vacuna 💰 1 más barata, registro gratis y Hospital Día gratis en Concepción.", "MSPBS, 2024"],
+    pt: ["Dose única da vacina HPV e notificação obrigatória", "Desde 01/08/2024 basta uma dose da vacina; em novembro, o Ministério anunciou a notificação obrigatória de todo câncer confirmado (Res. S.G. N° 752). Concepción inaugura o 10º Hospital Día oncológico do país.", "Vacina 💰 1 mais barata, registro grátis e Hospital Día grátis em Concepción.", "MSPBS, 2024"],
   },
 };
 
@@ -265,7 +265,7 @@ const LICOES = {
   habitos: { es: ["Solo 3,9% comen 5 porciones de frutas y verduras por día. El colorrectal es el cáncer que más crece: cerca de 3% por año desde 1990.", "ENFR 2022; Leite et al., 2025"], pt: ["Só 3,9% comem 5 porções de frutas e verduras por dia. O colorretal é o câncer que mais cresce: cerca de 3% ao ano desde 1990.", "ENFR 2022; Leite et al., 2025"] },
   vph: { es: ["En 2024 el Ministerio de Salud hizo 72.133 tests de VPH y encontró 9.863 positivos (13,7%). Diagnosticar hace subir los casos visibles.", "MSPBS"], pt: ["Em 2024 o Ministério da Saúde fez 72.133 testes de HPV e encontrou 9.863 positivos (13,7%). Diagnosticar faz subir os casos visíveis.", "MSPBS"] },
   mamo: { es: ["La mama es la 1.ª causa de muerte por cáncer en las mujeres (1.945 muertes, 20,2%). 51,1% de las mujeres ya se hicieron una mamografía.", "Atlas 2015–2019; ENFR 2023"], pt: ["A mama é a 1ª causa de morte por câncer nas mulheres (1.945 mortes, 20,2%). 51,1% das mulheres já fizeram mamografia.", "Atlas 2015–2019; ENFR 2023"] },
-  registro: { es: ["Tasa baja no es riesgo bajo: Canindeyú tiene la menor tasa (41,3) y la mayor proporción de muertes femeninas por cuello uterino (36,8%).", "Atlas 2015–2019"], pt: ["Taxa baixa não é risco baixo: Canindeyú tem a menor taxa (41,3) e a maior proporção de mortes femininas por colo do útero (36,8%).", "Atlas 2015–2019"] },
+  registro: { es: ["Tasa baja no es riesgo bajo: Canindeyú tiene la menor tasa estandarizada (41,3) y la mayor proporción de muertes femeninas por cuello uterino (36,8%).", "Atlas 2015–2019"], pt: ["Taxa baixa não é risco baixo: Canindeyú tem a menor taxa padronizada (41,3) e a maior proporção de mortes femininas por colo do útero (36,8%).", "Atlas 2015–2019"] },
   quimio: { es: ["Los Hospitales Día oncológicos llevan la quimioterapia al interior; el 10.º se inauguró en Concepción en 2024.", "MSPBS, 21/11/2024"], pt: ["Os Hospitais Día oncológicos levam a quimioterapia ao interior; o 10º foi inaugurado em Concepción em 2024.", "MSPBS, 21/11/2024"] },
   radio: { es: ["Radioterapia pública: un único lugar para todo el país, el INCAN, en Capiatá, con 3 aceleradores lineales.", "MSPBS, 2024"], pt: ["Radioterapia pública: um único lugar para o país inteiro, o INCAN, em Capiatá, com 3 aceleradores lineares.", "MSPBS, 2024"] },
   privado: { es: ["El IPS contrata radioterapia de prestadores privados por licitación. Resuelve rápido, pero se paga todos los años.", "DNCP, licitación de radioterapia del IPS"], pt: ["O IPS contrata radioterapia de prestadores privados por licitação. Resolve rápido, mas se paga todo ano.", "DNCP, licitação de radioterapia do IPS"] },
@@ -274,7 +274,7 @@ const LICOES = {
   fila: { es: ["Diagnosticar sin tratar crea filas: en Ciudad del Este, de cada 10 pacientes diagnosticados, 6 necesitarán radioterapia y deben viajar.", "La Nación, 23/07/2024"], pt: ["Diagnosticar sem tratar cria filas: em Ciudad del Este, de cada 10 pacientes diagnosticados, 6 vão precisar de radioterapia e precisam viajar.", "La Nación, 23/07/2024"] },
   colo: { es: ["En 8 de los 18 departamentos, el cuello uterino es la 1.ª causa de muerte por cáncer en las mujeres: un cáncer evitable.", "Atlas 2015–2019"], pt: ["Em 8 dos 18 departamentos, o colo do útero é a 1ª causa de morte por câncer nas mulheres: um câncer evitável.", "Atlas 2015–2019"] },
   jovens: { es: ["La mortalidad por cuello uterino en mujeres de 20 a 44 años sube 3,7% por año (1997–2017).", "Torres-Roman et al., BMC Public Health 2022"], pt: ["A mortalidade por colo do útero em mulheres de 20 a 44 anos sobe 3,7% ao ano (1997–2017).", "Torres-Roman et al., BMC Public Health 2022"] },
-  mapa: { es: ["El mapa del cáncer también es un mapa del acceso al diagnóstico: Asunción tiene tasa de 103,9 y Canindeyú de 41,3 por 100 mil.", "Atlas 2015–2019"], pt: ["O mapa do câncer também é um mapa do acesso ao diagnóstico: Asunción tem taxa de 103,9 e Canindeyú de 41,3 por 100 mil.", "Atlas 2015–2019"] },
+  mapa: { es: ["El mapa del cáncer también es un mapa del acceso al diagnóstico: Asunción tiene tasa estandarizada de 103,9 y Canindeyú de 41,3 por 100 mil (2015–2019).", "Atlas 2015–2019"], pt: ["O mapa do câncer também é um mapa do acesso ao diagnóstico: Asunción tem taxa padronizada de 103,9 e Canindeyú de 41,3 por 100 mil (2015–2019).", "Atlas 2015–2019"] },
 };
 const LICOES_GERAIS = ["mapa", "colo", "registro", "jovens"];
 
@@ -320,6 +320,11 @@ const temSlot = (d, a) => (a === "radio" ? d.feitas.radio !== undefined || d.pri
 const nivel = (d, n) => SLOTS[n].reduce((s, a) => s + (temSlot(d, a) ? 1 : 0), 0);
 const equil = (id) => { const d = S.deps[id]; return Math.min(nivel(d, "P"), nivel(d, "D"), nivel(d, "T")); };
 const custo = (a) => Math.max(0, ACOES[a].custo + (S.mod[a] || 0));
+const ativa = (d, a) => (a === "pesquisa" ? d.pesquisa : a === "privado" ? d.privado : d.feitas[a] !== undefined);
+/* Só se desfaz o que foi pago neste ano (o que veio de graça e as renovações do convênio não) */
+const pagoNoAno = (d, a) => (a === "pesquisa" ? (d.pesquisaAno === S.anoIdx ? d.pesquisaPago : 0)
+  : a === "privado" ? (d.privadoAno === S.anoIdx ? d.privadoPago || 0 : 0)
+  : (d.feitas[a] === S.anoIdx ? d.pago[a] || 0 : 0));
 
 function vis(id) {
   const d = S.deps[id];
@@ -410,12 +415,8 @@ function proximoAno() {
 function comprar(id, a) {
   const d = S.deps[id];
   const nivelA = ACOES[a].nivel;
-  // desfazer o que foi comprado neste ano
-  if (a === "pesquisa" && d.pesquisa) return d.pesquisaAno === S.anoIdx ? desfazer(id, a, d.pesquisaPago) : toast(t("jaAtivo"));
-  if (a === "privado" && d.privado) return d.privadoAno === S.anoIdx && d.privadoPago > 0 ? desfazer(id, a, d.privadoPago) : toast(t("jaAtivo"));
-  if (a !== "pesquisa" && a !== "privado" && d.feitas[a] !== undefined) {
-    return d.feitas[a] === S.anoIdx && d.pago[a] > 0 ? desfazer(id, a, d.pago[a]) : toast(t("jaAtivo"));
-  }
+  // tocar no que já está ativo: desfaz se foi pago neste ano
+  if (ativa(d, a)) return pagoNoAno(d, a) > 0 ? desfazer(id, a, pagoNoAno(d, a)) : toast(t("jaAtivo"));
   const c = custo(a);
   if (c > S.orc) return toast(t("semOrc"));
   S.orc -= c;
@@ -487,11 +488,8 @@ function pintarMapa() {
 function botaoAcao(id, a, extra = "") {
   const d = S.deps[id];
   const [nome, alvo] = t("acoes")[a];
-  let ativo, desfazivel = false, preco;
-  if (a === "pesquisa") { ativo = d.pesquisa; desfazivel = ativo && d.pesquisaAno === S.anoIdx; }
-  else if (a === "privado") { ativo = d.privado; desfazivel = ativo && d.privadoAno === S.anoIdx && d.privadoPago !== undefined; }
-  else { ativo = d.feitas[a] !== undefined; desfazivel = ativo && d.feitas[a] === S.anoIdx && d.pago[a] > 0; }
-  preco = ativo ? (desfazivel ? `${t("ativo")}` : t("ativo")) : a === "privado" ? t("custoAno")(custo(a)) : t("custo")(custo(a));
+  const ativo = ativa(d, a), desfazivel = ativo && pagoNoAno(d, a) > 0;
+  const preco = ativo ? t("ativo") : a === "privado" ? t("custoAno")(custo(a)) : t("custo")(custo(a));
   const semDinheiro = !ativo && custo(a) > S.orc;
   const nv = ACOES[a].nivel;
   return `<button type="button" class="acao${ativo ? " feita" : ""}${desfazivel ? " desfaz" : ""} ${extra}" data-acao="${a}" ${semDinheiro ? "disabled" : ""}
@@ -739,7 +737,13 @@ document.addEventListener("click", (ev) => {
     lang = lang === "es" ? "pt" : "es"; guardar("epidemia-py-lang", lang);
     document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
     if (!$("#modal").hidden && S) { if (S.fase === "evento") mostrarEvento(); else if (S.fase === "resumo") mostrarResumo(S.log[S.log.length - 1]); }
-    if (!S) telaInicio(); else if (S.fim) mostrarFim(); else render();
+    if (!S) telaInicio();
+    else if (S.fim) {
+      const ids = ["#r-nome", "#r-fac", "#r-turma"], campos = ids.map((c) => $(c) && $(c).value), ok = $("#r-ok") && $("#r-ok").checked;
+      mostrarFim();
+      ids.forEach((c, i) => { if ($(c) && campos[i] != null) $(c).value = campos[i]; });
+      if ($("#r-ok")) $("#r-ok").checked = !!ok;
+    } else render();
   }
 });
 document.addEventListener("keydown", (ev) => {
@@ -756,6 +760,7 @@ async function compartilhar() {
   } catch (e) { /* o jogador cancelou */ }
 }
 
+if (rankingEncerrado()) { try { localStorage.removeItem("epidemia-py-jogador"); } catch (e) { /* sem armazenamento */ } }
 document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
 montarMapa();
 telaInicio();

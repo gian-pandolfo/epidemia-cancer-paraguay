@@ -142,18 +142,19 @@ function textos() {
 
 function desenhar(d) {
   $("#partidas").textContent = fmt(d.partidas || 0);
+  const destacar = !primeiraCarga;
+  primeiraCarga = false;
   if (d.encerrado) { $("#lista").innerHTML = `<p class="vazio">${esc(t("encerrado"))}</p>`; return; }
   if (!d.top || !d.top.length) { $("#lista").innerHTML = `<p class="vazio">${esc(t("vazio"))}</p>`; return; }
   const linhas = d.top.slice(0, 12).map((r, i) => {
     const chave = `${r.nome}|${r.turma}|${r.pontos}|${r.hora}`;
-    const nova = !primeiraCarga && !vistos.has(chave);
+    const nova = destacar && !vistos.has(chave);
     vistos.add(chave);
     const detalhe = [r.faculdade, r.turma].filter(Boolean).join(" · ");
     return `<div class="linha${i < 3 ? ` p${i + 1}` : ""}${nova ? " nova" : ""}"><span class="pos">${i + 1}</span>
       <span class="quem"><b>${esc(r.nome)}</b><span>${esc(detalhe)}</span></span><span class="pts">${fmt(r.pontos)}</span></div>`;
   });
   $("#lista").innerHTML = linhas.join("");
-  primeiraCarga = false;
   aparar();
 }
 
@@ -164,12 +165,15 @@ function aparar() {
   const limite = lista.clientHeight - parseFloat(getComputedStyle(lista).paddingBottom);
   [...lista.querySelectorAll(".linha")].forEach((l) => { if (l.offsetTop + l.offsetHeight > limite) l.remove(); });
 }
-window.addEventListener("resize", () => { if (ultimo) desenhar(ultimo); });
+window.addEventListener("resize", () => { if (ultimo) { primeiraCarga = true; desenhar(ultimo); } });
 
+let emCurso = false;
 async function atualizar() {
+  if (emCurso) return;
   const url = cfg().rankingUrl;
   const estado = $("#estado");
   if (!url) { $("#lista").innerHTML = `<p class="vazio">${esc(t("semUrl"))}</p>`; estado.textContent = ""; return; }
+  emCurso = true;
   try {
     const r = await fetch(`${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`, { cache: "no-store" });
     const d = await r.json();
@@ -181,6 +185,8 @@ async function atualizar() {
   } catch (e) {
     estado.className = "estado erro";
     estado.textContent = t("erro");
+  } finally {
+    emCurso = false;
   }
 }
 
@@ -195,7 +201,7 @@ $("#btn-idioma").addEventListener("click", () => {
   lang = lang === "es" ? "pt" : "es";
   try { localStorage.setItem("epidemia-py-lang", JSON.stringify(lang)); } catch (e) { /* sem armazenamento */ }
   textos();
-  if (ultimo) desenhar(ultimo); else atualizar();
+  if (ultimo) { primeiraCarga = true; desenhar(ultimo); } else atualizar();
 });
 const podeTela = document.fullscreenEnabled || document.webkitFullscreenEnabled;
 $("#btn-tela").hidden = !podeTela;
