@@ -4,5 +4,5 @@ window.EPIDEMIA_CONFIG = {
   rankingUrl: "",
   jogoUrl: "https://gian-pandolfo.github.io/epidemia-cancer-paraguay/",
   fimDadosPessoais: "2026-10-31T00:00:00-03:00",
-  versao: "beta4",
+  versao: "beta5",
 };

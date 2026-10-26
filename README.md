@@ -2,7 +2,11 @@
 
 Juego educativo para celular sobre la epidemiología del cáncer en Paraguay. El jugador conduce el control del cáncer de 2015 a 2024: cada año recibe un presupuesto y elige acciones de **prevención**, **diagnóstico** y **tratamiento** en los 18 departamentos.
 
-Cada año dura 12 meses en tiempo real (unos 24 segundos, con pausa). El mapa y los contadores del país muestran incidencia, prevalencia, muertes y curas mientras el año corre. Cada año trae un hecho real, a veces un imprevisto (royalties de Itaipú, epidemias, inversión extranjera) y una demanda de la sociedad, que el jugador atiende, rechaza o promete cumplir. Las respuestas cambian la confianza, y la confianza cambia el presupuesto. Los convenios con instituciones privadas, fundaciones o universidades cuestan menos al principio, pero se pagan todos los años.
+El jugador elige un personaje: **Bob** (estudiante de Medicina, tecnología e IA), **Don Patrón** (empresario, alianzas público-privadas) o la **Dra. Beatriz** (médica). Cada uno tiene ventajas propias y un árbol de habilidades al estilo de XCOM 2: al subir de cargo con sus puntos, elige una nueva habilidad (3 especializaciones × 4 cargos).
+
+Cada año se juega con calma y se cierra con un toque. En enero llega el presupuesto y se paga el mantenimiento de todo lo implementado; sin dinero, lo más caro se cierra. Implementar cuesta dinero y **prestigio**, que se gana con metas, misiones y respuestas a la sociedad. Cada acción tiene su nivel de atención (1.ª primaria, 2.ª secundaria, 3.ª terciaria): la secundaria necesita atención primaria en el departamento y la terciaria, secundaria cerca (derivación). Algunas acciones se habilitan solo a partir de cierto año. Los convenios no tienen compra ni prestigio, pero se pagan todos los años.
+
+El mapa y los contadores del país muestran incidencia, prevalencia, muertes y curas por año, y cambian en el acto con cada decisión. Cada año trae un hecho real, a veces un imprevisto (royalties de Itaipú, epidemias, donaciones de instituciones religiosas, académicas o de empresas, recortes del Congreso, premios internacionales) y una demanda de la sociedad, que el jugador atiende, rechaza o promete cumplir.
 
 Para que den ganas de volver a jugar: **misiones** con premio (por ejemplo, test de VPH donde el cuello uterino es la 1.ª causa de muerte en las mujeres), un **desafío relámpago** por año (verdadero o falso, con fuente), **logros** que quedan guardados en el celular, estrellas por año, cargo final y récord. El juego también reacciona a las decisiones: muestra las vidas salvadas, los casos evitados por la prevención y las personas que murieron sin diagnóstico (modelo del juego, comparado con no hacer nada).
 
@@ -17,7 +21,8 @@ Para que den ganas de volver a jugar: **misiones** con premio (por ejemplo, test
 ## Qué es real y qué es simulación
 
 - **Real, con fuente:** las tasas y las muertes de partida de cada departamento (Atlas de Mortalidad por Cáncer en Paraguay 2015–2019), la población (Censo 2022), la proporción entre casos y muertes (GLOBOCAN 2022: 13.783 casos y 6.581 muertes) y el hecho de cada año (ley, decreto, pandemia, misiones, servicios inaugurados). Los imprevistos y demandas que traen «ejemplo real» o «inspirado en» citan su fuente.
-- **Simulación (ilustrativa):** el efecto de cada acción, los casos ocultos (subregistro), la incidencia, la prevalencia, las muertes y las curas en tiempo real, los imprevistos, las demandas, la confianza y los puntos. Sirven para enseñar, no son estimaciones epidemiológicas.
+- **Simulación (ilustrativa):** el efecto de cada acción, los personajes y sus habilidades, los casos ocultos (subregistro), la incidencia, la prevalencia, las muertes y las curas, los imprevistos, las demandas, el prestigio y los puntos. Sirven para enseñar, no son estimaciones epidemiológicas.
+- **Fuentes con enlace:** cada fuente citada en el juego tiene un enlace ↗ al lado. Cuando existe, abre una copia guardada en el Internet Archive (no depende de que el sitio original esté en línea); si no, abre la página original. Los enlaces se conferieron el 26/10/2026 (`links.js`).
 
 ## Base
 
@@ -30,6 +35,7 @@ Mapa: límites de [geoBoundaries](https://www.geoboundaries.org) (CC BY 4.0; Run
 - `index.html`: pantalla y estilos.
 - `jogo.js`: reglas, textos (español y portugués) y fuentes.
 - `dados.js`: mapa y datos de los departamentos. Lo genera un script del proyecto a partir de la página del mapa del congreso; no editar a mano.
+- `links.js`: enlaces de las fuentes (página original y copia del Internet Archive).
 - `ranking.html`: ranking en vivo para la tablet del stand (se actualiza cada 5 s, con el QR del juego).
 - `config.js`: dirección del ranking (`rankingUrl`) y del juego.
 - `apps-script/`: código de la planilla de Google que guarda el ranking y cómo instalarlo.

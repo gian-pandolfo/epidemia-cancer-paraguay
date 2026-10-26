@@ -257,6 +257,54 @@ main { max-width: 640px; margin: 0 auto; }
 .trofeus { margin: 0; }
 .cons { border-color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { .confete, .mais { display: none; } .faixa { transition: none; } .estrelas span.on, .selo.novo { animation: none; } }
+/* v4: personagens, árvore de habilidades (estilo XCOM 2), ficha da ação, níveis de atenção e prestígio */
+#btn-ajuda { position: relative; font-size: 1.05rem; }
+#btn-ajuda.alerta-asc::after { content: ""; position: absolute; top: 1px; right: 1px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--bg); animation: pulsa 1s ease-in-out infinite; }
+@keyframes pulsa { 50% { transform: scale(1.35); } }
+.avatar { display: inline-grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: color-mix(in srgb, var(--cor, var(--accent)) 30%, var(--surface)); box-shadow: inset 0 0 0 2px var(--cor, var(--accent)); font-size: 1.8rem; flex: none; }
+.pers-lista { display: grid; gap: 8px; }
+.pers { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; text-align: left; padding: 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); cursor: pointer; }
+.pers.sel { border-color: var(--accent); box-shadow: inset 0 0 0 2px var(--accent); }
+.pers-txt { display: grid; gap: 3px; min-width: 0; }
+.pers-txt b { font: 800 1.05rem var(--f-display); }
+.pers-txt small { color: var(--accent); font-weight: 700; }
+.pers-bio { font-size: .82rem; color: var(--muted); }
+.pers-tracos { font-size: .76rem; line-height: 1.35; }
+.pers-teaser { display: flex; align-items: center; gap: 8px; }
+.pers-teaser .avatar { width: 40px; height: 40px; font-size: 1.3rem; }
+.pers-teaser > span:last-child { font-size: .85rem; color: var(--muted); }
+.perfil { display: flex; gap: 12px; align-items: center; }
+.arvore { display: grid; gap: 6px; }
+.cargos-cab, .ramo-cels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.cargos-cab small { font-size: .6rem; line-height: 1.1; color: var(--muted); text-align: center; }
+.ramo-tit { margin: 0 0 2px; font: 800 .74rem var(--f-body); }
+.hab { display: grid; justify-items: center; align-content: start; gap: 2px; min-height: 62px; padding: 6px 2px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); cursor: pointer; text-align: center; }
+.hab span { font-size: 1.3rem; line-height: 1.1; }
+.hab small { font-size: .6rem; line-height: 1.1; }
+.hab.bloqueada, .hab.perdida { opacity: .4; }
+.hab.perdida small { text-decoration: line-through; }
+.hab.escolhida { background: var(--ouro-bg); box-shadow: inset 0 0 0 2px var(--ouro); }
+.hab.opcao { box-shadow: inset 0 0 0 2px var(--accent); animation: opcao 1.2s ease-in-out infinite; }
+@keyframes opcao { 50% { box-shadow: inset 0 0 0 3px var(--accent), 0 0 12px var(--accent-soft); } }
+.hab.sel { outline: 3px solid var(--ink); outline-offset: 1px; }
+.hab-desc { display: grid; gap: 6px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+.hab-desc p { margin: 0; font-size: .88rem; }
+.mini-lista { padding: 10px 12px; font-size: .84rem; }
+.nat { display: inline-block; padding: 1px 6px; border-radius: 999px; font-size: .66rem; font-weight: 800; line-height: 1.4; color: var(--ink); background: var(--surface); border: 1px solid var(--line); }
+.nat.n1 { border-color: var(--nv-p); } .nat.n2 { border-color: var(--nv-d); } .nat.n3 { border-color: var(--nv-t); }
+.acao { position: relative; }
+.acao .nat { position: absolute; right: 3px; bottom: 3px; padding: 0 4px; font-size: .52rem; }
+.acao.bloq, .acao.falta { opacity: .55; }
+.ficha-topo { display: flex; gap: 12px; align-items: center; }
+.ficha-ico { font-size: 2rem; }
+.ficha-custos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.ficha-custos div { display: grid; gap: 2px; padding: 8px 4px; border-radius: 12px; background: var(--surface-2); text-align: center; }
+.ficha-custos small { font-size: .7rem; color: var(--muted); }
+.ficha-custos b { font: 800 1rem var(--f-display); }
+.ficha-btns { display: grid; gap: 8px; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.lk { color: var(--accent); font-weight: 800; text-decoration: none; white-space: nowrap; }
+.lk:hover, .lk:focus-visible { text-decoration: underline; }
 /* Formulário do ranking */
 .form-rank { display: grid; gap: 10px; }
 .form-rank label { display: grid; gap: 4px; font-weight: 700; font-size: .9rem; }
@@ -291,6 +339,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .acao { min-height: 40px; padding: 5px; }
   .painel-acoes { gap: 5px; margin-top: 6px; }
   .barra .btn { padding: 10px 16px; min-height: 46px; font-size: 1rem; }
+  .legenda { font-size: .6rem; }
 }
 @media (max-width: 370px) {
   .hud { gap: 4px; }
@@ -308,8 +357,9 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 <div class="aparelho"><div class="tela" id="tela">
 <header class="hud">
   <div class="marca"><span id="h-titulo">Epidemia</span><small id="h-sub">Paraguay contra el cáncer</small></div>
-  <button class="chip ano" id="h-ano" type="button" hidden></button>
+  <span class="chip" id="h-ano" hidden></span>
   <span class="chip dinheiro" id="h-dinheiro" hidden></span>
+  <span class="chip prest" id="h-prest" hidden></span>
   <span class="chip" id="h-pontos" hidden></span>
   <button class="btn-ico" id="btn-ajuda" type="button" aria-label="Ayuda">?</button>
   <button class="btn-ico" id="btn-idioma" type="button">PT</button>
@@ -350,6 +400,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 
 <script src="config.js"></script>
 <script src="dados.js"></script>
+<script src="links.js"></script>
 <script src="jogo.js"></script>
 </body>
 </html>

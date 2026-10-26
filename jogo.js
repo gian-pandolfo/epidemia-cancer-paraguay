@@ -6,10 +6,11 @@
 
 const $ = (s) => document.querySelector(s);
 const ANOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
-const ORC_BASE = 12;
-const SEG_MES = 2;                 // relógio: 1 mês a cada 2 s (24 s por ano)
+const ORC_BASE = 15;   // receita por ano, que entra mês a mês
 const RAZAO_INC = 2.1;             // incidência ≈ 2,1 × óbitos (GLOBOCAN 2022: 13.783 casos / 6.581 óbitos)
-const CHAVE = "epidemia-py-v3";    // v3: missões, conquistas e desafios (partidas salvas de versões anteriores não continuam)
+const CHAVE = "epidemia-py-v4";    // v4: personagens, habilidades, prestígio e manutenção (partidas salvas de versões anteriores não continuam)
+const RANKS = [0, 1500, 4000, 7500, 11000];   // pontos de cada cargo; cada promoção libera uma habilidade
+const CONV_DESDE = 2016;   // convênios a partir de 2016 (Don Patrón desde o começo)
 const CHAVE_LOGROS = "epidemia-py-logros";   // conquistas deste celular, entre partidas
 const MODOS_VIVOS = ["inc", "prev", "mort", "cura"];
 const DEP = Object.fromEntries(DEPS.map((d) => [d.id, d]));
@@ -24,17 +25,19 @@ const ler = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (
 
 /* ---------- ações: 3 por nível + centro de pesquisa. "conv" = anuidade do convênio que cumpre o mesmo papel ---------- */
 const SLOTS = { P: ["vacuna", "tabaco", "habitos"], D: ["vph", "mamo", "registro"], T: ["quimio", "radio", "paliativos"] };
+/* at = nível de atenção (1ª primária, 2ª secundária, 3ª terciária); manut = manutenção por ano; prest = prestígio para aprovar;
+   desde = ano em que fica disponível; conv = anuidade do convênio que cumpre o mesmo papel */
 const ACOES = {
-  vacuna: { nivel: "P", custo: 2, ico: "💉" },
-  tabaco: { nivel: "P", custo: 1, ico: "🚭" },
-  habitos: { nivel: "P", custo: 1, ico: "🍎" },
-  vph: { nivel: "D", custo: 2, ico: "🔬", vis: 0.06, conv: 1 },
-  mamo: { nivel: "D", custo: 3, ico: "🎗️", vis: 0.06, conv: 2 },
-  registro: { nivel: "D", custo: 1, ico: "📋", vis: 0.08 },
-  quimio: { nivel: "T", custo: 4, ico: "💊", conv: 2 },
-  radio: { nivel: "T", custo: 8, ico: "☢️", conv: 3 },
-  paliativos: { nivel: "T", custo: 2, ico: "🤲", conv: 1 },
-  pesquisa: { nivel: "X", custo: 5, ico: "🎓", conv: 2 },
+  vacuna: { nivel: "P", at: 1, custo: 2, manut: 0.5, prest: 0, ico: "💉" },
+  tabaco: { nivel: "P", at: 1, custo: 1, manut: 0.5, prest: 0, ico: "🚭" },
+  habitos: { nivel: "P", at: 1, custo: 1, manut: 0.5, prest: 0, ico: "🍎" },
+  vph: { nivel: "D", at: 1, custo: 2, manut: 0.5, prest: 0, ico: "🔬", vis: 0.06, conv: 1 },
+  mamo: { nivel: "D", at: 2, custo: 3, manut: 1, prest: 1, ico: "🎗️", vis: 0.06, conv: 2 },
+  registro: { nivel: "D", at: 2, custo: 1, manut: 0.5, prest: 0, ico: "📋", vis: 0.08 },
+  quimio: { nivel: "T", at: 2, custo: 4, manut: 1.5, prest: 1, ico: "💊", conv: 2 },
+  radio: { nivel: "T", at: 3, custo: 8, manut: 2.5, prest: 3, ico: "☢️", conv: 3, desde: 2020 },
+  paliativos: { nivel: "T", at: 1, custo: 2, manut: 0.5, prest: 0, ico: "🤲", conv: 1 },
+  pesquisa: { nivel: "X", at: 3, custo: 5, manut: 1.5, prest: 2, ico: "🎓", conv: 2, desde: 2016 },
 };
 
 /* ---------- textos ---------- */
@@ -44,15 +47,18 @@ const T = {
     h1: "Epidemia: Paraguay contra el cáncer",
     intro: "Eres responsable del control del cáncer en Paraguay de 2015 a 2024. Los primeros 5 años parten de los datos reales del Atlas de Mortalidad por Cáncer; los 5 siguientes son una proyección de tus decisiones.",
     passos: [
-      "Cada año dura 12 meses (unos 24 segundos; toca la fecha ⏸ para pausar). Toca un departamento y elige acciones con tu presupuesto 💰: lo que haces temprano rinde más.",
-      "Tres niveles: <b>1.º Prevención</b>, <b>2.º Diagnóstico</b> y <b>3.º Tratamiento</b>. El <b>equilibrio</b> de un departamento es su nivel más bajo: solo los tres juntos curan más y multiplican los puntos (por la población). Diagnóstico sin tratamiento forma fila.",
-      "Arriba a la derecha: incidencia, prevalencia, muertes y curas del país, en tiempo real. Tócalas para ver el mapa de cada una.",
-      "🤝 Convenios: más baratos para empezar, pero se pagan todos los años.",
+      "Elige tu personaje: Bob, Don Patrón o la Dra. Beatriz. Cada uno tiene ventajas propias y un árbol de habilidades: al subir de cargo con tus ⭐ eliges una nueva.",
+      "Lee con calma, decide y toca «Cerrar el año» para avanzar. En enero llega el 💰 del año y se paga el mantenimiento de todo lo que implementaste; sin dinero, lo más caro se cierra.",
+      "Implementar también cuesta 🎖️ prestigio, que ganas con metas, misiones y respuestas a la sociedad. Toca una acción para ver costos y requisitos antes de invertir.",
+      "Tres funciones: <b>Prevención</b>, <b>Diagnóstico</b> y <b>Tratamiento</b>. El <b>equilibrio</b> de un departamento es la más baja de las tres: solo las tres juntas curan más y multiplican los puntos. Diagnóstico sin tratamiento forma fila.",
+      "Cada acción tiene su nivel de atención: <b>1.ª primaria</b> (puerta de entrada), <b>2.ª secundaria</b> (hospital regional, por derivación) y <b>3.ª terciaria</b> (alta complejidad). La 2.ª necesita 1.ª en el departamento; la 3.ª, 2.ª cerca.",
+      "🤝 Convenios: sin compra ni prestigio, pero se pagan todos los años.",
+      "Arriba a la derecha: incidencia, prevalencia, muertes y curas del país por año; cambian en el acto con cada decisión. Tócalas para ver el mapa de cada una.",
+      "Cada año trae un hecho real, a veces un imprevisto (royalties, epidemias, donaciones, recortes del Congreso) y una demanda de la sociedad.",
       "🎯 Misiones, ⚡ desafíos relámpago y 🏅 logros dan premios. ❤️ Vidas salvadas, 🍎 casos evitados y 🕯️ muertes sin diagnóstico muestran el efecto de tus decisiones (modelo del juego, comparado con no hacer nada).",
-      "Cada año trae un hecho real, a veces un imprevisto (royalties de Itaipú, epidemias, inversión extranjera) y una demanda de la sociedad. Tus respuestas cambian la confianza 👍, y la confianza cambia el presupuesto.",
       "Donde la estadística es baja, falta diagnóstico, no cáncer: diagnosticar revela casos ocultos y la tasa registrada sube. ¡Es buena señal!",
     ],
-    aviso: "Simulación educativa (beta). Los datos de partida y el hecho histórico de cada año son reales, con fuente. Los efectos de las acciones, los números en tiempo real, los imprevistos, las demandas y los puntos son del modelo del juego.",
+    aviso: "Simulación educativa (beta). Los datos de partida y el hecho histórico de cada año son reales, con fuente. Los efectos de las acciones, los personajes, los números en tiempo real, los imprevistos, las demandas y los puntos son del modelo del juego.",
     creditosTit: "Créditos",
     creditos: [
       "<b>Desarrollo:</b> Gianmarlon Pandolfo, estudiante de Medicina (UNINTER Tres Fronteras).",
@@ -83,7 +89,7 @@ const T = {
       mamo: ["Mamógrafo regional", "mama"],
       registro: ["Notificación y registro", "revela casos ocultos"],
       quimio: ["Hospital Día oncológico", "quimioterapia cerca de casa"],
-      radio: ["Acelerador lineal público", "radioterapia; es para siempre"],
+      radio: ["Acelerador lineal público", "radioterapia, alta complejidad"],
       paliativos: ["Cuidados paliativos", "calidad de vida"],
       pesquisa: ["Centro de investigación y registro", "revela la carga real aquí y en los vecinos; +20% de puntos aquí"],
     },
@@ -127,41 +133,72 @@ const T = {
     meses: ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"],
     vivo: { inc: "Incidencia", prev: "Prevalencia", mort: "Muertes", cura: "Curas" },
     vivoTit: {
-      inc: "Casos diagnosticados en el país este año (modelo del juego). Toca para ver el mapa.",
+      inc: "Casos diagnosticados por año con lo que funciona hoy (modelo del juego). Toca para ver el mapa.",
       prev: "Personas que viven con un cáncer diagnosticado en los últimos 5 años (modelo del juego). Toca para ver el mapa.",
-      mort: "Muertes por cáncer en el país este año, estimadas (modelo del juego). Toca para ver el mapa.",
-      cura: "Curas entre los pacientes diagnosticados este año (modelo del juego). Toca para ver el mapa.",
+      mort: "Muertes por cáncer por año con lo que funciona hoy, estimadas (modelo del juego). Toca para ver el mapa.",
+      cura: "Curas por año entre los pacientes diagnosticados (modelo del juego). Toca para ver el mapa.",
     },
-    vivoAria: "País, este año (modelo del juego)",
+    vivoAria: "País, por año (modelo del juego)",
     legVivo: { inc: "Incidencia /100 mil por año (modelo)", prev: "Prevalencia /100 mil (modelo)", mort: "Muertes /100 mil por año (modelo)", cura: "Curas /100 mil por año (modelo)" },
     nomesNivel: { P: "Prevención", D: "Diagnóstico", T: "Tratamiento" }, e: " y ",
     infoEq: (n) => `Equilibrio <b>${n}/3</b>`,
     eqFalta: (l) => `↑ Para subir: ${l}`, os3: "los 3 niveles",
     eqCompleto: "✓ Los 3 niveles completos",
+    // v4: personagens, habilidades, prestígio, manutenção e níveis de atenção
+    linksNota: "↗ abre una copia guardada de la fuente (Internet Archive) cuando existe; si no, la página original.",
+    persTeaser: "Bob, Don Patrón o la Dra. Beatriz: elige quién lidera la lucha contra el cáncer en Paraguay.",
+    pers: { escolher: "Elige tu personaje", jogarCom: (n) => `Jugar con ${n}`, passiva: "Lo que ya sabe hacer", lado: "Contactos" },
+    cargos: ["Coordinador/a local", "Director/a regional", "Director/a nacional", "Viceministro/a", "Ministro/a de Salud"],
+    arvTit: "Personaje y habilidades", arvAscenso: (c) => `¡Ascenso a ${c}! Elige una habilidad de esa columna.`,
+    arvProx: (c, p) => `Próximo cargo: ${c} con ⭐ ${p}`, arvTopo: "Llegaste al cargo más alto.",
+    arvEscolher: "Elegir esta habilidad", arvEscolhida: "Ya la elegiste.", arvBloq: "Se habilita al llegar al cargo de esa columna (una sola por cargo).",
+    ascensoFaixa: (c) => `¡Ascenso: ${c}!`, ascensoTxt: "Elige una nueva habilidad.",
+    niveisAt: ["", "1.ª atención primaria", "2.ª atención secundaria", "3.ª atención terciaria"], nivAtCurto: ["", "1.ª", "2.ª", "3.ª"],
+    funcoes: { P: "Prevención", D: "Diagnóstico", T: "Tratamiento", X: "Investigación" },
+    fichaCompra: "Compra", fichaPrest: "Prestigio", fichaManut: "Mantenimiento", porAnoCurto: "/año",
+    fichaImplementar: (c, p) => `Implementar · 💰 ${c}${p ? ` · 🎖️ ${p}` : ""}`,
+    fichaConv: (c) => `🤝 Convenio: 💰 ${c} por año (ahora y cada enero), sin compra ni prestigio`,
+    fichaManutNota: "El mantenimiento se paga cada enero, a partir del año siguiente.",
+    evEconomia: (r, m) => `Presupuesto del año: +💰 ${r} · mantenimiento y convenios: −💰 ${m}`,
+    evFechou: (l) => `Sin dinero para el mantenimiento: se cerró ${l} (−🎖️ 2 cada uno).`,
+    fichaDesfazer: (c, p) => `Deshacer: vuelven 💰 ${c}${p ? ` y 🎖️ ${p}` : ""}`,
+    fichaCancelar: "Volver", fichaCancelarConv: "Terminar el convenio", convCancelado: "Convenio terminado",
+    fichaAtivo: "Ya funciona en este departamento.", fichaConvAtivo: "Funciona por convenio en este departamento.",
+    bloqAno: (a) => `🔒 ${a}`, bloqAnoTxt: (a) => `Disponible desde ${a}.`,
+    bloqRef1: "🔒 1.ª", bloqRef1Txt: "La atención secundaria necesita atención primaria en el departamento (derivación).",
+    bloqRef2: "🔒 2.ª", bloqRef2Txt: "La atención terciaria necesita atención secundaria en el departamento o en un vecino (derivación).",
+    bloqPrest: (p) => `Necesitas 🎖️ ${p} de prestigio.`, bloqOrc: "Presupuesto insuficiente.", bloqConvAno: (a) => `🤝 Convenios desde ${a}`,
+    semPrest: "Prestigio insuficiente",
+    economia: (r) => `💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/año`,
+    fechouTxt: (ico, n, d) => `Sin dinero: se cerró ${ico} ${n} en ${d} (−🎖️ 2)`,
+    resPrestAno: (a, b) => `Prestigio: 🎖️ ${a} → ${b}`, resPrest: (c) => `Prestigio al final: 🎖️ <b>${c}</b>`,
+    resFechou: (l) => `Cierres por falta de dinero: ${l}`, resHab: (l) => `Habilidades elegidas: ${l}`,
+    congressoMais: "Prestigio alto: el Congreso aprueba +💰 3 para salud.",
+    evPrest: (p, e) => `🎖️ ${p} de prestigio · ${e}`,
+    niveisFonte: "Niveles de atención: la 1.ª es el primer contacto con el sistema de salud (Declaración de Alma-Ata, OMS/UNICEF, 1978); la red del Paraguay va «desde la atención primaria hasta los servicios de mayor complejidad» (OPS, 14/07/2026).",
     missoesTit: "Misiones", missaoOk: "¡Misión cumplida!", recompensa: "Premio", feitasTit: "Cumplidas", semMissao: "🎯 Todas las misiones cumplidas",
     voltar: "Volver al juego",
-    premio: (p) => [p.orc ? `+💰 ${p.orc}` : "", p.conf ? `+👍 ${p.conf}` : "", p.mult ? `⭐×${String(p.mult).replace(".", ",")} este año` : ""].filter(Boolean).join(" · "),
+    premio: (p) => [p.orc ? `+💰 ${p.orc}` : "", p.prest ? `+🎖️ ${p.prest}` : "", p.mult ? `⭐×${String(p.mult).replace(".", ",")} este año` : ""].filter(Boolean).join(" · "),
     logrosTit: "Logros de este celular", logroOk: "¡Logro!", logrosConta: (n, m) => `${n} de ${m}`,
     inicioLogros: (n, m) => `🏅 Logros: ${n} de ${m}`, inicioRecorde: (r) => `🏆 Tu récord: ${r}`,
     quizTit: "Desafío relámpago", quizSub: "¿Verdadero o falso?", verdadeiro: "Verdadero", falso: "Falso",
-    quizCerto: "¡Correcto! +💰 2", quizErrado: "No era así.", quizSeguir: "Seguir",
-    racha: (n) => `Racha de ${n} aciertos 🔥`, rachaPremio: "+👍 5 por la racha",
+    quizCerto: (o) => `¡Correcto! +💰 ${o} · +🎖️ 1`, quizErrado: "No era así.", quizSeguir: "Seguir",
+    racha: (n) => `Racha de ${n} aciertos 🔥`, rachaPremio: "+🎖️ 2 por la racha",
     nivelSobe: (n) => `¡Equilibrio ${n}/3!`, novoRecorde: "¡Nuevo récord!", recordeTxt: "Superaste tu mejor puntaje en este celular.",
-    rodapeV3: (c, v, p) => `👍 ${c} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Confianza · vidas salvadas (modelo) · puntos que suma este año",
+    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Presupuesto anual menos mantenimiento · vidas salvadas (modelo) · puntos que suma este año",
     consTit: "Consecuencia de tus decisiones",
     metVidas: "vidas salvadas", vidasPerd: "vidas perdidas", metEvit: "casos evitados por la prevención", metSemDx: "murieron sin diagnóstico",
     metModelo: "Modelo del juego, comparado con no hacer nada.",
     misAno: (l) => `🎯 Misiones cumplidas: ${l}`, quizAno: (ok) => `⚡ Desafío relámpago: ${ok ? "acertaste" : "fallaste"}`,
-    titulos: ["Promotor/a de salud", "Epidemiólogo/a", "Director/a regional", "Director/a nacional", "Ministro/a de Salud"],
     cargo: (c) => `Tu cargo: ${c}`,
     resImpacto: (v, e, s) => `En 10 años (modelo): <b>${v}</b> vidas salvadas, <b>${e}</b> casos evitados por la prevención y <b>${s}</b> personas que murieron sin diagnóstico.`,
     resMis: (n, m) => `Misiones cumplidas: <b>${n}</b> de ${m}`, resQuiz: (n, m) => `Desafíos relámpago: <b>${n}</b> de ${m} correctos`,
     estrelasAria: (n) => `${n} de 3 estrellas (población en equilibrio)`,
     infoVivo: {
-      inc: (n, x) => `Incidencia (modelo): <b>${n}</b> casos este año · <b>${x}</b>/100 mil`,
+      inc: (n, x) => `Incidencia (modelo): <b>${n}</b> casos por año · <b>${x}</b>/100 mil`,
       prev: (n, x) => `Prevalencia (modelo): <b>${n}</b> personas · <b>${x}</b>/100 mil`,
-      mort: (n, x, s) => `Muertes (modelo): <b>${n}</b> este año, ${s} sin diagnóstico · <b>${x}</b>/100 mil`,
-      cura: (n, x) => `Curas (modelo): <b>${n}</b> este año · <b>${x}</b>/100 mil`,
+      mort: (n, x, s) => `Muertes (modelo): <b>${n}</b> por año, ${s} sin diagnóstico · <b>${x}</b>/100 mil`,
+      cura: (n, x) => `Curas (modelo): <b>${n}</b> por año · <b>${x}</b>/100 mil`,
     },
     infoComp: (n, a) => `📌 Prometiste ${n} hasta ${a}`,
     convNomes: { vph: "Convenio con laboratorio privado de VPH", mamo: "Convenio con clínica privada de mamografía", quimio: "Convenio con una fundación (Hospital Día)",
@@ -169,20 +206,14 @@ const T = {
     convFeito: "🤝 convenio", convAria: (n, c) => `${n}: 💰 ${c} por año`, porAno: "año",
     convTroca: "Inversión pública: el convenio termina",
     pausar: "Pausar", seguir: "Seguir",
-    terminar: (a) => `Terminar ${a} ⏩`,
-    rodape: (c, p) => `👍 Confianza ${c} · ⭐ +${p} este año`,
+    terminar: (a) => `Cerrar ${a} ▶`,
     imprevisto: "Imprevisto", escenario: "Escenario del juego (ilustrativo)",
     demandaTit: "Demanda del año", proxDemanda: "Ver la demanda del año",
     quem: { cid: "Ciudadanos", pub: "Institución pública", priv: "Institución privada", acad: "Institución académica", int: "Cooperación internacional" },
     semOrcOp: "sin presupuesto", inspirado: "Inspirado en",
-    convPago: (c, n) => `Convenios: −💰 ${c} (${n})`,
-    convCancel: (n) => `Sin presupuesto: ${n} convenio(s) cancelado(s).`,
-    confOrc: (b) => `Confianza ${b > 0 ? "alta" : "baja"}: ${b > 0 ? "+" : "−"}💰 ${Math.abs(b)} en el presupuesto`,
-    compOk: (n, d) => `Compromiso cumplido: ${n} en ${d} (+👍 8)`,
-    compFalhou: (n, d) => `Compromiso incumplido: ${n} en ${d} (−👍 12)`,
+    compOk: (n, d) => `Compromiso cumplido: ${n} en ${d} (+🎖️ 4)`,
+    compFalhou: (n, d) => `Compromiso incumplido: ${n} en ${d} (−🎖️ 6)`,
     resPais: (c, m, k) => `País este año (modelo): ${c} casos diagnosticados, ${m} muertes y ${k} curas.`,
-    resConfAno: (a, b) => `Confianza: 👍 ${a} → ${b}`,
-    resConf: (c) => `Confianza al final: 👍 <b>${c}</b>`,
     resComp: (ok, tot) => `Compromisos cumplidos: <b>${ok}</b> de ${tot}`,
     resTot: (c, m, k) => `En 10 años (modelo del juego): <b>${c}</b> casos diagnosticados, <b>${m}</b> muertes y <b>${k}</b> curas.`,
     modeloNota: "Modelo del juego: incidencia ≈ 2,1 × muertes (proporción de GLOBOCAN 2022: 13.783 casos y 6.581 muertes); punto de partida: muertes registradas por departamento en el Atlas 2015–2019. Lo demás es ilustrativo.",
@@ -192,15 +223,18 @@ const T = {
     h1: "Epidemia: Paraguai contra o câncer",
     intro: "Você é responsável pelo controle do câncer no Paraguai de 2015 a 2024. Os primeiros 5 anos partem dos dados reais do Atlas de Mortalidad por Cáncer; os 5 seguintes são uma projeção das suas decisões.",
     passos: [
-      "Cada ano dura 12 meses (uns 24 segundos; toque na data ⏸ para pausar). Toque num departamento e escolha ações com o seu orçamento 💰: o que você faz cedo rende mais.",
-      "Três níveis: <b>1º Prevenção</b>, <b>2º Diagnóstico</b> e <b>3º Tratamento</b>. O <b>equilíbrio</b> de um departamento é o seu nível mais baixo: só os três juntos curam mais e multiplicam os pontos (pela população). Diagnóstico sem tratamento forma fila.",
-      "No alto à direita: incidência, prevalência, óbitos e curas do país, em tempo real. Toque nelas para ver o mapa de cada uma.",
-      "🤝 Convênios: mais baratos para começar, mas se pagam todo ano.",
+      "Escolha seu personagem: Bob, Don Patrón ou a Dra. Beatriz. Cada um tem vantagens próprias e uma árvore de habilidades: ao subir de cargo com suas ⭐ você escolhe uma nova.",
+      "Leia com calma, decida e toque em «Fechar o ano» para avançar. Em janeiro chega o 💰 do ano e se paga a manutenção de tudo o que você implantou; sem dinheiro, o mais caro fecha.",
+      "Implantar também custa 🎖️ prestígio, que você ganha com metas, missões e respostas à sociedade. Toque numa ação para ver custos e requisitos antes de investir.",
+      "Três funções: <b>Prevenção</b>, <b>Diagnóstico</b> e <b>Tratamento</b>. O <b>equilíbrio</b> de um departamento é a mais baixa das três: só as três juntas curam mais e multiplicam os pontos. Diagnóstico sem tratamento forma fila.",
+      "Cada ação tem seu nível de atenção: <b>1ª primária</b> (porta de entrada), <b>2ª secundária</b> (hospital regional, por encaminhamento) e <b>3ª terciária</b> (alta complexidade). A 2ª precisa de 1ª no departamento; a 3ª, de 2ª perto.",
+      "🤝 Convênios: sem compra nem prestígio, mas se pagam todo ano.",
+      "No alto à direita: incidência, prevalência, óbitos e curas do país por ano; mudam na hora a cada decisão. Toque nelas para ver o mapa de cada uma.",
+      "Cada ano traz um fato real, às vezes um imprevisto (royalties, epidemias, doações, cortes do Congresso) e uma demanda da sociedade.",
       "🎯 Missões, ⚡ desafios relâmpago e 🏅 conquistas dão prêmios. ❤️ Vidas salvas, 🍎 casos evitados e 🕯️ óbitos sem diagnóstico mostram o efeito das suas decisões (modelo do jogo, comparado com não fazer nada).",
-      "Cada ano traz um fato real, às vezes um imprevisto (royalties de Itaipu, epidemias, investimento estrangeiro) e uma demanda da sociedade. Suas respostas mudam a confiança 👍, e a confiança muda o orçamento.",
       "Onde a estatística é baixa, falta diagnóstico, não câncer: diagnosticar revela casos ocultos e a taxa registrada sobe. É bom sinal!",
     ],
-    aviso: "Simulação educativa (beta). Os dados de partida e o fato histórico de cada ano são reais, com fonte. Os efeitos das ações, os números em tempo real, os imprevistos, as demandas e os pontos são do modelo do jogo.",
+    aviso: "Simulação educativa (beta). Os dados de partida e o fato histórico de cada ano são reais, com fonte. Os efeitos das ações, os personagens, os números em tempo real, os imprevistos, as demandas e os pontos são do modelo do jogo.",
     creditosTit: "Créditos",
     creditos: [
       "<b>Desenvolvimento:</b> Gianmarlon Pandolfo, estudante de Medicina (UNINTER Tres Fronteras).",
@@ -231,7 +265,7 @@ const T = {
       mamo: ["Mamógrafo regional", "mama"],
       registro: ["Notificação e registro", "revela casos ocultos"],
       quimio: ["Hospital Día oncológico", "quimioterapia perto de casa"],
-      radio: ["Acelerador linear público", "radioterapia; é para sempre"],
+      radio: ["Acelerador linear público", "radioterapia, alta complexidade"],
       paliativos: ["Cuidados paliativos", "qualidade de vida"],
       pesquisa: ["Centro de pesquisa e registro", "revela a carga real aqui e nos vizinhos; +20% de pontos aqui"],
     },
@@ -275,41 +309,72 @@ const T = {
     meses: ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"],
     vivo: { inc: "Incidência", prev: "Prevalência", mort: "Óbitos", cura: "Curas" },
     vivoTit: {
-      inc: "Casos diagnosticados no país neste ano (modelo do jogo). Toque para ver o mapa.",
+      inc: "Casos diagnosticados por ano com o que funciona hoje (modelo do jogo). Toque para ver o mapa.",
       prev: "Pessoas que vivem com um câncer diagnosticado nos últimos 5 anos (modelo do jogo). Toque para ver o mapa.",
-      mort: "Óbitos por câncer no país neste ano, estimados (modelo do jogo). Toque para ver o mapa.",
-      cura: "Curas entre os pacientes diagnosticados neste ano (modelo do jogo). Toque para ver o mapa.",
+      mort: "Óbitos por câncer por ano com o que funciona hoje, estimados (modelo do jogo). Toque para ver o mapa.",
+      cura: "Curas por ano entre os pacientes diagnosticados (modelo do jogo). Toque para ver o mapa.",
     },
-    vivoAria: "País, neste ano (modelo do jogo)",
+    vivoAria: "País, por ano (modelo do jogo)",
     legVivo: { inc: "Incidência /100 mil por ano (modelo)", prev: "Prevalência /100 mil (modelo)", mort: "Óbitos /100 mil por ano (modelo)", cura: "Curas /100 mil por ano (modelo)" },
     nomesNivel: { P: "Prevenção", D: "Diagnóstico", T: "Tratamento" }, e: " e ",
     infoEq: (n) => `Equilíbrio <b>${n}/3</b>`,
     eqFalta: (l) => `↑ Para subir: ${l}`, os3: "os 3 níveis",
     eqCompleto: "✓ Os 3 níveis completos",
+    // v4: personagens, habilidades, prestígio, manutenção e níveis de atenção
+    linksNota: "↗ abre uma cópia guardada da fonte (Internet Archive) quando existe; se não, a página original.",
+    persTeaser: "Bob, Don Patrón ou a Dra. Beatriz: escolha quem lidera a luta contra o câncer no Paraguai.",
+    pers: { escolher: "Escolha seu personagem", jogarCom: (n) => `Jogar com ${n}`, passiva: "O que já sabe fazer", lado: "Contatos" },
+    cargos: ["Coordenador/a local", "Diretor/a regional", "Diretor/a nacional", "Vice-ministro/a", "Ministro/a da Saúde"],
+    arvTit: "Personagem e habilidades", arvAscenso: (c) => `Promoção a ${c}! Escolha uma habilidade dessa coluna.`,
+    arvProx: (c, p) => `Próximo cargo: ${c} com ⭐ ${p}`, arvTopo: "Você chegou ao cargo mais alto.",
+    arvEscolher: "Escolher esta habilidade", arvEscolhida: "Você já a escolheu.", arvBloq: "Libera ao chegar ao cargo dessa coluna (uma só por cargo).",
+    ascensoFaixa: (c) => `Promoção: ${c}!`, ascensoTxt: "Escolha uma nova habilidade.",
+    niveisAt: ["", "1ª atenção primária", "2ª atenção secundária", "3ª atenção terciária"], nivAtCurto: ["", "1ª", "2ª", "3ª"],
+    funcoes: { P: "Prevenção", D: "Diagnóstico", T: "Tratamento", X: "Pesquisa" },
+    fichaCompra: "Compra", fichaPrest: "Prestígio", fichaManut: "Manutenção", porAnoCurto: "/ano",
+    fichaImplementar: (c, p) => `Implantar · 💰 ${c}${p ? ` · 🎖️ ${p}` : ""}`,
+    fichaConv: (c) => `🤝 Convênio: 💰 ${c} por ano (agora e todo janeiro), sem compra nem prestígio`,
+    fichaManutNota: "A manutenção se paga todo janeiro, a partir do ano seguinte.",
+    evEconomia: (r, m) => `Orçamento do ano: +💰 ${r} · manutenção e convênios: −💰 ${m}`,
+    evFechou: (l) => `Sem dinheiro para a manutenção: fechou ${l} (−🎖️ 2 cada).`,
+    fichaDesfazer: (c, p) => `Desfazer: voltam 💰 ${c}${p ? ` e 🎖️ ${p}` : ""}`,
+    fichaCancelar: "Voltar", fichaCancelarConv: "Encerrar o convênio", convCancelado: "Convênio encerrado",
+    fichaAtivo: "Já funciona neste departamento.", fichaConvAtivo: "Funciona por convênio neste departamento.",
+    bloqAno: (a) => `🔒 ${a}`, bloqAnoTxt: (a) => `Disponível a partir de ${a}.`,
+    bloqRef1: "🔒 1ª", bloqRef1Txt: "A atenção secundária precisa de atenção primária no departamento (encaminhamento).",
+    bloqRef2: "🔒 2ª", bloqRef2Txt: "A atenção terciária precisa de atenção secundária no departamento ou num vizinho (encaminhamento).",
+    bloqPrest: (p) => `Você precisa de 🎖️ ${p} de prestígio.`, bloqOrc: "Orçamento insuficiente.", bloqConvAno: (a) => `🤝 Convênios a partir de ${a}`,
+    semPrest: "Prestígio insuficiente",
+    economia: (r) => `💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/ano`,
+    fechouTxt: (ico, n, d) => `Sem dinheiro: fechou ${ico} ${n} em ${d} (−🎖️ 2)`,
+    resPrestAno: (a, b) => `Prestígio: 🎖️ ${a} → ${b}`, resPrest: (c) => `Prestígio no fim: 🎖️ <b>${c}</b>`,
+    resFechou: (l) => `Fechamentos por falta de dinheiro: ${l}`, resHab: (l) => `Habilidades escolhidas: ${l}`,
+    congressoMais: "Prestígio alto: o Congresso aprova +💰 3 para a saúde.",
+    evPrest: (p, e) => `🎖️ ${p} de prestígio · ${e}`,
+    niveisFonte: "Níveis de atenção: a 1ª é o primeiro contato com o sistema de saúde (Declaração de Alma-Ata, OMS/UNICEF, 1978); a rede do Paraguai vai «desde la atención primaria hasta los servicios de mayor complejidad» (OPAS, 14/07/2026).",
     missoesTit: "Missões", missaoOk: "Missão cumprida!", recompensa: "Prêmio", feitasTit: "Cumpridas", semMissao: "🎯 Todas as missões cumpridas",
     voltar: "Voltar ao jogo",
-    premio: (p) => [p.orc ? `+💰 ${p.orc}` : "", p.conf ? `+👍 ${p.conf}` : "", p.mult ? `⭐×${String(p.mult).replace(".", ",")} neste ano` : ""].filter(Boolean).join(" · "),
+    premio: (p) => [p.orc ? `+💰 ${p.orc}` : "", p.prest ? `+🎖️ ${p.prest}` : "", p.mult ? `⭐×${String(p.mult).replace(".", ",")} neste ano` : ""].filter(Boolean).join(" · "),
     logrosTit: "Conquistas deste celular", logroOk: "Conquista!", logrosConta: (n, m) => `${n} de ${m}`,
     inicioLogros: (n, m) => `🏅 Conquistas: ${n} de ${m}`, inicioRecorde: (r) => `🏆 Seu recorde: ${r}`,
     quizTit: "Desafio relâmpago", quizSub: "Verdadeiro ou falso?", verdadeiro: "Verdadeiro", falso: "Falso",
-    quizCerto: "Correto! +💰 2", quizErrado: "Não era assim.", quizSeguir: "Continuar",
-    racha: (n) => `Sequência de ${n} acertos 🔥`, rachaPremio: "+👍 5 pela sequência",
+    quizCerto: (o) => `Correto! +💰 ${o} · +🎖️ 1`, quizErrado: "Não era assim.", quizSeguir: "Continuar",
+    racha: (n) => `Sequência de ${n} acertos 🔥`, rachaPremio: "+🎖️ 2 pela sequência",
     nivelSobe: (n) => `Equilíbrio ${n}/3!`, novoRecorde: "Novo recorde!", recordeTxt: "Você superou sua melhor pontuação neste celular.",
-    rodapeV3: (c, v, p) => `👍 ${c} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Confiança · vidas salvas (modelo) · pontos que soma neste ano",
+    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Orçamento anual menos manutenção · vidas salvas (modelo) · pontos que soma neste ano",
     consTit: "Consequência das suas decisões",
     metVidas: "vidas salvas", vidasPerd: "vidas perdidas", metEvit: "casos evitados pela prevenção", metSemDx: "morreram sem diagnóstico",
     metModelo: "Modelo do jogo, comparado com não fazer nada.",
     misAno: (l) => `🎯 Missões cumpridas: ${l}`, quizAno: (ok) => `⚡ Desafio relâmpago: ${ok ? "você acertou" : "você errou"}`,
-    titulos: ["Agente de saúde", "Epidemiologista", "Diretor/a regional", "Diretor/a nacional", "Ministro/a da Saúde"],
     cargo: (c) => `Seu cargo: ${c}`,
     resImpacto: (v, e, s) => `Em 10 anos (modelo): <b>${v}</b> vidas salvas, <b>${e}</b> casos evitados pela prevenção e <b>${s}</b> pessoas que morreram sem diagnóstico.`,
     resMis: (n, m) => `Missões cumpridas: <b>${n}</b> de ${m}`, resQuiz: (n, m) => `Desafios relâmpago: <b>${n}</b> de ${m} corretos`,
     estrelasAria: (n) => `${n} de 3 estrelas (população em equilíbrio)`,
     infoVivo: {
-      inc: (n, x) => `Incidência (modelo): <b>${n}</b> casos neste ano · <b>${x}</b>/100 mil`,
+      inc: (n, x) => `Incidência (modelo): <b>${n}</b> casos por ano · <b>${x}</b>/100 mil`,
       prev: (n, x) => `Prevalência (modelo): <b>${n}</b> pessoas · <b>${x}</b>/100 mil`,
-      mort: (n, x, s) => `Óbitos (modelo): <b>${n}</b> neste ano, ${s} sem diagnóstico · <b>${x}</b>/100 mil`,
-      cura: (n, x) => `Curas (modelo): <b>${n}</b> neste ano · <b>${x}</b>/100 mil`,
+      mort: (n, x, s) => `Óbitos (modelo): <b>${n}</b> por ano, ${s} sem diagnóstico · <b>${x}</b>/100 mil`,
+      cura: (n, x) => `Curas (modelo): <b>${n}</b> por ano · <b>${x}</b>/100 mil`,
     },
     infoComp: (n, a) => `📌 Você prometeu ${n} até ${a}`,
     convNomes: { vph: "Convênio com laboratório privado de HPV", mamo: "Convênio com clínica privada de mamografia", quimio: "Convênio com uma fundação (Hospital Día)",
@@ -317,20 +382,14 @@ const T = {
     convFeito: "🤝 convênio", convAria: (n, c) => `${n}: 💰 ${c} por ano`, porAno: "ano",
     convTroca: "Investimento público: o convênio termina",
     pausar: "Pausar", seguir: "Continuar",
-    terminar: (a) => `Terminar ${a} ⏩`,
-    rodape: (c, p) => `👍 Confiança ${c} · ⭐ +${p} neste ano`,
+    terminar: (a) => `Fechar ${a} ▶`,
     imprevisto: "Imprevisto", escenario: "Cenário do jogo (ilustrativo)",
     demandaTit: "Demanda do ano", proxDemanda: "Ver a demanda do ano",
     quem: { cid: "Cidadãos", pub: "Instituição pública", priv: "Instituição privada", acad: "Instituição acadêmica", int: "Cooperação internacional" },
     semOrcOp: "sem orçamento", inspirado: "Inspirado em",
-    convPago: (c, n) => `Convênios: −💰 ${c} (${n})`,
-    convCancel: (n) => `Sem orçamento: ${n} convênio(s) cancelado(s).`,
-    confOrc: (b) => `Confiança ${b > 0 ? "alta" : "baixa"}: ${b > 0 ? "+" : "−"}💰 ${Math.abs(b)} no orçamento`,
-    compOk: (n, d) => `Compromisso cumprido: ${n} em ${d} (+👍 8)`,
-    compFalhou: (n, d) => `Compromisso não cumprido: ${n} em ${d} (−👍 12)`,
+    compOk: (n, d) => `Compromisso cumprido: ${n} em ${d} (+🎖️ 4)`,
+    compFalhou: (n, d) => `Compromisso não cumprido: ${n} em ${d} (−🎖️ 6)`,
     resPais: (c, m, k) => `País neste ano (modelo): ${c} casos diagnosticados, ${m} óbitos e ${k} curas.`,
-    resConfAno: (a, b) => `Confiança: 👍 ${a} → ${b}`,
-    resConf: (c) => `Confiança no fim: 👍 <b>${c}</b>`,
     resComp: (ok, tot) => `Compromissos cumpridos: <b>${ok}</b> de ${tot}`,
     resTot: (c, m, k) => `Em 10 anos (modelo do jogo): <b>${c}</b> casos diagnosticados, <b>${m}</b> óbitos e <b>${k}</b> curas.`,
     modeloNota: "Modelo do jogo: incidência ≈ 2,1 × óbitos (proporção do GLOBOCAN 2022: 13.783 casos e 6.581 óbitos); ponto de partida: óbitos registrados por departamento no Atlas 2015–2019. O resto é ilustrativo.",
@@ -381,8 +440,8 @@ const EVENTOS = {
   },
   2023: {
     aplicar: () => { S.mod.radio = -2; },
-    es: ["El INCAN anuncia un nuevo equipo de radioterapia", "Inversión de US$ 2 millones en radioterapia para el INCAN.", "El acelerador lineal público cuesta 💰 2 menos este año.", "La Nación, 25/04/2023"],
-    pt: ["O INCAN anuncia um novo equipamento de radioterapia", "Investimento de US$ 2 milhões em radioterapia para o INCAN.", "O acelerador linear público custa 💰 2 a menos neste ano.", "La Nación, 25/04/2023"],
+    es: ["Llega al INCAN un nuevo acelerador lineal", "Un acelerador valuado en US$ 2 millones, donado por EE. UU. y el OIEA, llega al INCAN.", "El acelerador lineal público cuesta 💰 2 menos este año.", "La Nación, 25/04/2023"],
+    pt: ["Chega ao INCAN um novo acelerador linear", "Um acelerador avaliado em US$ 2 milhões, doado pelos EUA e pela AIEA, chega ao INCAN.", "O acelerador linear público custa 💰 2 a menos neste ano.", "La Nación, 25/04/2023"],
   },
   2024: {
     aplicar: () => { S.mod.vacuna = -1; S.mod.registro = -1; darGratis("concepcion", "quimio"); },
@@ -393,7 +452,7 @@ const EVENTOS = {
 
 /* ---------- imprevistos: a partir de 2016, em metade dos anos, sem repetir ---------- */
 const EVENTOS_ALEAT = [
-  { id: "itaipu", alvo: () => sortear(DEPS).id, aplicar: (dep) => { S.orc += 2; S.regiao = { dep, valor: 1 }; },
+  { id: "itaipu", alvo: () => sortear(DEPS).id, aplicar: (dep) => { S.orc += 2 + num("royaltyExtra"); S.regiao = { dep, valor: 1 }; },
     es: ["Royalties de Itaipú", "Los royalties de la represa impulsan el desarrollo de {dep}.", "+💰 2 y, este año, las acciones en {dep} cuestan 💰 1 menos.", "Ejemplo real: la Itaipú Binacional compró, vía Fundación Tesai, el mamógrafo del primer servicio de mamografía de Concepción (MSPBS, 21/11/2024)."],
     pt: ["Royalties de Itaipu", "Os royalties da usina impulsionam o desenvolvimento de {dep}.", "+💰 2 e, neste ano, as ações em {dep} custam 💰 1 a menos.", "Exemplo real: a Itaipu Binacional comprou, via Fundación Tesai, o mamógrafo do primeiro serviço de mamografia de Concepción (MSPBS, 21/11/2024)."] },
   { id: "dengue", aplicar: () => { S.orc = Math.max(0, S.orc - 3); },
@@ -406,14 +465,40 @@ const EVENTOS_ALEAT = [
     es: ["Inversión extranjera en salud", "Un fondo internacional financia equipos de diagnóstico del cáncer.", "Este año, el mamógrafo y el test de VPH cuestan 💰 1 menos.", ""],
     pt: ["Investimento estrangeiro em saúde", "Um fundo internacional financia equipamentos de diagnóstico do câncer.", "Neste ano, o mamógrafo e o teste de HPV custam 💰 1 a menos.", ""] },
   { id: "ops", alvo: () => alvoSem("vph"), aplicar: (dep) => darGratis(dep, "vph"),
-    es: ["Cooperación de la OPS/OMS", "La OPS/OMS apoya el test de VPH en {dep}.", "{dep} recibe gratis el test de VPH.", "Ejemplo real: OPS/OMS, prueba de VPH para 100 mil mujeres de Alto Paraná (12/02/2024)."],
-    pt: ["Cooperação da OPAS/OMS", "A OPAS/OMS apoia o teste de HPV em {dep}.", "{dep} ganha de graça o teste de HPV.", "Exemplo real: OPAS/OMS, teste de HPV para 100 mil mulheres de Alto Paraná (12/02/2024)."] },
+    es: ["Cooperación de la OPS/OMS", "La OPS/OMS apoya el test de VPH en {dep}.", "{dep} recibe gratis el test de VPH.", "Ejemplo real: prueba de VPH para 100 mil mujeres de Alto Paraná (OPS/OMS, 12/02/2024)."],
+    pt: ["Cooperação da OPAS/OMS", "A OPAS/OMS apoia o teste de HPV em {dep}.", "{dep} ganha de graça o teste de HPV.", "Exemplo real: teste de HPV para 100 mil mulheres de Alto Paraná (OPAS/OMS, 12/02/2024)."] },
   { id: "oiea", aplicar: () => { S.mod.radio = (S.mod.radio || 0) - 3; },
     es: ["Cooperación técnica para radioterapia", "Un organismo internacional ofrece apoyo técnico para nuevos aceleradores.", "Este año, el acelerador lineal cuesta 💰 3 menos.", ""],
     pt: ["Cooperação técnica para radioterapia", "Um organismo internacional oferece apoio técnico para novos aceleradores.", "Neste ano, o acelerador linear custa 💰 3 a menos.", ""] },
-  { id: "yacyreta", alvo: () => (temSlot(S.deps.itapua, "radio") ? undefined : "itapua"), aplicar: () => { S.cupons.push({ dep: "itapua", a: "radio", valor: 4 }); },
+  { id: "yacyreta", alvo: () => (temSlot(S.deps.itapua, "radio") ? undefined : "itapua"), aplicar: () => { S.cupons.push({ dep: "itapua", a: "radio", valor: 4 }); S.orc += num("royaltyExtra"); },
     es: ["Fondos de Yacyretá para Itapúa", "La Entidad Binacional Yacyretá ofrece fondos para la radioterapia en Itapúa.", "Este año, el acelerador en Itapúa cuesta 💰 4 menos.", "Ejemplo real: el Gobierno se comprometió a comprar un acelerador para Encarnación con fondos de Yacyretá (ABC Color, 10/05/2024)."],
     pt: ["Recursos de Yacyretá para Itapúa", "A Entidad Binacional Yacyretá oferece recursos para a radioterapia em Itapúa.", "Neste ano, o acelerador em Itapúa custa 💰 4 a menos.", "Exemplo real: o governo se comprometeu a comprar um acelerador para Encarnación com recursos de Yacyretá (ABC Color, 10/05/2024)."] },
+  { id: "gobierno", cond: () => S.aleatUsados.includes("dengue") || S.aleatUsados.includes("respiratoria") || S.anoIdx >= 6, aplicar: () => { S.orc += 4; },
+    es: ["Fondo de emergencia del Gobierno Nacional", "Después de la epidemia, el Gobierno Nacional refuerza el presupuesto de salud.", "+💰 4.", ""],
+    pt: ["Fundo de emergência do Governo Nacional", "Depois da epidemia, o Governo Nacional reforça o orçamento da saúde.", "+💰 4.", ""] },
+  { id: "global", cond: () => contar(COLO, (id) => temSlot(S.deps[id], "vph")) >= 4 && DEPS.filter((d) => temSlot(S.deps[d.id], "vacuna")).length >= 4,
+    aplicar: () => { S.orc += 6; ganharPrest(3); },
+    es: ["Premio internacional contra el cáncer de cuello uterino", "Un organismo internacional reconoce tus avances en vacunación y en test de VPH.", "+💰 6 y +🎖️ 3.", "Inspirado en la estrategia de la OMS para eliminar el cáncer de cuello uterino: metas 90-70-90 para 2030 (resolución WHA73.2, 2020)."],
+    pt: ["Prêmio internacional contra o câncer do colo do útero", "Um organismo internacional reconhece seus avanços em vacinação e teste de HPV.", "+💰 6 e +🎖️ 3.", "Inspirado na estratégia da OMS para eliminar o câncer do colo do útero: metas 90-70-90 para 2030 (resolução WHA73.2, 2020)."] },
+  { id: "recorte", alvo: () => { const r = S.log[S.log.length - 1], f = r && DEPS.find((d) => r.filas.includes(d.nome)); return f ? f.id : (S.comp.find((c) => c.estado === "falhou") || {}).dep; },
+    aplicar: () => { S.orc = Math.max(0, S.orc - 3); ganharPrest(-1); },
+    es: ["El Congreso recorta fondos de {dep}", "{dep} no alcanzó sus metas y el Congreso recorta parte del presupuesto de salud.", "−💰 3 y −🎖️ 1.", ""],
+    pt: ["O Congresso corta verbas de {dep}", "{dep} não alcançou suas metas e o Congresso corta parte do orçamento da saúde.", "−💰 3 e −🎖️ 1.", ""] },
+  { id: "religiosa", alvo: () => alvoSem("paliativos"), aplicar: (dep) => darGratis(dep, "paliativos"),
+    es: ["Donación de instituciones religiosas", "Instituciones religiosas donan un servicio de cuidados paliativos en {dep}.", "{dep} recibe gratis los cuidados paliativos.", ""],
+    pt: ["Doação de instituições religiosas", "Instituições religiosas doam um serviço de cuidados paliativos em {dep}.", "{dep} ganha de graça os cuidados paliativos.", ""] },
+  { id: "academia", alvo: () => alvoSem("registro"), aplicar: (dep) => darGratis(dep, "registro"),
+    es: ["Una universidad cede académicos", "Residentes e investigadores de una universidad organizan el registro de cáncer en {dep}.", "{dep} recibe gratis la notificación y el registro.", ""],
+    pt: ["Uma universidade cede acadêmicos", "Residentes e pesquisadores de uma universidade organizam o registro de câncer em {dep}.", "{dep} ganha de graça a notificação e o registro.", ""] },
+  { id: "empresa", aplicar: () => { S.orc += 4; },
+    es: ["Donación de empresas privadas", "Empresas privadas donan dinero para la lucha contra el cáncer.", "+💰 4.", ""],
+    pt: ["Doação de empresas privadas", "Empresas privadas doam dinheiro para a luta contra o câncer.", "+💰 4.", ""] },
+  { id: "opensource", cond: () => S.pers === "bob", alvo: () => alvoMenorVisSem("registro"), aplicar: (dep) => { darGratis(dep, "registro"); ganharPrest(1); },
+    es: ["La comunidad open source ayuda a Bob", "Programadores voluntarios instalan un registro digital de cáncer en {dep}.", "{dep} recibe gratis el registro y +🎖️ 1.", ""],
+    pt: ["A comunidade open source ajuda o Bob", "Programadores voluntários instalam um registro digital de câncer em {dep}.", "{dep} ganha de graça o registro e +🎖️ 1.", ""] },
+  { id: "medicas", cond: () => S.pers === "beatriz", alvo: () => alvoSem("vph"), aplicar: (dep) => { darGratis(dep, "vph"); ganharPrest(1); },
+    es: ["Colegas de la Dra. Beatriz", "Sociedades médicas organizan una jornada de test de VPH en {dep}.", "{dep} recibe gratis el test de VPH y +🎖️ 1.", ""],
+    pt: ["Colegas da Dra. Beatriz", "Sociedades médicas organizam uma jornada de teste de HPV em {dep}.", "{dep} ganha de graça o teste de HPV e +🎖️ 1.", ""] },
 ];
 
 /* ---------- demandas da sociedade: uma por ano, estilo SimCity. Cada resposta custa, muda a confiança ou vira compromisso ---------- */
@@ -422,92 +507,181 @@ const DEMANDAS = [
     es: "Pacientes de {dep} viajan horas para la quimioterapia y piden un Hospital Día.",
     pt: "Pacientes de {dep} viajam horas para a quimioterapia e pedem um Hospital Día.",
     opcoes: [
-      { es: "Prometer un Hospital Día en {dep} hasta {ano2}", pt: "Prometer um Hospital Día em {dep} até {ano2}", conf: 4, aplicar: (dep) => prometer(dep, "quimio", 2) },
-      { es: "Convenio con una fundación local", pt: "Convênio com uma fundação local", conv: "quimio", conf: 6 },
-      { es: "Ahora no", pt: "Agora não", conf: -6 },
+      { es: "Prometer un Hospital Día en {dep} hasta {ano2}", pt: "Prometer um Hospital Día em {dep} até {ano2}", prest: 2, aplicar: (dep) => prometer(dep, "quimio", 2) },
+      { es: "Convenio con una fundación local", pt: "Convênio com uma fundação local", conv: "quimio", prest: 3 },
+      { es: "Ahora no", pt: "Agora não", prest: -3 },
     ] },
   { id: "vacuna", quem: "cid", alvo: () => alvoSem("vacuna"),
     es: "Madres de {dep} piden la vacuna contra el VPH en las escuelas.",
     pt: "Mães de {dep} pedem a vacina contra o HPV nas escolas.",
     opcoes: [
-      { es: "Campaña de vacunación en {dep}", pt: "Campanha de vacinação em {dep}", compra: "vacuna", conf: 6 },
-      { es: "Ahora no", pt: "Agora não", conf: -5 },
+      { es: "Campaña de vacunación en {dep}", pt: "Campanha de vacinação em {dep}", compra: "vacuna", prest: 3 },
+      { es: "Ahora no", pt: "Agora não", prest: -3 },
     ] },
   { id: "terreno", quem: "pub", alvo: () => alvoSem("mamo"),
     es: "La Gobernación de {dep} ofrece terreno y personal para un mamógrafo.",
     pt: "O governo departamental de {dep} oferece terreno e pessoal para um mamógrafo.",
     opcoes: [
-      { es: "Aceptar: este año el mamógrafo en {dep} cuesta 💰 2 menos", pt: "Aceitar: neste ano o mamógrafo em {dep} custa 💰 2 a menos", conf: 3, aplicar: (dep) => S.cupons.push({ dep, a: "mamo", valor: 2 }) },
-      { es: "Rechazar", pt: "Recusar", conf: -2 },
+      { es: "Aceptar: este año el mamógrafo en {dep} cuesta 💰 2 menos", pt: "Aceitar: neste ano o mamógrafo em {dep} custa 💰 2 a menos", prest: 2, aplicar: (dep) => S.cupons.push({ dep, a: "mamo", valor: 2 }) },
+      { es: "Rechazar", pt: "Recusar", prest: -1 },
     ] },
   { id: "subregistro", quem: "acad", alvo: () => alvoMenorVis(),
     es: "Una Facultad de Medicina propone medir el subregistro de muertes en {dep}.",
     pt: "Uma Faculdade de Medicina propõe medir o sub-registro de óbitos em {dep}.",
     opcoes: [
-      { es: "Convenio con la universidad", pt: "Convênio com a universidade", conv: "pesquisa", conf: 3 },
-      { es: "Centro de investigación propio", pt: "Centro de pesquisa próprio", compra: "pesquisa", conf: 3 },
-      { es: "No", pt: "Não", conf: -1 },
+      { es: "Convenio con la universidad", pt: "Convênio com a universidade", conv: "pesquisa", prest: 2 },
+      { es: "Centro de investigación propio", pt: "Centro de pesquisa próprio", compra: "pesquisa", prest: 2 },
+      { es: "No", pt: "Não", prest: -1 },
     ] },
   { id: "clinica", quem: "priv", alvo: () => alvoSem("mamo"),
     es: "Una clínica privada de {dep} ofrece mamografías por convenio.",
     pt: "Uma clínica privada de {dep} oferece mamografias por convênio.",
     opcoes: [
-      { es: "Firmar el convenio", pt: "Assinar o convênio", conv: "mamo", conf: 2 },
-      { es: "Prefiero invertir en lo público", pt: "Prefiro investir no público", conf: 0 },
+      { es: "Firmar el convenio", pt: "Assinar o convênio", conv: "mamo", prest: 1 },
+      { es: "Prefiero invertir en lo público", pt: "Prefiro investir no público", prest: 0 },
     ] },
   { id: "remedios", quem: "cid", alvo: () => null, fonte: "La Nación, 09/03/2026; Decreto N° 2064/2019, art. 23",
     es: "La asociación de pacientes denuncia falta de medicamentos oncológicos.",
     pt: "A associação de pacientes denuncia falta de remédios oncológicos.",
     opcoes: [
-      { es: "Compra de urgencia", pt: "Compra de urgência", custo: 3, gasto: "T", conf: 8 },
-      { es: "Actualizar el Listado Nacional de Drogas Antineoplásicas: el año que viene la quimioterapia cuesta 💰 1 menos", pt: "Atualizar o Listado Nacional de Drogas Antineoplásicas: no ano que vem a quimioterapia custa 💰 1 a menos", conf: 3, aplicar: () => { S.modProx.quimio = (S.modProx.quimio || 0) - 1; } },
-      { es: "Ignorar", pt: "Ignorar", conf: -10 },
+      { es: "Compra de urgencia", pt: "Compra de urgência", custo: 3, gasto: "T", prest: 4 },
+      { es: "Actualizar el Listado Nacional de Drogas Antineoplásicas: el año que viene la quimioterapia cuesta 💰 1 menos", pt: "Atualizar o Listado Nacional de Drogas Antineoplásicas: no ano que vem a quimioterapia custa 💰 1 a menos", prest: 2, aplicar: () => { S.modProx.quimio = (S.modProx.quimio || 0) - 1; } },
+      { es: "Ignorar", pt: "Ignorar", prest: -5 },
     ] },
   { id: "ops", quem: "int", alvo: () => alvoSem("vph"), fonte: "OPS/OMS, 12/02/2024",
     es: "La OPS/OMS ofrece apoyo al test de VPH en {dep} si el país pone el personal.",
     pt: "A OPAS/OMS oferece apoio ao teste de HPV em {dep} se o país puser o pessoal.",
     opcoes: [
-      { es: "Aceptar: test de VPH en {dep}", pt: "Aceitar: teste de HPV em {dep}", custo: 1, gasto: "D", conf: 4, aplicar: (dep) => darGratis(dep, "vph") },
-      { es: "No", pt: "Não", conf: -1 },
+      { es: "Aceptar: test de VPH en {dep}", pt: "Aceitar: teste de HPV em {dep}", custo: 1, gasto: "D", prest: 2, aplicar: (dep) => darGratis(dep, "vph") },
+      { es: "No", pt: "Não", prest: -1 },
     ] },
   { id: "tabaco", quem: "cid", alvo: () => alvoSem("tabaco"),
     es: "Escuelas de {dep} piden charlas contra el tabaco.",
     pt: "Escolas de {dep} pedem palestras contra o tabaco.",
     opcoes: [
-      { es: "Campaña antitabaco en {dep}", pt: "Campanha antitabaco em {dep}", compra: "tabaco", conf: 4 },
-      { es: "No", pt: "Não", conf: -3 },
+      { es: "Campaña antitabaco en {dep}", pt: "Campanha antitabaco em {dep}", compra: "tabaco", prest: 2 },
+      { es: "No", pt: "Não", prest: -2 },
     ] },
   { id: "radio", quem: "cid", alvo: () => alvoSem("radio", ["alto-parana", "itapua"]), fonte: "La Nación, 23/07/2024",
     es: "La prensa muestra pacientes de {dep} que tienen que viajar a Capiatá para la radioterapia.",
     pt: "A imprensa mostra pacientes de {dep} que precisam viajar a Capiatá para a radioterapia.",
     opcoes: [
-      { es: "Convenio con radioterapia privada", pt: "Convênio com radioterapia privada", conv: "radio", conf: 6 },
-      { es: "Prometer un acelerador en {dep} hasta {ano3}", pt: "Prometer um acelerador em {dep} até {ano3}", conf: 4, aplicar: (dep) => prometer(dep, "radio", 3) },
-      { es: "Ignorar", pt: "Ignorar", conf: -8 },
+      { es: "Convenio con radioterapia privada", pt: "Convênio com radioterapia privada", conv: "radio", prest: 3 },
+      { es: "Prometer un acelerador en {dep} hasta {ano3}", pt: "Prometer um acelerador em {dep} até {ano3}", prest: 2, aplicar: (dep) => prometer(dep, "radio", 3) },
+      { es: "Ignorar", pt: "Ignorar", prest: -4 },
     ] },
   { id: "paliativos", quem: "pub", alvo: () => alvoSem("paliativos"),
     es: "El municipio de {dep} pide cuidados paliativos en casa.",
     pt: "O município de {dep} pede cuidados paliativos em casa.",
     opcoes: [
-      { es: "Convenio con una ONG", pt: "Convênio com uma ONG", conv: "paliativos", conf: 4 },
-      { es: "Servicio público", pt: "Serviço público", compra: "paliativos", conf: 4 },
-      { es: "No", pt: "Não", conf: -3 },
+      { es: "Convenio con una ONG", pt: "Convênio com uma ONG", conv: "paliativos", prest: 2 },
+      { es: "Servicio público", pt: "Serviço público", compra: "paliativos", prest: 2 },
+      { es: "No", pt: "Não", prest: -2 },
     ] },
   { id: "formacion", quem: "acad", alvo: () => null,
     es: "Una universidad propone formar oncólogos para el interior.",
     pt: "Uma universidade propõe formar oncologistas para o interior.",
     opcoes: [
-      { es: "Becas: por 3 años el tratamiento cuesta 💰 1 menos", pt: "Bolsas: por 3 anos o tratamento custa 💰 1 a menos", custo: 2, gasto: "T", conf: 3, aplicar: () => { S.descTrat = { ate: S.anoIdx + 3, valor: 1 }; } },
-      { es: "No", pt: "Não", conf: 0 },
+      { es: "Becas: por 3 años el tratamiento cuesta 💰 1 menos", pt: "Bolsas: por 3 anos o tratamento custa 💰 1 a menos", custo: 2, gasto: "T", prest: 2, aplicar: () => { S.descTrat = { ate: S.anoIdx + 3, valor: 1 }; } },
+      { es: "No", pt: "Não", prest: 0 },
     ] },
   { id: "lab", quem: "priv", alvo: () => alvoSem("vph"),
     es: "Un laboratorio privado ofrece procesar los tests de VPH de {dep} por convenio.",
     pt: "Um laboratório privado oferece processar os testes de HPV de {dep} por convênio.",
     opcoes: [
-      { es: "Firmar el convenio", pt: "Assinar o convênio", conv: "vph", conf: 2 },
-      { es: "No", pt: "Não", conf: 0 },
+      { es: "Firmar el convenio", pt: "Assinar o convênio", conv: "vph", prest: 1 },
+      { es: "No", pt: "Não", prest: 0 },
     ] },
 ];
+
+/* ---------- personagens: passiva + árvore de 3 especializações × 4 cargos (estilo XCOM 2); arvore[cargo][especialização] ---------- */
+const PERSONAGENS = {
+  bob: { ico: "🧑‍💻", cor: "#6f9bd2",
+    ef: { custo: { pesquisa: 0.6, n1: 0.8 }, ano: { radio: 3, pesquisa: 1 }, sorte: { opensource: 4, academia: 2 } },
+    arvore: [["b_reg", "b_beca", "b_agentes"], ["b_ia", "b_uni", "b_tele"], ["b_vig", "b_ensaios", "b_movel"], ["b_pred", "b_paper", "b_aps40"]],
+    es: { nome: "Bob", papel: "Estudiante de Medicina", lado: "Comunidad open source",
+      bio: "Entusiasta de la epidemiología y de las nuevas tecnologías, aprendiz de inteligencia artificial. Ingenioso para inventar soluciones en la atención primaria.",
+      ramos: ["🤖 Tecnología e IA", "🔬 Investigación", "🏘️ APS inventiva"],
+      tracos: ["🎓 Centro de investigación 40% más barato", "☢️ Acelerador disponible 3 años antes", "🏘️ Atención primaria 20% más barata", "💻 La comunidad open source lo ayuda"] },
+    pt: { nome: "Bob", papel: "Estudante de Medicina", lado: "Comunidade open source",
+      bio: "Entusiasta da epidemiologia e das novas tecnologias, aprendiz de inteligência artificial. Engenhoso para inventar soluções na atenção primária.",
+      ramos: ["🤖 Tecnologia e IA", "🔬 Pesquisa", "🏘️ APS inventiva"],
+      tracos: ["🎓 Centro de pesquisa 40% mais barato", "☢️ Acelerador disponível 3 anos antes", "🏘️ Atenção primária 20% mais barata", "💻 A comunidade open source o ajuda"] } },
+  patron: { ico: "🤵", cor: "#c9a227",
+    ef: { renda: 1 / 3, conv: { todos: 0.6 }, convDesde: 2015, sorte: { religiosa: 3, empresa: 3, itaipu: 2, yacyreta: 2, gobierno: 2 } },
+    arvore: [["p_chave", "p_kermes", "p_camara"], ["p_concessao", "p_caridade", "p_royalties"], ["p_acelconc", "p_fundacao", "p_zona"], ["p_grande", "p_mecenas", "p_polo"]],
+    es: { nome: "Don Patrón", papel: "Empresario", lado: "Instituciones religiosas",
+      bio: "Exitoso en los negocios, ve en la salud una oportunidad para desarrollar la región. Su ambición termina haciendo el bien. Creyente.",
+      ramos: ["🤝 Alianzas público-privadas", "🙏 Filantropía", "🏗️ Desarrollo regional"],
+      tracos: ["💰 +4 por año", "🤝 Convenios 40% más baratos y desde 2015", "🍀 Más donaciones y royalties", "⛪ Las instituciones religiosas lo ayudan"] },
+    pt: { nome: "Don Patrón", papel: "Empresário", lado: "Instituições religiosas",
+      bio: "Bem-sucedido nos negócios, vê na saúde uma oportunidade de desenvolver a região. Sua ambição acaba fazendo o bem. Religioso.",
+      ramos: ["🤝 Parcerias público-privadas", "🙏 Filantropia", "🏗️ Desenvolvimento regional"],
+      tracos: ["💰 +4 por ano", "🤝 Convênios 40% mais baratos e desde 2015", "🍀 Mais doações e royalties", "⛪ As instituições religiosas o ajudam"] } },
+  beatriz: { ico: "👩‍⚕️", cor: "#c48ee0",
+    ef: { custo: { n1: 0.9, n2: 0.8, n3: 0.8 }, prest: { n2: -1, n3: -1 }, cura: 0.02, demMedPrest: 2, sorte: { medicas: 4, academia: 2 } },
+    arvore: [["d_gestao", "d_colegas", "d_protocolos"], ["d_rede", "d_residentes", "d_mbe"], ["d_acel", "d_tamizaje", "d_rcbp"], ["d_centro", "d_lider", "d_excel"]],
+    es: { nome: "Dra. Beatriz", papel: "Médica", lado: "Instituciones médicas",
+      bio: "Altamente capacitada y articulada: ciencia básica y avanzada, metodología y medicina como un todo. Respetada entre colegas.",
+      ramos: ["🏥 Hospitales", "🩺 Clínica", "📚 Ciencia y método"],
+      tracos: ["🏥 Atención 2.ª y 3.ª 20% más barata y con 🎖️ 1 menos", "🩺 +2% de chance de cura", "🎓 Demandas académicas dan +🎖️ 2", "⚕️ Las instituciones médicas la ayudan"] },
+    pt: { nome: "Dra. Beatriz", papel: "Médica", lado: "Instituições médicas",
+      bio: "Altamente capacitada e articulada: ciência básica e avançada, metodologia e medicina como um todo. Respeitada entre colegas.",
+      ramos: ["🏥 Hospitais", "🩺 Clínica", "📚 Ciência e método"],
+      tracos: ["🏥 Atenção 2ª e 3ª 20% mais barata e com 🎖️ 1 a menos", "🩺 +2% de chance de cura", "🎓 Demandas acadêmicas dão +🎖️ 2", "⚕️ As instituições médicas a ajudam"] } },
+};
+
+/* ---------- habilidades (efeitos do jogo): ef = modificadores; aoEscolher = prêmio na hora ---------- */
+const HAB = {
+  b_reg: { ico: "📲", ef: { manut: { registro: 0.5 }, vis: { registro: 0.02 } }, es: ["Registro digital", "Notificación y registro: mantenimiento a la mitad y +2% de casos visibles."], pt: ["Registro digital", "Notificação e registro: manutenção pela metade e +2% de casos visíveis."] },
+  b_beca: { ico: "📜", ef: { prestPesq: 1 }, es: ["Beca de iniciación", "Cada centro de investigación activo da +🎖️ 1 al empezar el año."], pt: ["Bolsa de iniciação", "Cada centro de pesquisa ativo dá +🎖️ 1 no começo do ano."] },
+  b_agentes: { ico: "🧑‍🤝‍🧑", ef: { manut: { n1: 0.5 } }, es: ["Agentes comunitarios", "Atención primaria: mantenimiento a la mitad."], pt: ["Agentes comunitários", "Atenção primária: manutenção pela metade."] },
+  b_ia: { ico: "🤖", ef: { vis: { vph: 0.04, mamo: 0.04 } }, es: ["IA en el tamizaje", "Test de VPH y mamógrafo revelan 4% más casos ocultos."], pt: ["IA no rastreamento", "Teste de HPV e mamógrafo revelam 4% mais casos ocultos."] },
+  b_uni: { ico: "🏛️", ef: { conv: { pesquisa: 0.5 } }, es: ["Red de universidades", "Convenios con universidades a mitad de precio."], pt: ["Rede de universidades", "Convênios com universidades pela metade do preço."] },
+  b_tele: { ico: "📡", ef: { refTele: 1 }, es: ["Telemedicina", "La atención primaria también habilita la terciaria: no hace falta secundaria cerca."], pt: ["Telemedicina", "A atenção primária também libera a terciária: não precisa de secundária perto."] },
+  b_vig: { ico: "📈", ef: { filaMeia: 1 }, es: ["Vigilancia en tiempo real", "Las filas quitan la mitad de puntos y de prestigio."], pt: ["Vigilância em tempo real", "As filas tiram a metade de pontos e de prestígio."] },
+  b_ensaios: { ico: "🧪", ef: { rendaPesq: 3 }, es: ["Ensayos clínicos", "Cada centro de investigación activo da +💰 3 por año."], pt: ["Ensaios clínicos", "Cada centro de pesquisa ativo dá +💰 3 por ano."] },
+  b_movel: { ico: "🚐", ef: { custo: { vacuna: 0.6, tabaco: 0.6, habitos: 0.6 } }, es: ["Salud móvil", "Vacuna, antitabaco y hábitos: 40% más baratos."], pt: ["Saúde móvel", "Vacina, antitabaco e hábitos: 40% mais baratos."] },
+  b_pred: { ico: "🔮", ef: { visTodos: 0.05 }, es: ["Predicción con IA", "+5% de casos visibles en todo el país."], pt: ["Predição com IA", "+5% de casos visíveis no país inteiro."] },
+  b_paper: { ico: "🌐", aoEscolher: () => { S.orc += 8; ganharPrest(4); }, es: ["Publicación internacional", "Premio de una revista internacional: +💰 8 y +🎖️ 4 ahora."], pt: ["Publicação internacional", "Prêmio de uma revista internacional: +💰 8 e +🎖️ 4 agora."] },
+  b_aps40: { ico: "✨", ef: { cura: 0.03 }, es: ["APS 4.0", "+3% de chance de cura en todo el país."], pt: ["APS 4.0", "+3% de chance de cura no país inteiro."] },
+  p_chave: { ico: "🔑", ef: { conv: { todos: 0.75 } }, es: ["Contratos llave en mano", "Convenios: 25% más baratos."], pt: ["Contratos chave na mão", "Convênios: 25% mais baratos."] },
+  p_kermes: { ico: "🎪", ef: { demOrc: 1 }, es: ["Kermés solidaria", "+💰 1 por cada demanda que atiendes."], pt: ["Quermesse solidária", "+💰 1 por demanda atendida."] },
+  p_camara: { ico: "🏢", ef: { renda: 1 / 3 }, es: ["Cámara de comercio", "+💰 4 por año."], pt: ["Câmara de comércio", "+💰 4 por ano."] },
+  p_concessao: { ico: "🏨", ef: { manut: { quimio: 0.5, mamo: 0.5 } }, es: ["Concesión hospitalaria", "Hospital Día y mamógrafo: mantenimiento a la mitad."], pt: ["Concessão hospitalar", "Hospital Día e mamógrafo: manutenção pela metade."] },
+  p_caridade: { ico: "🙏", aoEscolher: () => { for (const d of DEPS.filter((x) => !temSlot(S.deps[x.id], "paliativos")).sort((x, y) => y.pop - x.pop).slice(0, 2)) darGratis(d.id, "paliativos"); },
+    es: ["Obras de caridad", "Instituciones religiosas donan cuidados paliativos en los 2 departamentos más poblados que no los tienen (ahora)."], pt: ["Obras de caridade", "Instituições religiosas doam cuidados paliativos nos 2 departamentos mais populosos que não os têm (agora)."] },
+  p_royalties: { ico: "⚡", ef: { sorte: { itaipu: 3, yacyreta: 3 }, royaltyExtra: 3 }, es: ["Royalties negociados", "Royalties de Itaipú y fondos de Yacyretá más frecuentes, con +💰 3 extra."], pt: ["Royalties negociados", "Royalties de Itaipu e recursos de Yacyretá mais frequentes, com +💰 3 extra."] },
+  p_acelconc: { ico: "☢️", ef: { conv: { radio: 0.5 } }, es: ["Radioterapia concesionada", "Convenio de radioterapia a mitad de precio."], pt: ["Radioterapia concessionada", "Convênio de radioterapia pela metade do preço."] },
+  p_fundacao: { ico: "🕊️", ef: { ganhoPrest: 1.5 }, es: ["Fundación propia", "Todo el prestigio que ganas, ×1,5."], pt: ["Fundação própria", "Todo o prestígio que você ganha, ×1,5."] },
+  p_zona: { ico: "🏗️", ef: { custo: { todos: 0.85 } }, es: ["Zona franca de salud", "Todas las compras 15% más baratas."], pt: ["Zona franca da saúde", "Todas as compras 15% mais baratas."] },
+  p_grande: { ico: "🤝", ef: { conv: { todos: 0.5 } }, es: ["Gran alianza", "Todos los convenios a mitad de precio."], pt: ["Grande aliança", "Todos os convênios pela metade do preço."] },
+  p_mecenas: { ico: "💎", aoEscolher: () => { S.orc += 15; }, es: ["Mecenas", "Empresarios amigos donan +💰 15 ahora."], pt: ["Mecenas", "Empresários amigos doam +💰 15 agora."] },
+  p_polo: { ico: "🌆", ef: { ptsEq: 1.2 }, es: ["Polo regional", "Los departamentos en equilibrio dan 20% más puntos."], pt: ["Polo regional", "Os departamentos em equilíbrio dão 20% mais pontos."] },
+  d_gestao: { ico: "📊", ef: { manut: { n2: 0.75, n3: 0.75 } }, es: ["Gestión hospitalaria", "Atención 2.ª y 3.ª: mantenimiento 25% más barato."], pt: ["Gestão hospitalar", "Atenção 2ª e 3ª: manutenção 25% mais barata."] },
+  d_colegas: { ico: "👥", ef: { demPrest: 1 }, es: ["Colegas de confianza", "+🎖️ 1 extra por cada demanda que atiendes."], pt: ["Colegas de confiança", "+🎖️ 1 extra por demanda atendida."] },
+  d_protocolos: { ico: "📋", ef: { cura: 0.03 }, es: ["Protocolos clínicos", "+3% de chance de cura."], pt: ["Protocolos clínicos", "+3% de chance de cura."] },
+  d_rede: { ico: "🗺️", ef: { semRef: 1 }, es: ["Red de derivación", "La atención terciaria ya no necesita secundaria cerca."], pt: ["Rede de encaminhamento", "A atenção terciária não precisa mais de secundária perto."] },
+  d_residentes: { ico: "🧑‍⚕️", ef: { custo: { quimio: 0.75 }, manut: { quimio: 0.5 } }, es: ["Residentes al interior", "Hospital Día: 25% más barato y mantenimiento a la mitad."], pt: ["Residentes no interior", "Hospital Día: 25% mais barato e manutenção pela metade."] },
+  d_mbe: { ico: "📚", ef: { quizOrc: 2 }, es: ["Medicina basada en evidencia", "Desafío relámpago: +💰 2 extra al acertar."], pt: ["Medicina baseada em evidências", "Desafio relâmpago: +💰 2 extra ao acertar."] },
+  d_acel: { ico: "☢️", ef: { custo: { radio: 0.65 }, prest: { radio: -1 } }, es: ["Acelerador en el interior", "Acelerador lineal: 35% más barato y 🎖️ 1 menos."], pt: ["Acelerador no interior", "Acelerador linear: 35% mais barato e 🎖️ 1 a menos."] },
+  d_tamizaje: { ico: "🔬", ef: { custo: { vph: 0.7 }, vis: { vph: 0.03 } }, es: ["Tamizaje organizado", "Test de VPH: 30% más barato y +3% de casos visibles."], pt: ["Rastreamento organizado", "Teste de HPV: 30% mais barato e +3% de casos visíveis."] },
+  d_rcbp: { ico: "🧬", ef: { custo: { pesquisa: 0.7 }, visViz: 0.05 }, es: ["Registro poblacional", "Centro de investigación: 30% más barato y revela +5% en los vecinos."], pt: ["Registro populacional", "Centro de pesquisa: 30% mais barato e revela +5% nos vizinhos."] },
+  d_centro: { ico: "🏥", aoEscolher: () => { const d = DEPS.filter((x) => !temSlot(S.deps[x.id], "radio")).sort((x, y) => y.pop - x.pop)[0]; if (d) { darGratis(d.id, "quimio"); darGratis(d.id, "radio"); } },
+    es: ["Centro oncológico regional", "Hospital Día y acelerador gratis en el departamento más poblado sin radioterapia (ahora)."], pt: ["Centro oncológico regional", "Hospital Día e acelerador grátis no departamento mais populoso sem radioterapia (agora)."] },
+  d_lider: { ico: "🎖️", ef: { ganhoPrest: 1.5 }, es: ["Liderazgo médico", "Todo el prestigio que ganas, ×1,5."], pt: ["Liderança médica", "Todo o prestígio que você ganha, ×1,5."] },
+  d_excel: { ico: "🏆", ef: { cura: 0.05 }, es: ["Excelencia científica", "+5% de chance de cura."], pt: ["Excelência científica", "+5% de chance de cura."] },
+};
+
+/* Missão pessoal de cada personagem (entra em 4º lugar na fila) */
+const MISSOES_PESSOAIS = {
+  bob: { id: "m_bob", meta: 6, prog: () => DEPS.filter((d) => temSlot(S.deps[d.id], "registro") || temPesq(S.deps[d.id])).length, premio: { orc: 3, prest: 2 },
+    es: ["Datos abiertos", "Registro o investigación en 6 departamentos: sin datos no hay epidemiología."], pt: ["Dados abertos", "Registro ou pesquisa em 6 departamentos: sem dados não há epidemiologia."] },
+  patron: { id: "m_patron", meta: 4, prog: () => DEPS.reduce((s, d) => s + Object.keys(S.deps[d.id].conv).length, 0), premio: { orc: 4, prest: 1 },
+    es: ["Socios para la salud", "4 convenios funcionando al mismo tiempo."], pt: ["Parceiros da saúde", "4 convênios funcionando ao mesmo tempo."] },
+  beatriz: { id: "m_beatriz", meta: 1, prog: () => (INTERIOR.some((id) => redeCompleta(id)) ? 1 : 0), premio: { prest: 3, mult: 1.2 },
+    es: ["Red completa en el interior", "Atención 1.ª, 2.ª y 3.ª en un mismo departamento fuera de Asunción y Central."], pt: ["Rede completa no interior", "Atenção 1ª, 2ª e 3ª num mesmo departamento fora de Asunción e Central."] },
+};
 
 /* ---------- missões paralelas: 3 em curso; cumprir dá prêmio (dinheiro, confiança ou pontos em dobro no ano, que não se ganham desfazendo) ---------- */
 const COLO = DEPS.filter((d) => d.primM === "colo").map((d) => d.id);       // 8 departamentos (Atlas 2015-2019)
@@ -520,19 +694,19 @@ const MISSOES = [
   { id: "central", meta: 1, alvo: () => (equil("central") >= 1 ? [] : ["central"]), prog: () => (equil("central") >= 1 ? 1 : 0), premio: { orc: 2 },
     es: ["Equilibrio en Central", "Central ya tiene tratamiento (INCAN). Súmale prevención y diagnóstico."],
     pt: ["Equilíbrio em Central", "Central já tem tratamento (INCAN). Some prevenção e diagnóstico."] },
-  { id: "colo", meta: 3, alvo: () => COLO.filter((id) => !temSlot(S.deps[id], "vph")), prog: () => contar(COLO, (id) => temSlot(S.deps[id], "vph")), premio: { orc: 3, conf: 4 }, fonte: "Atlas 2015–2019",
+  { id: "colo", meta: 3, alvo: () => COLO.filter((id) => !temSlot(S.deps[id], "vph")), prog: () => contar(COLO, (id) => temSlot(S.deps[id], "vph")), premio: { orc: 3, prest: 2 }, fonte: "Atlas 2015–2019",
     es: ["La 1.ª causa evitable", "Test de VPH en 3 de los 8 departamentos donde el cuello uterino es la 1.ª causa de muerte por cáncer en las mujeres (🎯 en el mapa)."],
     pt: ["A 1ª causa evitável", "Teste de HPV em 3 dos 8 departamentos onde o colo do útero é a 1ª causa de morte por câncer nas mulheres (🎯 no mapa)."] },
-  { id: "pulmao", meta: 4, alvo: () => PULMAO.filter((id) => !temSlot(S.deps[id], "tabaco")), prog: () => contar(PULMAO, (id) => temSlot(S.deps[id], "tabaco")), premio: { orc: 2, conf: 3 }, fonte: "Atlas 2015–2019",
+  { id: "pulmao", meta: 4, alvo: () => PULMAO.filter((id) => !temSlot(S.deps[id], "tabaco")), prog: () => contar(PULMAO, (id) => temSlot(S.deps[id], "tabaco")), premio: { orc: 2, prest: 2 }, fonte: "Atlas 2015–2019",
     es: ["Pulmón: 1.ª causa en los hombres", "Campaña antitabaco en 4 de los 11 departamentos donde el pulmón es la 1.ª causa de muerte por cáncer en los hombres (🎯 en el mapa)."],
     pt: ["Pulmão: 1ª causa nos homens", "Campanha antitabaco em 4 dos 11 departamentos onde o pulmão é a 1ª causa de morte por câncer nos homens (🎯 no mapa)."] },
-  { id: "radio", meta: 1, alvo: () => ["alto-parana", "itapua"], prog: () => (["alto-parana", "itapua"].some((id) => temSlot(S.deps[id], "radio")) ? 1 : 0), premio: { conf: 6, mult: 1.2 }, fonte: "La Nación, 23/07/2024",
+  { id: "radio", meta: 1, alvo: () => ["alto-parana", "itapua"], prog: () => (["alto-parana", "itapua"].some((id) => temSlot(S.deps[id], "radio")) ? 1 : 0), premio: { prest: 3, mult: 1.2 }, fonte: "La Nación, 23/07/2024",
     es: ["Radioterapia fuera de Capiatá", "Acelerador (público o por convenio) en Alto Paraná o Itapúa, donde el Ministerio anunció aceleradores en 2024."],
     pt: ["Radioterapia fora de Capiatá", "Acelerador (público ou por convênio) em Alto Paraná ou Itapúa, onde o Ministério anunciou aceleradores em 2024."] },
-  { id: "chaco", meta: 1, alvo: () => CHACO, prog: () => (CHACO.some((id) => equil(id) >= 1) ? 1 : 0), premio: { orc: 1, conf: 8 },
+  { id: "chaco", meta: 1, alvo: () => CHACO, prog: () => (CHACO.some((id) => equil(id) >= 1) ? 1 : 0), premio: { orc: 1, prest: 4 },
     es: ["El Chaco también cuenta", "Equilibrio en Boquerón, Presidente Hayes o Alto Paraguay."],
     pt: ["O Chaco também conta", "Equilíbrio em Boquerón, Presidente Hayes ou Alto Paraguay."] },
-  { id: "pesquisa", meta: 1, prog: () => (INTERIOR.some((id) => temPesq(S.deps[id])) ? 1 : 0), premio: { orc: 2, conf: 4 }, fonte: "DGVS/MSPBS, 05/02/2024",
+  { id: "pesquisa", meta: 1, prog: () => (INTERIOR.some((id) => temPesq(S.deps[id])) ? 1 : 0), premio: { orc: 2, prest: 2 }, fonte: "DGVS/MSPBS, 05/02/2024",
     es: ["Datos fuera de la capital", "Centro de investigación (o convenio con una universidad) fuera de Asunción y Central: el único registro poblacional cubre solo esos dos."],
     pt: ["Dados fora da capital", "Centro de pesquisa (ou convênio com universidade) fora de Asunción e Central: o único registro populacional cobre só esses dois."] },
   { id: "ocultos", meta: 40, fmt: pct, prog: () => Math.floor(revelados()), premio: { orc: 3 },
@@ -541,9 +715,9 @@ const MISSOES = [
   { id: "eq9", meta: 9, prog: () => DEPS.filter((d) => equil(d.id) >= 1).length, premio: { mult: 1.3 },
     es: ["Medio país en equilibrio", "Equilibrio en 9 departamentos."],
     pt: ["Meio país em equilíbrio", "Equilíbrio em 9 departamentos."] },
-  { id: "conf", meta: 75, fmt: (p, m) => `👍 ${p}/${m}`, prog: () => S.conf, premio: { orc: 4 },
-    es: ["La gente confía", "Llega a 👍 75 de confianza atendiendo las demandas y cumpliendo las promesas."],
-    pt: ["O povo confia", "Chegue a 👍 75 de confiança atendendo às demandas e cumprindo as promessas."] },
+  { id: "prest", meta: 15, fmt: (p, m) => `🎖️ ${p}/${m}`, prog: () => S.prest, premio: { orc: 4 },
+    es: ["Prestigio nacional", "Junta 🎖️ 15 de prestigio atendiendo demandas, cumpliendo promesas y misiones."],
+    pt: ["Prestígio nacional", "Junte 🎖️ 15 de prestígio atendendo demandas, cumprindo promessas e missões."] },
   { id: "pop75", meta: 75, fmt: pct, prog: () => Math.floor(popEqPct()), premio: { mult: 1.5 },
     es: ["Tres de cada cuatro", "75% de la población viviendo en departamentos en equilibrio."],
     pt: ["Três em cada quatro", "75% da população vivendo em departamentos em equilíbrio."] },
@@ -560,10 +734,12 @@ const LOGROS = [
   { id: "radio", ico: "☢️", teste: () => INTERIOR.some((id) => temSlot(S.deps[id], "radio")), es: ["Radioterapia en el interior", "Un acelerador fuera de Asunción y Central."], pt: ["Radioterapia no interior", "Um acelerador fora de Asunción e Central."] },
   { id: "vacuna", ico: "💉", teste: () => DEPS.filter((d) => temSlot(S.deps[d.id], "vacuna")).length >= 9, es: ["Generación protegida", "Vacuna VPH en 9 departamentos."], pt: ["Geração protegida", "Vacina HPV em 9 departamentos."] },
   { id: "conv", ico: "🤝", teste: () => DEPS.reduce((s, d) => s + Object.keys(S.deps[d.id].conv).length, 0) >= 5, es: ["Buen socio", "5 convenios al mismo tiempo."], pt: ["Bom parceiro", "5 convênios ao mesmo tempo."] },
-  { id: "conf", ico: "👍", teste: () => S.conf >= 80, es: ["Confianza de la gente", "👍 80 de confianza."], pt: ["Confiança do povo", "👍 80 de confiança."] },
+  { id: "prest", ico: "🎖️", teste: () => S.prest >= 20, es: ["Prestigio de estadista", "🎖️ 20 de prestigio al mismo tiempo."], pt: ["Prestígio de estadista", "🎖️ 20 de prestígio ao mesmo tempo."] },
   { id: "quiz", ico: "🧠", teste: () => S.quiz.racha >= 5, es: ["Sabio del cáncer", "5 desafíos relámpago seguidos sin errar."], pt: ["Sábio do câncer", "5 desafios relâmpago seguidos sem errar."] },
   { id: "mis", ico: "🎯", teste: () => S.mis.feitas.length >= 6, es: ["Misionero/a", "6 misiones cumplidas en una partida."], pt: ["Missionário/a", "6 missões cumpridas numa partida."] },
   { id: "vidas", ico: "❤️", teste: () => vidasTotal() >= META_VIDAS, es: ["5.000 vidas", "5.000 vidas salvadas en una partida (modelo)."], pt: ["5.000 vidas", "5.000 vidas salvas numa partida (modelo)."] },
+  { id: "rede", ico: "🕸️", teste: () => INTERIOR.some((id) => redeCompleta(id)), es: ["Red de derivación", "Atención 1.ª, 2.ª y 3.ª en un departamento del interior."], pt: ["Rede de encaminhamento", "Atenção 1ª, 2ª e 3ª num departamento do interior."] },
+  { id: "ministro", ico: "🎩", teste: () => cargoAtual() >= 4, es: ["Ministro/a", "Llegaste al cargo más alto."], pt: ["Ministro/a", "Você chegou ao cargo mais alto."] },
   { id: "recorde", ico: "🏆", teste: () => S.recordeBatido, es: ["Nuevo récord", "Superaste tu récord en este celular."], pt: ["Novo recorde", "Você superou seu recorde neste celular."] },
 ];
 
@@ -572,7 +748,7 @@ const QUIZ = [
   { v: false, fonte: "Atlas 2015–2019",
     es: ["El pulmón es la 1.ª causa de muerte por cáncer en las mujeres paraguayas.", "En las mujeres lideran la mama y el cuello uterino; el pulmón es la 1.ª causa en los hombres."],
     pt: ["O pulmão é a 1ª causa de morte por câncer nas mulheres paraguaias.", "Nas mulheres lideram a mama e o colo do útero; o pulmão é a 1ª causa nos homens."] },
-  { v: true, fonte: "MSPBS, 2024",
+  { v: true, fonte: "MSPBS, INCAN 2024",
     es: ["La radioterapia pública está en un único lugar del país: el INCAN, en Capiatá.", "Un único lugar para todo el país, con 3 aceleradores lineales."],
     pt: ["A radioterapia pública está num único lugar do país: o INCAN, em Capiatá.", "Um único lugar para o país inteiro, com 3 aceleradores lineares."] },
   { v: false, fonte: "Atlas 2015–2019",
@@ -619,13 +795,13 @@ const QUIZ = [
 /* ---------- consequências: o jogo reage às escolhas (modelo do jogo; no máximo uma por ano, cada uma uma vez) ---------- */
 const nPrev = () => DEPS.reduce((s, d) => s + nivel(S.deps[d.id], "P"), 0);
 const CONSEQ = [
-  { id: "modelo", achar: () => DEPS.find((d) => equil(d.id) >= 3)?.id, aplicar: () => { S.conf = limitar(S.conf + 6); S.orc += 2; },
-    es: ["{dep}, modelo nacional", "{dep} tiene prevención, diagnóstico y tratamiento completos. Otros departamentos quieren copiarlo.", "+👍 6 y +💰 2."],
-    pt: ["{dep}, modelo nacional", "{dep} tem prevenção, diagnóstico e tratamento completos. Outros departamentos querem copiá-lo.", "+👍 6 e +💰 2."] },
+  { id: "modelo", achar: () => DEPS.find((d) => equil(d.id) >= 3)?.id, aplicar: () => { ganharPrest(3); S.orc += 2; },
+    es: ["{dep}, modelo nacional", "{dep} tiene prevención, diagnóstico y tratamiento completos. Otros departamentos quieren copiarlo.", "+🎖️ 3 y +💰 2."],
+    pt: ["{dep}, modelo nacional", "{dep} tem prevenção, diagnóstico e tratamento completos. Outros departamentos querem copiá-lo.", "+🎖️ 3 e +💰 2."] },
   { id: "fila", achar: () => { const [a, b] = S.log.slice(-2); return a && b ? DEPS.find((d) => temFila(d.id) && a.filas.includes(d.nome) && b.filas.includes(d.nome))?.id : undefined; },
-    aplicar: () => { S.conf = limitar(S.conf - 6); },
-    es: ["La fila crece en {dep}", "Hace dos años que {dep} diagnostica pero no trata: los pacientes viajan a Capiatá y la prensa lo muestra.", "−👍 6. Pon tratamiento en {dep}."],
-    pt: ["A fila cresce em {dep}", "Há dois anos {dep} diagnostica mas não trata: os pacientes viajam a Capiatá e a imprensa mostra.", "−👍 6. Ponha tratamento em {dep}."] },
+    aplicar: () => { ganharPrest(-3); },
+    es: ["La fila crece en {dep}", "Hace dos años que {dep} diagnostica pero no trata: los pacientes viajan a Capiatá y la prensa lo muestra.", "−🎖️ 3. Pon tratamiento en {dep}."],
+    pt: ["A fila cresce em {dep}", "Há dois anos {dep} diagnostica mas não trata: os pacientes viajam a Capiatá e a imprensa mostra.", "−🎖️ 3. Ponha tratamento em {dep}."] },
   { id: "semdx", achar: () => { const r = S.log[S.log.length - 1]; return r && S.anoIdx >= 2 && r.ind.semdx >= 0.08 * r.ind.mortes ? "" : undefined; }, aplicar: () => {},
     es: ["Muertes sin diagnóstico", "En {ano} murieron {n} personas sin saber que tenían cáncer. Sin diagnóstico, ni siquiera entran en las estadísticas.", "Invierte en diagnóstico: test de VPH, mamógrafo y registro."],
     pt: ["Óbitos sem diagnóstico", "Em {ano} morreram {n} pessoas sem saber que tinham câncer. Sem diagnóstico, nem entram nas estatísticas.", "Invista em diagnóstico: teste de HPV, mamógrafo e registro."] },
@@ -634,9 +810,9 @@ const CONSEQ = [
     es: ["Sin prevención, el cáncer avanza", "Casi no hubo campañas contra el tabaco, por la alimentación ni vacunación: los casos siguen subiendo.", "+2% de casos donde no hay prevención."],
     pt: ["Sem prevenção, o câncer avança", "Quase não houve campanhas contra o tabaco, pela alimentação nem vacinação: os casos continuam subindo.", "+2% de casos onde não há prevenção."] },
   { id: "prevok", achar: () => (nPrev() >= 12 ? "" : undefined),
-    aplicar: () => { for (const d of DEPS) if (nivel(S.deps[d.id], "P") >= 1) S.deps[d.id].carga *= 0.98; S.conf = limitar(S.conf + 4); },
-    es: ["La prevención da frutos", "Tus campañas llegan a escuelas, comedores y centros de salud: menos tabaco, mejor alimentación y más niñas vacunadas.", "−2% de casos donde hay prevención y +👍 4."],
-    pt: ["A prevenção dá frutos", "Suas campanhas chegam a escolas, refeitórios e postos de saúde: menos tabaco, melhor alimentação e mais meninas vacinadas.", "−2% de casos onde há prevenção e +👍 4."] },
+    aplicar: () => { for (const d of DEPS) if (nivel(S.deps[d.id], "P") >= 1) S.deps[d.id].carga *= 0.98; ganharPrest(2); },
+    es: ["La prevención da frutos", "Tus campañas llegan a escuelas, comedores y centros de salud: menos tabaco, mejor alimentación y más niñas vacunadas.", "−2% de casos donde hay prevención y +🎖️ 2."],
+    pt: ["A prevenção dá frutos", "Suas campanhas chegam a escolas, refeitórios e postos de saúde: menos tabaco, melhor alimentação e mais meninas vacinadas.", "−2% de casos onde há prevenção e +🎖️ 2."] },
 ];
 
 /* ---------- lições (fatos com fonte) ---------- */
@@ -644,12 +820,12 @@ const LICOES = {
   vacuna: { es: ["El VPH causa casi todos los cánceres de cuello uterino; en Paraguay, 58,9% de los casos son por los tipos 16 y 18.", "ICO/IARC HPV Information Centre, 2023"], pt: ["O HPV causa quase todos os cânceres do colo do útero; no Paraguai, 58,9% dos casos são pelos tipos 16 e 18.", "ICO/IARC HPV Information Centre, 2023"] },
   tabaco: { es: ["12,5% de los adultos fuman cigarrillo y 17% usan alguna forma de tabaco. El pulmón es la 1.ª causa de muerte por cáncer en los hombres.", "ENFR 2022; Atlas 2015–2019"], pt: ["12,5% dos adultos fumam cigarro e 17% usam alguma forma de tabaco. O pulmão é a 1ª causa de morte por câncer nos homens.", "ENFR 2022; Atlas 2015–2019"] },
   habitos: { es: ["Solo 3,9% comen 5 porciones de frutas y verduras por día. El colorrectal es el cáncer que más crece: cerca de 3% por año desde 1990.", "ENFR 2022; Leite et al., 2025"], pt: ["Só 3,9% comem 5 porções de frutas e verduras por dia. O colorretal é o câncer que mais cresce: cerca de 3% ao ano desde 1990.", "ENFR 2022; Leite et al., 2025"] },
-  vph: { es: ["En 2024 el Ministerio de Salud hizo 72.133 tests de VPH y encontró 9.863 positivos (13,7%). Diagnosticar hace subir los casos visibles.", "MSPBS"], pt: ["Em 2024 o Ministério da Saúde fez 72.133 testes de HPV e encontrou 9.863 positivos (13,7%). Diagnosticar faz subir os casos visíveis.", "MSPBS"] },
+  vph: { es: ["En 2024 el Ministerio de Salud hizo 72.133 tests de VPH y encontró 9.863 positivos (13,7%). Diagnosticar hace subir los casos visibles.", "MSPBS, 12/03/2025"], pt: ["Em 2024 o Ministério da Saúde fez 72.133 testes de HPV e encontrou 9.863 positivos (13,7%). Diagnosticar faz subir os casos visíveis.", "MSPBS, 12/03/2025"] },
   mamo: { es: ["La mama es la 1.ª causa de muerte por cáncer en las mujeres (1.945 muertes, 20,2%). 51,1% de las mujeres ya se hicieron una mamografía.", "Atlas 2015–2019; ENFR 2023"], pt: ["A mama é a 1ª causa de morte por câncer nas mulheres (1.945 mortes, 20,2%). 51,1% das mulheres já fizeram mamografia.", "Atlas 2015–2019; ENFR 2023"] },
   registro: { es: ["Tasa baja no es riesgo bajo: Canindeyú tiene la menor tasa estandarizada (41,3) y la mayor proporción de muertes femeninas por cuello uterino (36,8%).", "Atlas 2015–2019"], pt: ["Taxa baixa não é risco baixo: Canindeyú tem a menor taxa padronizada (41,3) e a maior proporção de mortes femininas por colo do útero (36,8%).", "Atlas 2015–2019"] },
   quimio: { es: ["Los Hospitales Día oncológicos llevan la quimioterapia al interior; el 10.º se inauguró en Concepción en 2024.", "MSPBS, 21/11/2024"], pt: ["Os Hospitais Día oncológicos levam a quimioterapia ao interior; o 10º foi inaugurado em Concepción em 2024.", "MSPBS, 21/11/2024"] },
-  radio: { es: ["Radioterapia pública: un único lugar para todo el país, el INCAN, en Capiatá, con 3 aceleradores lineales.", "MSPBS, 2024"], pt: ["Radioterapia pública: um único lugar para o país inteiro, o INCAN, em Capiatá, com 3 aceleradores lineares.", "MSPBS, 2024"] },
-  privado: { es: ["El IPS contrata radioterapia de prestadores privados por licitación. Resuelve rápido, pero se paga todos los años.", "DNCP, licitación de radioterapia del IPS"], pt: ["O IPS contrata radioterapia de prestadores privados por licitação. Resolve rápido, mas se paga todo ano.", "DNCP, licitação de radioterapia do IPS"] },
+  radio: { es: ["Radioterapia pública: un único lugar para todo el país, el INCAN, en Capiatá, con 3 aceleradores lineales.", "MSPBS, INCAN 2024"], pt: ["Radioterapia pública: um único lugar para o país inteiro, o INCAN, em Capiatá, com 3 aceleradores lineares.", "MSPBS, INCAN 2024"] },
+  privado: { es: ["El IPS contrata servicios de radioterapia de prestadores privados por licitación pública, con contratos que se renuevan.", "DNCP, licitación de radioterapia del IPS"], pt: ["O IPS contrata serviços de radioterapia de prestadores privados por licitação pública, com contratos que se renovam.", "DNCP, licitação de radioterapia do IPS"] },
   paliativos: { es: ["En Paraguay, los cuidados paliativos en la comunidad «generalmente no están disponibles».", "OMS, Cancer Country Profile Paraguay 2020"], pt: ["No Paraguai, os cuidados paliativos na comunidade «geralmente não estão disponíveis».", "OMS, Cancer Country Profile Paraguay 2020"] },
   pesquisa: { es: ["El único registro de cáncer de base poblacional se creó en 2020 para Asunción y Central; los datos preliminares de 2019 salieron recién en 2024.", "DGVS/MSPBS, 05/02/2024"], pt: ["O único registro de câncer de base populacional foi criado em 2020 para Asunción e Central; os dados preliminares de 2019 só saíram em 2024.", "DGVS/MSPBS, 05/02/2024"] },
   fila: { es: ["Diagnosticar sin tratar crea filas: en Ciudad del Este, de cada 10 pacientes diagnosticados, 6 necesitarán radioterapia y deben viajar.", "La Nación, 23/07/2024"], pt: ["Diagnosticar sem tratar cria filas: em Ciudad del Este, de cada 10 pacientes diagnosticados, 6 vão precisar de radioterapia e precisam viajar.", "La Nación, 23/07/2024"] },
@@ -659,51 +835,91 @@ const LICOES = {
 };
 const LICOES_GERAIS = ["mapa", "colo", "registro", "jovens"];
 
+/* Lista de fontes: [texto, documentos com link em links.js] */
 const FONTES = [
-  "Silva GIS, Pandolfo GA, et al. Mortalidad por cáncer en Paraguay: análisis epidemiológico, disparidades geográficas y desafíos para el control. Revisión sistemática, 2026.",
-  "MSPBS/DVENT. Atlas de Mortalidad por Cáncer en Paraguay 2015–2019. Asunción; 2022.",
-  "IARC. GLOBOCAN 2022, Global Cancer Observatory.",
-  "INE. Censo Nacional de Población y Viviendas 2022.",
-  "MSPBS. Encuesta Nacional de Factores de Riesgo (ENFR) 2022; Sequera VG. An Fac Cienc Méd. 2025;58(3).",
-  "ICO/IARC HPV Information Centre. Paraguay: HPV and related cancers, fact sheet 2023.",
-  "Leite LF, et al. Cancer Res Commun. 2025;5(12):2236–2248.",
-  "Torres-Roman JS, et al. BMC Public Health. 2022;22:113.",
-  "Paraguay. Ley N° 6266/2018 y Decreto N° 2064/2019.",
-  "OMS. Cancer Country Profile Paraguay, 2020. Pediatría (Asunción) 2024;51(2):72-80.",
-  "MSPBS (2024–2026), DGVS (2024), OPS/OMS (2024, 2026), OIEA (2026), City Cancer Challenge (2022), ABC Color (2024), La Nación (2023, 2024, 2026), DNCP.",
-  "Mapa: geoBoundaries (CC BY 4.0).",
+  ["Silva GIS, Pandolfo GA, et al. Mortalidad por cáncer en Paraguay: análisis epidemiológico, disparidades geográficas y desafíos para el control. Revisión sistemática, 2026.", []],
+  ["MSPBS/DVENT. Atlas de Mortalidad por Cáncer en Paraguay 2015–2019. Asunción; 2022.", ["atlas"]],
+  ["IARC. GLOBOCAN 2022: Paraguay, fact sheet.", ["globocan_2022"]],
+  ["INE. Censo Nacional de Población y Viviendas 2022.", ["ine_censo"]],
+  ["MSPBS. Segunda Encuesta Nacional de Factores de Riesgo (ENFR).", ["enfr"]],
+  ["Sequera G. An Fac Cienc Méd (Asunción). 2025;58(3): tamizaje según la ENFR 2023.", ["sequera_2025"]],
+  ["ICO/IARC HPV Information Centre. Paraguay: HPV and related cancers, fact sheet 2023.", ["ico_2023"]],
+  ["Leite LF, et al. Cancer Res Commun. 2025;5(12):2236–2248.", ["leite_2025"]],
+  ["Torres-Roman JS, et al. BMC Public Health. 2022;22:113.", ["torres_2022"]],
+  ["Paraguay. Ley N° 6266/2018.", ["ley_6266"]],
+  ["Paraguay. Decreto N° 2064/2019.", ["decreto_2064"]],
+  ["OMS. Cancer Country Profile Paraguay, 2020.", ["oms_perfil_2020"]],
+  ["Pediatría (Asunción). 2024;51(2):72-80.", ["pediatria_2024"]],
+  ["OMS. Estrategia mundial para acelerar la eliminación del cáncer del cuello uterino (WHA73.2), 2020.", ["oms_colo_2020"]],
+  ["OMS/UNICEF. Declaración de Alma-Ata, 1978.", ["alma_ata"]],
+  ["OPS. Redes Integradas e Integrales de Servicios de Salud (RIISS) en Paraguay, 14/07/2026.", ["ops_riiss_2026"]],
+  ["OPS/OMS. Prueba de VPH para 100 mil mujeres de Alto Paraná, 12/02/2024.", ["ops_vph_2024"]],
+  ["OIEA y OPS/OMS. Misión imPACT en Paraguay, 2026.", ["oiea_2026", "ops_impact_2026"]],
+  ["City Cancer Challenge. Locally-led strategies to develop and implement cancer care policy, 2022.", ["ccan_2022"]],
+  ["MSPBS: dosis única de la vacuna VPH (2024); registro único (2024); Hospital Día de Concepción (21/11/2024); acelerador del INCAN (2024); test de VPH (12/03/2025).", ["mspbs_dosis_unica", "mspbs_registro_unico", "mspbs_concepcion", "mspbs_incan_acelerador", "mspbs_vph_2025"]],
+  ["DGVS/MSPBS, 05/02/2024.", ["dgvs_2024"]],
+  ["ABC Color, 10/05/2024.", ["abc_encarnacion"]],
+  ["La Nación, 25/04/2023; 23/07/2024; 09/03/2026.", ["lanacion_2023", "lanacion_2024", "lanacion_2026"]],
+  ["DNCP. Subasta LPN 83-18: servicios de tratamientos radiantes para el IPS, 06/12/2018.", ["dncp_ips"]],
+  ["Mapa: geoBoundaries (CC BY 4.0).", ["geoboundaries"]],
 ];
+/* Texto da fonte (como aparece no jogo) → documentos com link */
+const FONTE_CHAVES = {
+  "ABC Color, 10/05/2024": ["abc_encarnacion"], "OIEA, 2026": ["oiea_2026", "ops_impact_2026"], "AIEA, 2026": ["oiea_2026", "ops_impact_2026"],
+  "City Cancer Challenge, 2022": ["ccan_2022"], "Ley N° 6266/2018": ["ley_6266"], "Decreto N° 2064": ["decreto_2064"],
+  "Pediatría (Asunción) 2024;51(2):72-80": ["pediatria_2024"], "ICO/IARC HPV Information Centre, 2023": ["ico_2023"],
+  "Atlas 2015–2019": ["atlas"], "La Nación, 25/04/2023": ["lanacion_2023"], "La Nación, 23/07/2024": ["lanacion_2024"], "La Nación, 09/03/2026": ["lanacion_2026"],
+  "MSPBS, 2024": ["mspbs_dosis_unica", "mspbs_registro_unico", "mspbs_concepcion"], "MSPBS, INCAN 2024": ["mspbs_incan_acelerador"],
+  "MSPBS, 21/11/2024": ["mspbs_concepcion"], "MSPBS, 12/03/2025": ["mspbs_vph_2025"], "ENFR 2022": ["enfr"], "ENFR 2023": ["sequera_2025"],
+  "Leite et al., 2025": ["leite_2025"], "Torres-Roman et al., BMC Public Health 2022": ["torres_2022"],
+  "DNCP, licitación de radioterapia del IPS": ["dncp_ips"], "DNCP, licitação de radioterapia do IPS": ["dncp_ips"],
+  "OMS, Cancer Country Profile Paraguay 2020": ["oms_perfil_2020"], "DGVS/MSPBS, 05/02/2024": ["dgvs_2024"],
+  "OPS/OMS, 12/02/2024": ["ops_vph_2024"], "OPAS/OMS, 12/02/2024": ["ops_vph_2024"], "IARC, GLOBOCAN 2022": ["globocan_2022"],
+  "WHA73.2, 2020": ["oms_colo_2020"], "Alma-Ata, OMS/UNICEF, 1978": ["alma_ata"], "OPS, 14/07/2026": ["ops_riiss_2026"], "OPAS, 14/07/2026": ["ops_riiss_2026"],
+};
+const CHAVES_FONTE = Object.keys(FONTE_CHAVES).sort((a, b) => b.length - a.length);
+const urlFonte = (k) => (typeof LINKS_FONTES !== "undefined" && LINKS_FONTES[k] ? LINKS_FONTES[k].arquivo || LINKS_FONTES[k].url : null);
+const linkFonte = (k, n = "") => { const u = urlFonte(k); return u ? ` <a class="lk" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(LINKS_FONTES[k].url)}">${n}↗</a>` : ""; };
+/* Cada trecho da fonte ganha o link do seu documento, ao lado */
+function fonteHTML(texto) {
+  return String(texto).split("; ").map((parte) => {
+    const k = CHAVES_FONTE.find((c) => parte.includes(c)), ks = k ? FONTE_CHAVES[k] : [];
+    return esc(parte) + ks.map((x, i) => linkFonte(x, ks.length > 1 ? i + 1 : "")).join("");
+  }).join("; ");
+}
+const listaFontes = () => `<ol class="fontes">${FONTES.map(([txt, ks]) => `<li>${esc(txt)}${ks.map((k, i) => linkFonte(k, ks.length > 1 ? i + 1 : "")).join("")}</li>`).join("")}</ol><p class="fonte">${esc(t("linksNota"))}</p>`;
 
 
 /* ---------- estado ---------- */
 let lang = ler("epidemia-py-lang") === "pt" ? "pt" : "es";
 const t = (k) => T[lang][k] ?? T.es[k];
 let S = null;
-let tAnterior = performance.now(), acumulado = 0;   // relógio do jogo
 const LIM = {};                                     // limites das classes das camadas ao vivo (fixos, do começo do jogo)
 
 const novoInd = () => ({ casos: 0, mortes: 0, curas: 0, vidas: 0, evit: 0, semdx: 0 });
 
-function novoEstado() {
+function novoEstado(pers = "bob") {
   const deps = {};
   for (const d of DEPS) {
     const vis0 = 0.55 + 0.45 * (d.tee - TEE_MIN) / (TEE_MAX - TEE_MIN);   // onde a taxa é baixa, falta diagnóstico
     deps[d.id] = {
       vis0, visEv: 0, carga: d.tee / vis0, carga0: d.tee / vis0, cargaBase: d.tee / vis0,   // cargaBase: sem nenhuma prevenção (comparação)
       mort0: d.obitos / 5 / vis0,   // óbitos por ano: os registrados no Atlas 2015-2019 divididos pela parte visível
-      feitas: {}, pago: {}, conv: {}, ind: novoInd(), prev: 0, pc0: 0,
+      feitas: {}, pago: {}, prestPago: {}, conv: {}, ind: novoInd(), prev: 0, pc0: 0,
     };
   }
-  // Situação inicial simplificada: tratamento concentrado no INCAN (Central) e no IPS (Asunción)
+  // Situação inicial simplificada: tratamento concentrado no INCAN (Central) e no IPS (Asunción); o Estado já mantém essas estruturas
   for (const a of ["quimio", "radio", "paliativos"]) deps.central.feitas[a] = -1;
   deps.asuncion.feitas.quimio = -1;
+  const fila = ["central", "colo", "pulmao", MISSOES_PESSOAIS[pers].id, "radio", "chaco", "pesquisa", "ocultos", "eq9", "prest", "pop75"];
   return {
-    deps, id: Math.random().toString(36).slice(2, 10) + Date.now().toString(36), enviado: null,
-    anoIdx: 0, mes: 0, orc: 0, orcExtra: 0, pontos: 0, ptsAno: 0, conf: 50, confInicio: 50,
+    deps, pers, hab: [], habSel: null, cargoAvisado: 0, abrirArvore: false, fichaAtual: null,
+    id: Math.random().toString(36).slice(2, 10) + Date.now().toString(36), enviado: null,
+    anoIdx: 0, mes: 0, orc: 0, orcExtra: 0, pontos: 0, ptsAno: 0, prest: 5, prestInicio: 5,
     mod: {}, modProx: {}, cupons: [], regiao: null, descTrat: null, comp: [], usadas: [], aleatUsados: [], evAleat: null, demanda: null,
     sel: "central", modo: "cob", fase: "evento", pausa: false, gasto: { P: 0, D: 0, T: 0, X: 0 },
-    tot: novoInd(), licoesVistas: [], log: [], compradasAno: [], fim: false,
-    mis: { ativas: MISSOES.slice(0, 3).map((m) => m.id), feitas: [], prox: 3 }, quiz: { ordem: embaralhar(QUIZ.map((q, i) => i)), i: 0, racha: 0, acertos: 0, feitos: 0 },
+    tot: novoInd(), licoesVistas: [], log: [], compradasAno: [], fechadasAno: [], fim: false,
+    mis: { fila, ativas: fila.slice(0, 3), feitas: [], prox: 3 }, quiz: { ordem: embaralhar(QUIZ.map((q, i) => i)), i: 0, racha: 0, acertos: 0, feitos: 0 },
     quizAno: -1, quizResp: null, quizOk: null, quizDepois: false, multAno: 1, cons: null, consUsadas: [], logrosPartida: [],
     recordeAntes: ler("epidemia-py-recorde") || 0, recordeBatido: false,
   };
@@ -737,8 +953,12 @@ function desconto(a, id) {
   if (ACOES[a].nivel === "T" && S.descTrat && S.anoIdx < S.descTrat.ate) x += S.descTrat.valor;
   return x;
 }
-const custo = (a, id) => Math.max(0, ACOES[a].custo + (S.mod[a] || 0) - desconto(a, id));
-const custoConv = (a, id) => Math.max(0, ACOES[a].conv - (S.regiao && S.regiao.dep === id ? S.regiao.valor : 0));
+const dec = (x) => Math.round(x * 10) / 10;
+const custo = (a, id) => Math.max(0, dec(ACOES[a].custo * fator("custo", [a, "n" + ACOES[a].at, "todos"])) + (S.mod[a] || 0) - desconto(a, id));
+const prestCusto = (a) => Math.max(0, ACOES[a].prest + soma("prest", a) + soma("prest", "n" + ACOES[a].at));
+const manutAcao = (a) => ACOES[a].manut * fator("manut", [a, "n" + ACOES[a].at, "todos"]);
+const anuidadeConv = (a) => Math.max(0.5, dec(ACOES[a].conv * fator("conv", [a, "todos"])));
+const desfazivel = (d, a) => d.feitas[a] === S.anoIdx && ((d.pago[a] || 0) + (d.prestPago[a] || 0)) > 0;
 /* Só se desfaz o que foi pago neste ano (o que veio de graça, de uma demanda ou de renovação não) */
 const pagoNoAno = (d, a) => (d.feitas[a] === S.anoIdx ? d.pago[a] || 0 : 0);
 const convNoAno = (d, a) => (d.conv[a] && d.conv[a].ano === S.anoIdx ? d.conv[a].pago || 0 : 0);
@@ -746,10 +966,10 @@ const licaoDe = (a, conv) => (conv && a === "radio" ? "privado" : a);
 
 function vis(id) {
   const d = S.deps[id];
-  let v = d.vis0 + d.visEv;
-  for (const a of SLOTS.D) if (temSlot(d, a)) v += ACOES[a].vis;
+  let v = d.vis0 + d.visEv + num("visTodos");
+  for (const a of SLOTS.D) if (temSlot(d, a)) v += ACOES[a].vis + soma("vis", a);
   if (temPesq(d)) v += 0.10;
-  for (const n of DEP[id].vizinhos) if (temPesq(S.deps[n])) v += 0.05;
+  for (const n of DEP[id].vizinhos) if (temPesq(S.deps[n])) v += 0.05 + num("visViz");
   return Math.max(0.2, Math.min(1, v));
 }
 const taxaReg = (id) => S.deps[id].carga * vis(id);
@@ -759,7 +979,7 @@ const ocultoConhecido = (id) => { const d = S.deps[id]; return nivel(d, "D") >= 
 /* Chance de cura entre os diagnosticados: diagnóstico e tratamento juntos curam mais (é o que o equilíbrio mede) */
 function chanceCura(id) {
   const d = S.deps[id], D = nivel(d, "D"), Tn = nivel(d, "T");
-  let pc = 0.15 + 0.05 * D + 0.06 * Tn + 0.06 * Math.min(D, Tn);
+  let pc = 0.15 + 0.05 * D + 0.06 * Tn + 0.06 * Math.min(D, Tn) + num("cura");
   if (temFila(id)) pc *= 0.5;
   return Math.min(0.75, pc);
 }
@@ -781,11 +1001,11 @@ function pontosDep(id) {
   const d = S.deps[id], P = nivel(d, "P"), D = nivel(d, "D"), Tn = nivel(d, "T");
   let p = (10 * Math.min(P, D, Tn) + P + D + Tn) * (DEP[id].pop / 100000);
   if (temPesq(d)) p *= 1.2;
-  if (temFila(id)) p *= 0.5;
+  if (temFila(id)) p *= num("filaMeia") ? 0.75 : 0.5;
+  if (Math.min(P, D, Tn) >= 1) p *= mul("ptsEq");
   return p;
 }
 const pontosAno = () => DEPS.reduce((s, d) => s + pontosDep(d.id), 0);
-const bonusConf = () => Math.round((S.conf - 50) / 10);
 
 /* ---------- formatação ---------- */
 const fmtInt = (n) => new Intl.NumberFormat(lang === "pt" ? "pt-BR" : "es-PY", { maximumFractionDigits: 0 }).format(n);
@@ -832,30 +1052,24 @@ function escolherDemanda() {
 
 /* ---------- ano: fato real (+ imprevisto) → demanda → 12 meses → resumo ---------- */
 function iniciarAno() {
-  S.mes = 0; S.ptsAno = 0; acumulado = 0; S.multAno = 1; S.quizOk = null;
-  S.mod = { ...S.modProx }; S.modProx = {}; S.cupons = []; S.regiao = null; S.compradasAno = []; S.confInicio = S.conf;
+  S.mes = 0; S.ptsAno = 0; S.multAno = 1; S.quizOk = null; S.fechadasAno = [];
+  S.mod = { ...S.modProx }; S.modProx = {}; S.cupons = []; S.regiao = null; S.compradasAno = []; S.prestInicio = S.prest;
   for (const id in S.deps) { S.deps[id].ind = novoInd(); S.deps[id].eqInicio = equil(id); }
-  const bonus = bonusConf();
-  S.orc = Math.max(0, S.orc + ORC_BASE + S.orcExtra + bonus);
-  S.avisoOrc = { bonus, convPago: 0, convN: 0, convCancel: 0 };
+  const receita = rendaAno();
+  S.orc += receita;
+  S.avisoOrc = { receita, manut: 0, congresso: 0 };
+  if (S.anoIdx > 0 && S.prest >= 20) { S.orc += 3; S.avisoOrc.congresso = 3; }   // prestígio alto: o Congresso aprova mais verba
+  const nPesq = DEPS.filter((d) => temPesq(S.deps[d.id])).length;
+  if (S.anoIdx > 0 && nPesq && num("prestPesq")) ganharPrest(nPesq * num("prestPesq"));
   EVENTOS[ano()].aplicar();
   S.evAleat = null;
-  const livres = EVENTOS_ALEAT.filter((e) => !S.aleatUsados.includes(e.id));
-  if (S.anoIdx > 0 && livres.length && Math.random() < 0.5) {
-    const e = sortear(livres), dep = e.alvo ? e.alvo() : null;
+  const livres = EVENTOS_ALEAT.filter((e) => !S.aleatUsados.includes(e.id) && (!e.cond || e.cond()));
+  if (S.anoIdx > 0 && livres.length && Math.random() < 0.65) {
+    const e = sortearPeso(livres, (x) => fator("sorte", [x.id])), dep = e.alvo ? e.alvo() : null;
     if (dep !== undefined) { e.aplicar(dep); S.evAleat = { id: e.id, dep }; S.aleatUsados.push(e.id); }
   }
+  if (S.anoIdx > 0) S.avisoOrc.manut = cobrarManutencao();   // janeiro: manutenção e convênios do ano
   S.cons = escolherConsequencia();   // o jogo reage ao que o jogador fez (ou não fez)
-  // convênios: a anuidade vence no começo do ano; sem dinheiro, o convênio acaba
-  for (const id in S.deps) {
-    const d = S.deps[id];
-    for (const a of Object.keys(d.conv)) {
-      if (d.conv[a].ano === S.anoIdx) continue;
-      const c = ACOES[a].conv;
-      if (S.orc >= c) { S.orc -= c; S.gasto[ACOES[a].nivel] += c; S.avisoOrc.convPago += c; S.avisoOrc.convN++; }
-      else { delete d.conv[a]; S.avisoOrc.convCancel++; }
-    }
-  }
   S.demanda = escolherDemanda();
   S.fase = "evento";
   salvar();
@@ -875,15 +1089,6 @@ function simularMes() {
   S.ptsAno += pontosAno() * S.multAno / 12;
 }
 
-function avancarMes() {
-  simularMes();
-  S.mes++;
-  maisPontos(pontosAno() * S.multAno / 12);
-  if (S.mes >= 12) { fecharAno(); return; }
-  if (S.mes === 6 && S.quizAno !== S.anoIdx) { abrirQuiz(); return; }   // desafio relâmpago no meio do ano
-  salvar();
-  if (verificar()) render(); else renderVivo();
-}
 
 function fecharAno() {
   if (!S || S.fase !== "jogando") return;
@@ -908,13 +1113,14 @@ function fecharAno() {
   for (const k in ind) { ind[k] = Math.round(ind[k]); S.tot[k] += ind[k]; }
   for (const c of S.comp) {
     if (c.estado !== "aberto") continue;
-    if (temSlot(S.deps[c.dep], c.a)) { c.estado = "cumprido"; S.conf += 8; comp.push({ ok: true, a: c.a, dep: c.dep }); }
-    else if (S.anoIdx >= c.ate) { c.estado = "falhou"; S.conf -= 12; comp.push({ ok: false, a: c.a, dep: c.dep }); }
+    if (temSlot(S.deps[c.dep], c.a)) { c.estado = "cumprido"; ganharPrest(4); comp.push({ ok: true, a: c.a, dep: c.dep }); }
+    else if (S.anoIdx >= c.ate) { c.estado = "falhou"; ganharPrest(-6); comp.push({ ok: false, a: c.a, dep: c.dep }); }
   }
-  S.conf = limitar(S.conf + 2 * novosEq - 2 * filas.length);
+  ganharPrest(novosEq);
+  ganharPrest(-Math.round(filas.length * (num("filaMeia") ? 0.5 : 1)));   // fila tira prestígio
   const n3 = DEPS.filter((d) => equil(d.id) >= 1).length;
   const licao = escolherLicao(filas.length > 0);
-  S.log.push({ ano: ano(), pts, subiu, filas, n3, licao, ind, comp, conf0: S.confInicio, conf1: S.conf,
+  S.log.push({ ano: ano(), pts, subiu, filas, n3, licao, ind, comp, prest0: S.prestInicio, prest1: S.prest, fechadas: [...S.fechadasAno],
     mis: S.mis.feitas.filter((f) => f.ano === ano()).map((f) => f.id), quiz: S.quizOk, est: estrelas(popEqPct()) });
   S.compradasAno = [];
   S.fase = "resumo";
@@ -941,29 +1147,22 @@ function proximoAno() {
   render();
 }
 
-/* ---------- relógio: 1 mês a cada SEG_MES segundos; para com janela aberta, pausa ou aba escondida ---------- */
-const relogioRodando = () => S && !S.fim && S.fase === "jogando" && !S.pausa && $("#modal").hidden && !$("#tela-jogo").hidden && document.visibilityState === "visible";
-setInterval(() => {
-  const agora = performance.now(), dt = Math.min(1, (agora - tAnterior) / 1000);
-  tAnterior = agora;
-  if (!relogioRodando()) return;
-  acumulado += dt;
-  if (acumulado >= SEG_MES) { acumulado -= SEG_MES; avancarMes(); }
-}, 250);
 
 /* ---------- compras: investimento público (para sempre) ou convênio (anuidade) ---------- */
 function comprar(id, a) {
   const d = S.deps[id];
-  if (publico(d, a)) return pagoNoAno(d, a) > 0 ? desfazer(id, a) : toast(t("jaAtivo"));
-  if (d.conv[a] && convNoAno(d, a) > 0) return desfazerConv(id, a);
-  const c = custo(a, id);
+  if (publico(d, a)) return desfazivel(d, a) ? desfazer(id, a) : toast(t("jaAtivo"));
+  const b = bloqueio(id, a);
+  if (b) return toast(b.txt);
+  const c = custo(a, id), p = prestCusto(a);
   if (c > S.orc) return toast(t("semOrc"));
+  if (p > S.prest) return toast(t("semPrest"));
   const eq0 = equil(id);
-  S.orc -= c;
+  S.orc -= c; S.prest -= p;
   S.gasto[ACOES[a].nivel] += c;
   const tinhaConv = !!d.conv[a];
   if (tinhaConv) { d.convSubst = d.convSubst || {}; d.convSubst[a] = d.conv[a]; delete d.conv[a]; }   // o público substitui o convênio
-  d.feitas[a] = S.anoIdx; d.pago[a] = c;
+  d.feitas[a] = S.anoIdx; d.pago[a] = c; d.prestPago[a] = p;
   S.compradasAno.push(a);
   salvar();
   render();
@@ -976,25 +1175,34 @@ function comprar(id, a) {
 function contratar(id, a) {
   const d = S.deps[id];
   if (temSlot(d, a)) return toast(t("jaAtivo"));
-  const c = custoConv(a, id);
+  if (ano() < convLib()) return toast(t("bloqConvAno")(convLib()));
+  const c = anuidadeConv(a);
   if (c > S.orc) return toast(t("semOrc"));
   const eq0 = equil(id);
-  S.orc -= c;
+  S.orc -= c;   // o 1º ano se paga agora; depois, cada janeiro
   S.gasto[ACOES[a].nivel] += c;
   d.conv[a] = { ano: S.anoIdx, pago: c };
   S.compradasAno.push(licaoDe(a, true));
   salvar();
   render();
-  toast(t("compra")("🤝", t("convNomes")[a], t("custoAno")(ACOES[a].conv)));
+  toast(t("compra")("🤝", t("convNomes")[a], t("custoAno")(fmtM(c))));
   destacar(id, "🤝");
   if (equil(id) > eq0) festejarNivel(id, equil(id));
+}
+function cancelarConv(id, a) {
+  if (convNoAno(S.deps[id], a) > 0) return desfazerConv(id, a);   // contratado neste ano: devolve o pagamento
+  delete S.deps[id].conv[a];
+  tirarCompra(licaoDe(a, true));
+  toast(t("convCancelado"));
+  salvar();
+  render();
 }
 
 function tirarCompra(a) { const i = S.compradasAno.lastIndexOf(a); if (i >= 0) S.compradasAno.splice(i, 1); }
 function desfazer(id, a) {
-  const d = S.deps[id], v = pagoNoAno(d, a);
-  S.orc += v; S.gasto[ACOES[a].nivel] -= v;
-  delete d.feitas[a]; delete d.pago[a];
+  const d = S.deps[id], v = d.pago[a] || 0;
+  S.orc += v; S.gasto[ACOES[a].nivel] -= v; S.prest += d.prestPago[a] || 0;
+  delete d.feitas[a]; delete d.pago[a]; delete d.prestPago[a];
   if (d.convSubst && d.convSubst[a]) { d.conv[a] = d.convSubst[a]; delete d.convSubst[a]; }   // volta o convênio que o público tinha substituído
   tirarCompra(a);
   toast(t("desfeito")(v));
@@ -1087,25 +1295,21 @@ function destacar(id, ico) {
 function slotHTML(id, a) {
   const d = S.deps[id];
   const [nome, alvo] = t("acoes")[a];
-  const pub = publico(d, a), cv = !!d.conv[a];
-  const desfaz = (pub && pagoNoAno(d, a) > 0) || (cv && convNoAno(d, a) > 0);
-  const preco = pub ? t("ativo") : cv ? t("convFeito") : t("custo")(custo(a, id));
-  const semDinheiro = !pub && !cv && custo(a, id) > S.orc;
-  const nv = ACOES[a].nivel;
-  const principal = `<button type="button" class="acao${pub || cv ? " feita" : ""}${cv ? " conv-on" : ""}${desfaz ? " desfaz" : ""}" data-acao="${a}" ${semDinheiro ? "disabled" : ""}
-    aria-pressed="${pub || cv}" aria-label="${esc(`${nome} (${alvo}): ${preco}`)}" title="${esc(`${nome} → ${alvo}`)}">
-    <span class="ico" aria-hidden="true">${ACOES[a].ico}</span><span class="nome">${esc(t("curtas")[a])}</span><span class="custo">${esc(preco)}</span></button>`;
-  const cc = ACOES[a].conv && !pub && !cv ? custoConv(a, id) : null;
-  const conv = cc === null ? "" : `<button type="button" class="conv" data-conv="${a}" ${cc > S.orc ? "disabled" : ""} aria-label="${esc(t("convAria")(t("convNomes")[a], cc))}" title="${esc(t("convAria")(t("convNomes")[a], cc))}">🤝${cc}</button>`;
-  return `<div class="slot" style="--nv: var(--nv-${nv === "X" ? "d" : nv.toLowerCase()})">${principal}${conv}</div>`;
+  const pub = publico(d, a), cv = !!d.conv[a], b = !pub && !cv ? bloqueio(id, a) : null;
+  const c = custo(a, id), p = prestCusto(a), at = ACOES[a].at, nv = ACOES[a].nivel;
+  const preco = pub ? t("ativo") : cv ? t("convFeito") : b ? b.curto : `💰${fmtM(c)}${p ? ` 🎖️${p}` : ""}`;
+  const falta = !pub && !cv && !b && (c > S.orc || p > S.prest);
+  return `<div class="slot" style="--nv: var(--nv-${nv === "X" ? "d" : nv.toLowerCase()})"><button type="button" class="acao${pub || cv ? " feita" : ""}${cv ? " conv-on" : ""}${desfazivel(d, a) ? " desfaz" : ""}${b ? " bloq" : ""}${falta ? " falta" : ""}" data-acao="${a}"
+    aria-pressed="${pub || cv}" aria-label="${esc(`${nome} (${alvo}) · ${t("niveisAt")[at]}: ${preco}`)}">
+    <span class="ico" aria-hidden="true">${ACOES[a].ico}</span><span class="nome">${esc(t("curtas")[a])}</span><span class="custo">${esc(preco)}</span><span class="nat n${at}" aria-hidden="true">${t("nivAtCurto")[at]}</span></button></div>`;
 }
 
 /* Linha do departamento que acompanha a camada do mapa: taxa do Atlas ou o número ao vivo da camada escolhida */
 function linhaDep() {
   const id = S.sel, st = S.deps[id];
   if (!MODOS_VIVOS.includes(S.modo)) return t("infoTaxa")(fmt1(DEP[id].tee), fmt1(taxaReg(id)));
-  const n = S.modo === "inc" ? st.ind.casos : S.modo === "prev" ? st.prev : S.modo === "mort" ? st.ind.mortes : st.ind.curas;
-  return t("infoVivo")[S.modo](fmtInt(n), fmtInt(valorVivo(S.modo, id)), fmtInt(st.ind.semdx));
+  const f = fluxos(id), n = S.modo === "inc" ? f.casos : S.modo === "prev" ? st.prev : S.modo === "mort" ? f.mortes : f.curas;
+  return t("infoVivo")[S.modo](fmtInt(n), fmtInt(valorVivo(S.modo, id)), fmtInt(f.mortes * (1 - f.v)));
 }
 
 function renderPainel() {
@@ -1135,11 +1339,12 @@ function renderPainel() {
 
 /* ---------- topo, números ao vivo, barra e telas ---------- */
 function renderHud() {
-  const jogando = S && !S.fim && !$("#tela-jogo").hidden;
+  const jogando = S && !S.fim && !$("#tela-jogo").hidden, aj = $("#btn-ajuda");
   $("#h-sub").textContent = t("sub");
   $("#btn-idioma").textContent = lang === "es" ? "PT" : "ES";
-  $("#btn-ajuda").setAttribute("aria-label", t("ajuda"));
-  for (const k of ["#h-ano", "#h-dinheiro", "#h-pontos"]) $(k).hidden = !jogando;
+  if (jogando) { aj.textContent = PERSONAGENS[S.pers].ico; aj.setAttribute("aria-label", t("arvTit")); aj.classList.toggle("alerta-asc", pendentes() > 0); }
+  else { aj.textContent = "?"; aj.setAttribute("aria-label", t("ajuda")); aj.classList.remove("alerta-asc"); }
+  for (const k of ["#h-ano", "#h-dinheiro", "#h-prest", "#h-pontos"]) $(k).hidden = !jogando;
   document.querySelector(".hud .marca").hidden = jogando;
 }
 
@@ -1152,14 +1357,14 @@ function montarVivo() {
 /* Atualizado a cada mês: placar, contadores do país, números do departamento e barra de baixo */
 function renderVivo() {
   if (!S || S.fim) return;
-  const data = `${ano()} · ${t("meses")[Math.min(11, S.mes)]}`, h = $("#h-ano");   // a data também é o botão de pausa
-  h.textContent = `${S.pausa ? "▶" : "⏸"} ${data}`;
-  h.setAttribute("aria-label", `${S.pausa ? t("seguir") : t("pausar")} (${data})`);
-  h.setAttribute("aria-pressed", String(!!S.pausa));
-  $("#h-dinheiro").textContent = `💰 ${S.orc}`;
+  $("#h-ano").textContent = String(ano());
+  $("#h-ano").title = t("anoDe")(ano(), S.anoIdx + 1);
+  $("#h-dinheiro").textContent = `💰 ${Math.floor(S.orc)}`;
+  $("#h-prest").textContent = `🎖️ ${S.prest}`;
+  $("#btn-ajuda").classList.toggle("alerta-asc", pendentes() > 0);
   $("#h-pontos").textContent = `⭐ ${fmtInt(S.pontos + S.ptsAno)}`;
-  const tot = { inc: 0, prev: 0, mort: 0, cura: 0 };
-  for (const id in S.deps) { const st = S.deps[id]; tot.inc += st.ind.casos; tot.prev += st.prev; tot.mort += st.ind.mortes; tot.cura += st.ind.curas; }
+  const tot = { inc: 0, prev: 0, mort: 0, cura: 0 };   // por ano, com o que funciona agora: muda na hora a cada decisão
+  for (const d of DEPS) { const f = fluxos(d.id); tot.inc += f.casos; tot.prev += S.deps[d.id].prev; tot.mort += f.mortes; tot.cura += f.curas; }
   for (const m of MODOS_VIVOS) { const b = document.querySelector(`#vivo [data-modo="${m}"] b`); if (b) b.textContent = fmtInt(tot[m]); }
   if (MODOS_VIVOS.includes(S.modo)) { pintarMapa(); const el = $("#dep-linha"); if (el) el.innerHTML = linhaDep(); }
   renderRodape();
@@ -1168,6 +1373,7 @@ function renderVivo() {
 
 function render() {
   if (!S || S.fim) return renderHud();
+  S.orc = Math.round(S.orc * 100) / 100;   // sem resto de conta com decimais
   verificar();
   $("#tela-inicio").hidden = true; $("#tela-fim").hidden = true; $("#tela-jogo").hidden = false; $("#barra").hidden = false;
   document.querySelectorAll("#modos button").forEach((b) => { b.textContent = b.dataset.modo === "cob" ? t("modoCob") : t("modoReg"); });
@@ -1176,6 +1382,7 @@ function render() {
   renderPainel();
   renderHud();
   renderVivo();
+  talvezAbrirArvore();
 }
 
 function telaInicio() {
@@ -1187,6 +1394,7 @@ function telaInicio() {
     <h1>${esc(t("h1"))}</h1>
     <p class="sub">${esc(t("intro"))}</p>
     <details class="cartao regras"><summary>${esc(t("ajuda"))}</summary><ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol></details>
+    <div class="pers-teaser">${Object.values(PERSONAGENS).map((P) => `<span class="avatar" style="--cor:${P.cor}" aria-hidden="true">${P.ico}</span>`).join("")}<span>${esc(t("persTeaser"))}</span></div>
     <div class="btns">${temSalvo ? `<button class="btn" id="btn-continuar" type="button">${esc(t("continuar"))}</button><button class="btn sec" id="btn-nova" type="button">${esc(t("nova"))}</button>`
       : `<button class="btn" id="btn-nova" type="button">${esc(t("comecar"))}</button>`}${ultimoFim ? `<button class="btn sec" id="btn-ultimo" type="button">${esc(t("ultimo"))}</button>` : ""}</div>
     ${inicioExtra()}
@@ -1216,14 +1424,15 @@ function mostrarFim() {
     revelados: fmtInt(Math.max(0, Math.min(100, 100 * achado / faltava))),
     gP: S.gasto.P, gD: S.gasto.D, gT: S.gasto.T, gX: S.gasto.X,
   };
-  const linhas = [...t("resLinhas")(x), t("resMis")(S.mis.feitas.length, MISSOES.length), t("resQuiz")(S.quiz.acertos, S.quiz.feitos), t("resConf")(S.conf),
+  const linhas = [...t("resLinhas")(x), t("resMis")(S.mis.feitas.length, S.mis.fila.length), t("resQuiz")(S.quiz.acertos, S.quiz.feitos), t("resPrest")(S.prest), t("resHab")(S.hab.map((id) => HAB[id][lang][0]).join(", ") || "—"),
     t("resComp")(S.comp.filter((c) => c.estado === "cumprido").length, S.comp.length), t("resTot")(fmtInt(S.tot.casos), fmtInt(S.tot.mortes), fmtInt(S.tot.curas))];
-  const cargo = t("titulos")[[5000, 9000, 12000, 15000].filter((p) => S.pontos >= p).length];
+  const cargo = t("cargos")[Math.max(0, RANKS.filter((p) => S.pontos >= p).length - 1)], P = PERSONAGENS[S.pers];
   const nL = LOGROS.filter((l) => logros[l.id]).length;
   $("#tela-fim").innerHTML = `
     <h1>${esc(t("resTit"))}</h1>
     <div class="cartao"><div class="topo-res"><div class="placar">⭐ ${fmtInt(S.pontos)}</div>${estrelasHTML(estrelas(popEqPct()))}</div>
       <p class="cargo">${esc(t("cargo")(cargo))}</p>
+      <p class="meta">${P.ico} ${esc(P[lang].nome)}${S.hab.length ? ` · ${S.hab.map((id) => HAB[id].ico).join(" ")}` : ""}</p>
       <p class="meta">${esc(t("pontos"))} · ${novo ? esc(t("novoRec")) : esc(t("recorde")(fmtInt(Math.max(recAnt, S.pontos))))}</p></div>
     <div class="cartao"><div class="metricas">${metrica("❤️", Math.abs(S.tot.vidas), S.tot.vidas >= 0 ? t("metVidas") : t("vidasPerd"), "ok")}${metrica("🍎", S.tot.evit, t("metEvit"), "ok")}${metrica("🕯️", S.tot.semdx, t("metSemDx"))}</div>
       <p class="fonte">${esc(t("metModelo"))}</p></div>
@@ -1234,15 +1443,173 @@ function mostrarFim() {
     <div class="btns"><button class="btn" id="btn-nova" type="button">${esc(t("denovo"))}</button><button class="btn sec" id="btn-compartir" type="button">${esc(t("compartir"))}</button></div>
     <p class="aviso">${esc(t("beta"))} ${esc(t("modeloNota"))}</p>
     <div class="cartao">${creditosHTML(true)}</div>
-    <div class="cartao"><h2>${esc(t("fontesTit"))}</h2><ol class="fontes">${FONTES.map((f) => `<li>${esc(f)}</li>`).join("")}</ol></div>`;
+    <div class="cartao"><h2>${esc(t("fontesTit"))}</h2>${listaFontes()}</div>`;
   renderHud();
   rolarTopo();
   if (novo && recAnt > 0 && !S.festaFim) { S.festaFim = true; salvar(); confete(); faixa("🏆", t("novoRecorde"), t("recordeTxt"), "ouro"); }
 }
 
+/* ---------- personagem: efeitos da passiva e das habilidades escolhidas ---------- */
+const efeitos = () => (S ? [PERSONAGENS[S.pers].ef, ...S.hab.map((id) => HAB[id].ef || {})] : []);
+const fator = (k, chaves) => efeitos().reduce((f, e) => chaves.reduce((g, c) => g * ((e[k] && e[k][c]) ?? 1), f), 1);   // multiplicadores por chave
+const soma = (k, c) => efeitos().reduce((s, e) => s + ((e[k] && e[k][c]) || 0), 0);                                       // somas por chave
+const num = (k) => efeitos().reduce((s, e) => s + (typeof e[k] === "number" ? e[k] : 0), 0);                              // somas simples
+const mul = (k) => efeitos().reduce((f, e) => f * (typeof e[k] === "number" ? e[k] : 1), 1);                              // multiplicadores simples
+const fmtM = (x) => (Math.abs(x - Math.round(x)) < 0.05 ? fmtInt(x) : fmt1(x));
+let escolhaPers = ["bob", "patron", "beatriz"].includes(ler("epidemia-py-pers")) ? ler("epidemia-py-pers") : "beatriz";
+function ganharPrest(n) {
+  if (n > 0) n = Math.round(n * mul("ganhoPrest"));
+  S.prest = Math.max(0, Math.min(99, S.prest + n));
+  return n;
+}
+function sortearPeso(lista, peso) {
+  const p = lista.map(peso);
+  let r = Math.random() * p.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < lista.length; i++) { r -= p[i]; if (r <= 0) return lista[i]; }
+  return lista[lista.length - 1];
+}
+function alvoMenorVisSem(a) {
+  const sem = DEPS.filter((d) => !temSlot(S.deps[d.id], a)).sort((x, y) => vis(x.id) - vis(y.id)).slice(0, 4);
+  return sem.length ? sortear(sem).id : undefined;
+}
+
+/* ---------- níveis de atenção e encaminhamento; o que ainda não está disponível ---------- */
+const temNivelAt = (d, n) => Object.keys(ACOES).some((a) => ACOES[a].at === n && temSlot(d, a));
+const redeCompleta = (id) => [1, 2, 3].every((n) => temNivelAt(S.deps[id], n));
+const anoLib = (a) => (ACOES[a].desde || ANOS[0]) - soma("ano", a);
+const convLib = () => PERSONAGENS[S.pers].ef.convDesde || CONV_DESDE;
+function bloqueio(id, a) {
+  if (ano() < anoLib(a)) return { curto: t("bloqAno")(anoLib(a)), txt: t("bloqAnoTxt")(anoLib(a)) };
+  const at = ACOES[a].at, d = S.deps[id];
+  if (at === 2 && !temNivelAt(d, 1)) return { curto: t("bloqRef1"), txt: t("bloqRef1Txt") };
+  if (at === 3 && !num("semRef") && ![id, ...DEP[id].vizinhos].some((v) => temNivelAt(S.deps[v], 2) || (num("refTele") && temNivelAt(S.deps[v], 1))))
+    return { curto: t("bloqRef2"), txt: t("bloqRef2Txt") };
+  return null;
+}
+
+/* ---------- economia do ano: em janeiro entra a receita e se paga a manutenção e os convênios; sem dinheiro, fecha o mais caro ---------- */
+function rendaAno() {
+  const nPesq = DEPS.filter((d) => temPesq(S.deps[d.id])).length;
+  return ORC_BASE + S.orcExtra + nPesq * num("rendaPesq") + 12 * num("renda");
+}
+function estruturas() {
+  const l = [];
+  for (const d of DEPS) {
+    const st = S.deps[d.id];
+    for (const a in ACOES) {
+      if (st.conv[a]) l.push({ dep: d.id, a, conv: true, ano: anuidadeConv(a) });
+      else if (publico(st, a) && st.feitas[a] >= 0) l.push({ dep: d.id, a, conv: false, ano: manutAcao(a) });   // o que já existia é mantido pelo Estado
+    }
+  }
+  return l;
+}
+const manutAno = () => estruturas().reduce((s, e) => s + e.ano, 0);
+function cobrarManutencao() {
+  const total = manutAno();
+  S.orc -= total;
+  while (S.orc < 0) {
+    const e = estruturas().sort((x, y) => y.ano - x.ano)[0];
+    if (!e) { S.orc = 0; break; }
+    const st = S.deps[e.dep];
+    if (e.conv) delete st.conv[e.a]; else { delete st.feitas[e.a]; delete st.pago[e.a]; delete st.prestPago[e.a]; }
+    S.orc += e.ano;
+    ganharPrest(-2);
+    S.fechadasAno.push(`${ACOES[e.a].ico} ${t("curtas")[e.a]} (${DEP[e.dep].nome})`);
+  }
+  return total;
+}
+
+/* ---------- cargos e árvore de habilidades ---------- */
+const cargoAtual = () => RANKS.filter((p) => S.pontos + S.ptsAno >= p).length - 1;
+const pendentes = () => Math.min(4, cargoAtual()) - S.hab.length;
+function talvezAbrirArvore() {
+  if (S && !S.fim && S.abrirArvore && S.fase === "jogando" && $("#modal").hidden) { S.abrirArvore = false; mostrarArvore(); }
+}
+function mostrarArvore() {
+  janela = "arvore";
+  const P = PERSONAGENS[S.pers], tx = P[lang], cargo = cargoAtual(), pend = pendentes(), col = S.hab.length, sel = S.habSel;
+  const pts = S.pontos + S.ptsAno, topo = cargo >= RANKS.length - 1;
+  const pct = topo ? 100 : Math.max(0, Math.min(100, Math.round(100 * (pts - RANKS[cargo]) / (RANKS[cargo + 1] - RANKS[cargo]))));
+  const celula = (r, c) => {
+    const id = P.arvore[c][r], h = HAB[id];
+    const estado = S.hab.includes(id) ? "escolhida" : c < col ? "perdida" : c === col && pend > 0 ? "opcao" : "bloqueada";
+    return `<button type="button" class="hab ${estado}${sel === id ? " sel" : ""}" data-hab="${id}"><span aria-hidden="true">${h.ico}</span><small>${esc(h[lang][0])}</small></button>`;
+  };
+  const ramos = tx.ramos.map((ramo, r) => `<div class="ramo"><p class="ramo-tit">${esc(ramo)}</p><div class="ramo-cels">${[0, 1, 2, 3].map((c) => celula(r, c)).join("")}</div></div>`).join("");
+  const h = sel && HAB[sel];
+  const pode = h && pend > 0 && P.arvore[col] && P.arvore[col].includes(sel);
+  abrirModal(`
+    <div class="perfil"><span class="avatar" style="--cor:${P.cor}" aria-hidden="true">${P.ico}</span><div><h2>${esc(tx.nome)}</h2><p class="meta">${esc(tx.papel)} · <b>${esc(t("cargos")[cargo])}</b></p></div></div>
+    ${pend > 0 ? `<p class="efeito">${esc(t("arvAscenso")(t("cargos")[col + 1]))}</p>` : ""}
+    <div class="prog"><i style="width:${pct}%"></i></div><p class="meta">${esc(topo ? t("arvTopo") : t("arvProx")(t("cargos")[cargo + 1], fmtInt(RANKS[cargo + 1])))}</p>
+    <div class="arvore"><div class="cargos-cab">${[1, 2, 3, 4].map((i) => `<small>${esc(t("cargos")[i])}</small>`).join("")}</div>${ramos}</div>
+    ${h ? `<div class="hab-desc"><b>${h.ico} ${esc(h[lang][0])}</b><p>${esc(h[lang][1])}</p>${pode ? `<button class="btn" type="button" data-hab-ok="${sel}">${esc(t("arvEscolher"))}</button>` : `<p class="meta">${esc(S.hab.includes(sel) ? t("arvEscolhida") : t("arvBloq"))}</p>`}</div>` : ""}
+    <div class="cartao mini-lista"><b>${esc(t("pers").passiva)}</b><ul class="linhas">${tx.tracos.map((x) => `<li>${esc(x)}</li>`).join("")}</ul><p class="meta">${esc(t("pers").lado)}: ${esc(tx.lado)}</p></div>
+    <div class="btns"><button class="btn sec" type="button" data-abrir="missoes">🎯 ${esc(t("missoesTit"))}</button><button class="btn sec" type="button" data-abrir="ajuda">${esc(t("ajuda"))}</button></div>
+    <button class="btn" type="button" data-fechar>${esc(t("voltar"))}</button>`);
+}
+function escolherHab(id) {
+  const P = PERSONAGENS[S.pers], col = S.hab.length;
+  if (pendentes() <= 0 || !P.arvore[col] || !P.arvore[col].includes(id)) return;
+  S.hab.push(id);
+  S.habSel = null;
+  const h = HAB[id];
+  if (h.aoEscolher) h.aoEscolher();
+  faixa(h.ico, h[lang][0], h[lang][1], "ouro");
+  confete();
+  vibrar();
+  salvar();
+  if (pendentes() > 0) mostrarArvore(); else { fecharModal(); render(); }
+}
+
+/* ---------- escolha do personagem ---------- */
+function mostrarPersonagens() {
+  janela = "pers";
+  const cartao = (k) => {
+    const P = PERSONAGENS[k], tx = P[lang];
+    return `<button type="button" class="pers${k === escolhaPers ? " sel" : ""}" data-pers="${k}" aria-pressed="${k === escolhaPers}"><span class="avatar" style="--cor:${P.cor}" aria-hidden="true">${P.ico}</span>
+      <span class="pers-txt"><b>${esc(tx.nome)}</b><small>${esc(tx.papel)}</small><span class="pers-bio">${esc(tx.bio)}</span><span class="pers-tracos">${tx.tracos.map(esc).join("<br>")}</span></span></button>`;
+  };
+  abrirModal(`
+    <h2>${esc(t("pers").escolher)}</h2>
+    <div class="pers-lista">${Object.keys(PERSONAGENS).map(cartao).join("")}</div>
+    <button class="btn" type="button" id="btn-pers-ok">${esc(t("pers").jogarCom(PERSONAGENS[escolhaPers][lang].nome))}</button>
+    <button class="btn sec" type="button" data-fechar>${esc(t("fichaCancelar"))}</button>`);
+}
+
+/* ---------- ficha da ação: custos e requisitos antes de investir ---------- */
+function mostrarAcao(id, a) {
+  janela = "acao";
+  S.fichaAtual = { id, a };
+  const d = S.deps[id], [nome, alvo] = t("acoes")[a], at = ACOES[a].at;
+  const pub = publico(d, a), cv = !!d.conv[a], b = !pub && !cv ? bloqueio(id, a) : null;
+  const c = custo(a, id), p = prestCusto(a), m = manutAcao(a);
+  const pode = !pub && !b && c <= S.orc && p <= S.prest;
+  const motivo = pub ? t("fichaAtivo") : b ? b.txt : c > S.orc ? t("bloqOrc") : p > S.prest ? t("bloqPrest")(p) : "";
+  const temConv = ACOES[a].conv && !pub, convOk = ano() >= convLib();
+  abrirModal(`
+    <div class="ficha-topo"><span class="ficha-ico" aria-hidden="true">${ACOES[a].ico}</span><div><h2>${esc(nome)}</h2><p class="meta">${esc(DEP[id].nome)} · ${esc(t("funcoes")[ACOES[a].nivel])} → ${esc(alvo)}</p></div></div>
+    <p><span class="nat n${at}">${esc(t("niveisAt")[at])}</span></p>
+    <div class="ficha-custos" title="${esc(t("fichaManutNota"))}">
+      <div><small>${esc(t("fichaCompra"))}</small><b>💰 ${fmtM(c)}</b></div>
+      <div><small>${esc(t("fichaPrest"))}</small><b>🎖️ ${p}</b></div>
+      <div><small>${esc(t("fichaManut"))}</small><b>💰 ${fmtM(m)}${esc(t("porAnoCurto"))}</b></div>
+    </div>
+    <p class="meta">${esc(t("fichaManutNota"))}</p>
+    ${motivo && !cv ? `<p class="fila">${esc(motivo)}</p>` : ""}
+    ${cv ? `<p class="meta">${esc(t("fichaConvAtivo"))}</p>` : ""}
+    <div class="ficha-btns">
+      ${desfazivel(d, a) ? `<button class="btn sec" type="button" data-ficha="desfazer">${esc(t("fichaDesfazer")(fmtM(d.pago[a] || 0), d.prestPago[a] || 0))}</button>`
+        : !pub ? `<button class="btn" type="button" data-ficha="implementar" ${pode ? "" : "disabled"}>${esc(t("fichaImplementar")(fmtM(c), p))}</button>` : ""}
+      ${temConv && !cv ? `<button class="btn sec" type="button" data-ficha="conv" ${convOk && anuidadeConv(a) <= S.orc ? "" : "disabled"}>${esc(convOk ? t("fichaConv")(fmtM(anuidadeConv(a))) : t("bloqConvAno")(convLib()))}</button>` : ""}
+      ${cv ? `<button class="btn sec" type="button" data-ficha="cancelarConv">${esc(convNoAno(d, a) > 0 ? t("fichaDesfazer")(fmtM(convNoAno(d, a)), 0) : t("fichaCancelarConv"))}</button>` : ""}
+      <button class="btn sec" type="button" data-fechar>${esc(t("fichaCancelar"))}</button>
+    </div>`);
+}
+
 /* ---------- metas, prêmios e festa ---------- */
 let logros = ler(CHAVE_LOGROS) || {};
-const missao = (id) => MISSOES.find((m) => m.id === id);
+const missao = (id) => MISSOES.find((m) => m.id === id) || Object.values(MISSOES_PESSOAIS).find((m) => m.id === id);
 const popEqPct = () => 100 * DEPS.reduce((s, d) => s + (equil(d.id) >= 1 ? d.pop : 0), 0) / DEPS.reduce((s, d) => s + d.pop, 0);
 function revelados() {
   const faltava = DEPS.reduce((s, d) => s + (1 - S.deps[d.id].vis0) * d.pop, 0);
@@ -1270,15 +1637,22 @@ function verificar() {
     faixa("🏆", t("novoRecorde"), t("recordeTxt"), "ouro");
     confete();
   }
+  if (cargoAtual() > S.cargoAvisado) {   // promoção: faixa, confete e a árvore abre no próximo momento livre
+    S.cargoAvisado = cargoAtual();
+    faixa("🎖️", t("ascensoFaixa")(t("cargos")[S.cargoAvisado]), t("ascensoTxt"), "ouro");
+    confete();
+    vibrar();
+    S.abrirArvore = true;
+  }
   return mudou;
 }
 function cumprirMissao(m) {
   S.mis.ativas = S.mis.ativas.filter((x) => x !== m.id);
   S.mis.feitas.push({ id: m.id, ano: ano() });
-  if (S.mis.prox < MISSOES.length) S.mis.ativas.push(MISSOES[S.mis.prox++].id);
+  if (S.mis.prox < S.mis.fila.length) S.mis.ativas.push(S.mis.fila[S.mis.prox++]);
   const p = m.premio;
   if (p.orc) S.orc += p.orc;
-  if (p.conf) S.conf = limitar(S.conf + p.conf);
+  if (p.prest) ganharPrest(p.prest);
   if (p.mult) S.multAno = Math.max(S.multAno, p.mult);
   faixa("🎯", `${t("missaoOk")} ${m[lang][0]}`, t("premio")(p));
   confete();
@@ -1380,7 +1754,7 @@ function renderRodape() {
   } else b.innerHTML = `<span class="m-tit">${esc(t("semMissao"))}</span>`;
   b.setAttribute("aria-label", `${t("missoesTit")}: ${m ? `${m[lang][0]} ${progTxt(m)}` : t("semMissao")}`);
   const txt = $("#dica-txt");
-  txt.textContent = t("rodapeV3")(S.conf, fmtInt(Math.max(0, vidasTotal())), fmtInt(S.ptsAno + pontosAno() * S.multAno * (12 - S.mes) / 12));
+  txt.textContent = t("rodapeV4")(t("economia")(rendaAno() - manutAno()), fmtInt(Math.max(0, vidasTotal())), fmtInt(S.ptsAno + pontosAno() * S.multAno * (12 - S.mes) / 12));
   txt.title = t("rodapeTit");
 }
 
@@ -1472,24 +1846,25 @@ function mostrarEvento() {
   let imp = "";
   if (ev) {
     const [it, ix, ie, ifo] = ev[lang];
-    imp = `<div class="imprevisto"><p class="ano">⚡ ${esc(t("imprevisto"))}</p><h3>${esc(sub(it))}</h3><p>${esc(sub(ix))}</p><p class="efeito">${esc(sub(ie))}</p><p class="fonte">${esc(ifo || t("escenario"))}</p></div>`;
+    imp = `<div class="imprevisto"><p class="ano">⚡ ${esc(t("imprevisto"))}</p><h3>${esc(sub(it))}</h3><p>${esc(sub(ix))}</p><p class="efeito">${esc(sub(ie))}</p><p class="fonte">${ifo ? fonteHTML(sub(ifo)) : esc(t("escenario"))}</p></div>`;
   }
   abrirModal(`
     <p class="ano">${esc(t("anoDe")(ano(), S.anoIdx + 1))}</p>
     <h2>${esc(tit)}</h2><p>${esc(txt)}</p>
     <p class="efeito">${esc(efeito)}</p>
-    <p class="fonte">${esc(t("fonte"))}: ${esc(fonte)}</p>
+    <p class="fonte">${esc(t("fonte"))}: ${fonteHTML(fonte)}</p>
     ${imp}
     ${consHTML()}
-    ${ao.bonus ? `<p class="meta">${esc(t("confOrc")(ao.bonus))}</p>` : ""}
-    ${ao.convPago ? `<p class="meta">${esc(t("convPago")(ao.convPago, ao.convN))}</p>` : ""}${ao.convCancel ? `<p class="fila">${esc(t("convCancel")(ao.convCancel))}</p>` : ""}
-    <p><b>${esc(t("evOrc")(S.orc))}</b></p>
+    ${ao.receita ? `<p class="meta">${esc(t("evEconomia")(fmtM(ao.receita), fmtM(ao.manut || 0)))}</p>` : ""}
+    ${S.fechadasAno.length ? `<p class="fila">${esc(t("evFechou")(S.fechadasAno.join(", ")))}</p>` : ""}
+    ${ao.congresso ? `<p class="meta">${esc(t("congressoMais"))}</p>` : ""}
+    <p><b>${esc(t("evOrc")(Math.floor(S.orc)))}</b> · 🎖️ ${S.prest}</p>
     <button class="btn" type="button" data-fechar>${esc(S.demanda ? t("proxDemanda") : t("evBtn"))}</button>`);
 }
 
 function opcaoCusto(o, dep) {
-  if (o.compra) return { valor: custo(o.compra, dep) };
-  if (o.conv) return { valor: custoConv(o.conv, dep), anual: true };
+  if (o.compra) return { valor: custo(o.compra, dep), bloq: bloqueio(dep, o.compra) };
+  if (o.conv) return { valor: anuidadeConv(o.conv), anual: true };
   return { valor: o.custo || 0 };
 }
 
@@ -1498,8 +1873,8 @@ function mostrarDemanda() {
   const dm = DEMANDAS.find((x) => x.id === S.demanda.id), dep = S.demanda.dep;
   const sub = (s) => s.replaceAll("{dep}", dep ? DEP[dep].nome : "").replaceAll("{ano2}", ANOS[Math.min(9, S.anoIdx + 2)]).replaceAll("{ano3}", ANOS[Math.min(9, S.anoIdx + 3)]);
   const ops = dm.opcoes.map((o, i) => {
-    const c = opcaoCusto(o, dep), pode = c.valor <= S.orc;
-    const detalhe = [c.anual ? t("custoAno")(c.valor) : c.valor ? t("custo")(c.valor) : "", o.conf ? `${o.conf > 0 ? "+" : "−"}👍 ${Math.abs(o.conf)}` : "", pode ? "" : t("semOrcOp")].filter(Boolean).join(" · ");
+    const c = opcaoCusto(o, dep), pode = c.valor <= S.orc && !c.bloq;
+    const detalhe = [c.anual ? t("custoAno")(fmtM(c.valor)) : c.valor ? t("custo")(fmtM(c.valor)) : "", o.prest ? `${o.prest > 0 ? "+" : "−"}🎖️ ${Math.abs(o.prest)}` : "", c.bloq ? c.bloq.curto : pode ? "" : t("semOrcOp")].filter(Boolean).join(" · ");
     return `<button type="button" data-opcao="${i}" ${pode ? "" : "disabled"}><span>${esc(sub(o[lang]))}</span>${detalhe ? `<small>${esc(detalhe)}</small>` : ""}</button>`;
   }).join("");
   abrirModal(`
@@ -1507,22 +1882,24 @@ function mostrarDemanda() {
     <h2>${esc(t("demandaTit"))}</h2>
     <p>${esc(sub(dm[lang]))}</p>
     <div class="opcoes">${ops}</div>
-    ${dm.fonte ? `<p class="fonte">${esc(t("inspirado"))}: ${esc(dm.fonte)}</p>` : ""}
-    <p class="meta">👍 ${S.conf} · 💰 ${S.orc}</p>`);
+    ${dm.fonte ? `<p class="fonte">${esc(t("inspirado"))}: ${fonteHTML(dm.fonte)}</p>` : ""}
+    <p class="meta">🎖️ ${S.prest} · 💰 ${Math.floor(S.orc)}</p>`);
 }
 
 /* Resposta à demanda: o que se compra ou contrata aqui não se desfaz depois (a confiança já foi ganha) */
 function escolherOpcao(i) {
   const dm = DEMANDAS.find((x) => x.id === S.demanda.id), dep = S.demanda.dep, o = dm.opcoes[i];
   const c = opcaoCusto(o, dep);
-  if (c.valor > S.orc) return;
+  if (c.valor > S.orc || c.bloq) return;
   const eq0 = dep ? equil(dep) : 0;
   S.orc -= c.valor;
   if (o.compra) { const d = S.deps[dep]; S.gasto[ACOES[o.compra].nivel] += c.valor; d.feitas[o.compra] = S.anoIdx; d.pago[o.compra] = 0; delete d.conv[o.compra]; S.compradasAno.push(o.compra); }
   else if (o.conv) { S.gasto[ACOES[o.conv].nivel] += c.valor; S.deps[dep].conv[o.conv] = { ano: S.anoIdx, pago: 0 }; S.compradasAno.push(licaoDe(o.conv, true)); }
   else if (o.custo) S.gasto[o.gasto || "T"] += o.custo;
   if (o.aplicar) o.aplicar(dep);
-  S.conf = limitar(S.conf + (o.conf || 0));
+  const atendeu = (o.prest || 0) > 0;   // respostas positivas rendem os bônus do personagem
+  ganharPrest((o.prest || 0) + (atendeu ? num("demPrest") + (dm.quem === "acad" ? num("demMedPrest") : 0) : 0));
+  if (atendeu) S.orc += num("demOrc");
   S.demanda = null;
   S.fase = "jogando";
   if (dep) S.sel = dep;
@@ -1553,9 +1930,10 @@ function mostrarResumo(r) {
       ${comps}
       ${mis ? `<li>${esc(t("misAno")(mis))}</li>` : ""}
       ${r.quiz != null ? `<li>${esc(t("quizAno")(r.quiz))}</li>` : ""}
-      <li>${esc(t("resConfAno")(r.conf0, r.conf1))}</li>
+      ${r.fechadas && r.fechadas.length ? `<li>${esc(t("resFechou")(r.fechadas.join(", ")))}</li>` : ""}
+      <li>${esc(t("resPrestAno")(r.prest0, r.prest1))}</li>
     </ul>
-    <div class="licao"><p>${esc(licao)}</p><p class="fonte">${esc(t("fonte"))}: ${esc(fonte)}</p></div>
+    <div class="licao"><p>${esc(licao)}</p><p class="fonte">${esc(t("fonte"))}: ${fonteHTML(fonte)}</p></div>
     <button class="btn" type="button" data-proximo>${esc(ultimo ? t("verRes") : t("prox")(ANOS[S.anoIdx + 1]))}</button>`);
   contarAte($("#pts-ano"), r.pts, (v) => t("ptsAno")(fmtInt(v)));
 }
@@ -1565,7 +1943,7 @@ function mostrarMissoes() {
   const cartao = (id) => {
     const m = missao(id), p = Math.min(m.prog(), m.meta);
     return `<div class="missao"><b>🎯 ${esc(m[lang][0])}</b><p>${esc(m[lang][1])}</p><div class="prog"><i style="width:${Math.round(100 * p / m.meta)}%"></i></div>
-      <p class="meta">${esc(progTxt(m))} · ${esc(t("recompensa"))}: ${esc(t("premio")(m.premio))}${m.fonte ? ` · ${esc(t("fonte"))}: ${esc(m.fonte)}` : ""}</p></div>`;
+      <p class="meta">${esc(progTxt(m))} · ${esc(t("recompensa"))}: ${esc(t("premio")(m.premio))}${m.fonte ? ` · ${esc(t("fonte"))}: ${fonteHTML(m.fonte)}` : ""}</p></div>`;
   };
   const feitas = S.mis.feitas.map((f) => `<li>✓ ${esc(missao(f.id)[lang][0])} (${f.ano})</li>`).join("");
   const nL = LOGROS.filter((l) => logros[l.id]).length;
@@ -1588,9 +1966,9 @@ function mostrarQuiz() {
     <h2>${esc(t("quizSub"))}</h2>
     <p class="quiz-frase">${esc(frase)}</p>
     ${r == null ? `<div class="quiz-op"><button type="button" class="btn sec" data-quiz="1">${esc(t("verdadeiro"))}</button><button type="button" class="btn sec" data-quiz="0">${esc(t("falso"))}</button></div>`
-      : `<div class="quiz-res ${r === q.v ? "ok" : "erro"}"><b>${esc(r === q.v ? t("quizCerto") : t("quizErrado"))}</b> ${esc(q.v ? t("verdadeiro") : t("falso"))}: ${esc(expl)}</div>
+      : `<div class="quiz-res ${r === q.v ? "ok" : "erro"}"><b>${esc(r === q.v ? t("quizCerto")(2 + num("quizOrc")) : t("quizErrado"))}</b> ${esc(q.v ? t("verdadeiro") : t("falso"))}: ${esc(expl)}</div>
       ${r === q.v && S.quiz.racha >= 2 ? `<p class="meta">${esc(t("racha")(S.quiz.racha))}</p>` : ""}
-      <p class="fonte">${esc(t("fonte"))}: ${esc(q.fonte)}</p>
+      <p class="fonte">${esc(t("fonte"))}: ${fonteHTML(q.fonte)}</p>
       <button class="btn" type="button" data-quiz-seguir>${esc(t("quizSeguir"))}</button>`}`);
 }
 function responderQuiz(v) {
@@ -1599,8 +1977,8 @@ function responderQuiz(v) {
   S.quizOk = v === q.v;
   S.quiz.feitos++;
   if (S.quizOk) {
-    S.orc += 2; S.quiz.acertos++; S.quiz.racha++;
-    if (S.quiz.racha % 3 === 0) { S.conf = limitar(S.conf + 5); faixa("🔥", t("racha")(S.quiz.racha), t("rachaPremio"), "ouro"); }
+    S.orc += 2 + num("quizOrc"); ganharPrest(1); S.quiz.acertos++; S.quiz.racha++;
+    if (S.quiz.racha % 3 === 0) { ganharPrest(2); faixa("🔥", t("racha")(S.quiz.racha), t("rachaPremio"), "ouro"); }
     confete();
     vibrar();
   } else S.quiz.racha = 0;
@@ -1623,8 +2001,9 @@ function mostrarAjuda() {
   abrirModal(`
     <h2>${esc(t("ajuda"))}</h2>
     <ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol>
+    <p class="fonte">${fonteHTML(t("niveisFonte"))}</p>
     <p class="aviso">${esc(t("aviso"))} ${esc(t("modeloNota"))}</p>
-    <h2>${esc(t("fontesTit"))}</h2><ol class="fontes">${FONTES.map((f) => `<li>${esc(f)}</li>`).join("")}</ol>
+    <h2>${esc(t("fontesTit"))}</h2>${listaFontes()}
     ${creditosHTML(true)}
     <button class="btn" type="button" data-fechar>${esc(t("fechar"))}</button>`);
 }
@@ -1639,8 +2018,8 @@ function toast(msg) {
 /* ---------- salvar e começar ---------- */
 function salvar() { guardar(CHAVE, S); }
 
-function novoJogo() {
-  S = novoEstado();
+function novoJogo(pers = escolhaPers) {
+  S = novoEstado(pers);
   prepararInicio();
   iniciarAno();
   render();
@@ -1666,10 +2045,23 @@ document.addEventListener("click", (ev) => {
   if (!alvo.closest) return;
   const dep = alvo.closest("#mapa .dep");
   if (dep && S && !S.fim) { S.sel = dep.dataset.dep; salvar(); render(); return; }
-  const cv = alvo.closest("#painel .conv");
-  if (cv && !cv.disabled) { contratar(S.sel, cv.dataset.conv); return; }
   const ac = alvo.closest("#painel .acao");
-  if (ac && !ac.disabled) { comprar(S.sel, ac.dataset.acao); return; }
+  if (ac && S && !S.fim) { mostrarAcao(S.sel, ac.dataset.acao); return; }
+  const fi = alvo.closest("[data-ficha]");
+  if (fi && !fi.disabled && S && S.fichaAtual) {
+    const { id, a } = S.fichaAtual, op = fi.dataset.ficha;
+    fecharModal();
+    if (op === "implementar") comprar(id, a); else if (op === "conv") contratar(id, a); else if (op === "desfazer") desfazer(id, a); else cancelarConv(id, a);
+    return;
+  }
+  const pc = alvo.closest("[data-pers]");
+  if (pc) { escolhaPers = pc.dataset.pers; mostrarPersonagens(); return; }
+  const hok = alvo.closest("[data-hab-ok]");
+  if (hok && S) { escolherHab(hok.dataset.habOk); return; }
+  const hb = alvo.closest("[data-hab]");
+  if (hb && S) { S.habSel = hb.dataset.hab; mostrarArvore(); return; }
+  const abr = alvo.closest("[data-abrir]");
+  if (abr && S) { if (abr.dataset.abrir === "missoes") mostrarMissoes(); else mostrarAjuda(); return; }
   const op = alvo.closest("[data-opcao]");
   if (op && !op.disabled) { escolherOpcao(+op.dataset.opcao); return; }
   const qz = alvo.closest("[data-quiz]");
@@ -1691,18 +2083,19 @@ document.addEventListener("click", (ev) => {
     return;
   }
   if (alvo.closest("[data-proximo]")) { proximoAno(); return; }
-  if (alvo.id === "btn-nova") { novoJogo(); return; }
+  if (alvo.id === "btn-nova") { mostrarPersonagens(); return; }
+  if (alvo.id === "btn-pers-ok") { guardar("epidemia-py-pers", escolhaPers); fecharModal(); novoJogo(escolhaPers); return; }
   if (alvo.id === "btn-continuar") { continuar(); return; }
   if (alvo.id === "btn-fechar") { fecharAno(); return; }
-  if (alvo.closest("#h-ano") && S && !S.fim) { S.pausa = !S.pausa; salvar(); renderVivo(); return; }
-  if (alvo.id === "btn-ajuda") { mostrarAjuda(); return; }
+  if (alvo.closest("#btn-ajuda")) { if (S && !S.fim && !$("#tela-jogo").hidden) mostrarArvore(); else mostrarAjuda(); return; }
   if (alvo.id === "btn-compartir") { compartilhar(); return; }
   if (alvo.id === "btn-enviar") { enviarRanking(); return; }
   if (alvo.id === "btn-ultimo") { S = ler(CHAVE); mostrarFim(); return; }
   if (alvo.id === "btn-idioma") {
     lang = lang === "es" ? "pt" : "es"; guardar("epidemia-py-lang", lang);
     document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
-    if (!$("#modal").hidden) ({ evento: mostrarEvento, demanda: mostrarDemanda, quiz: mostrarQuiz, missoes: mostrarMissoes, resumo: () => mostrarResumo(S.log[S.log.length - 1]) }[janela] || mostrarAjuda)();
+    if (!$("#modal").hidden) ({ evento: mostrarEvento, demanda: mostrarDemanda, quiz: mostrarQuiz, missoes: mostrarMissoes, arvore: mostrarArvore, pers: mostrarPersonagens, acao: () => mostrarAcao(S.fichaAtual.id, S.fichaAtual.a),
+      resumo: () => mostrarResumo(S.log[S.log.length - 1]) }[janela] || mostrarAjuda)();
     if (!S) telaInicio();
     else if (S.fim) {
       const ids = ["#r-nome", "#r-fac", "#r-turma"], campos = ids.map((c) => $(c) && $(c).value), ok = $("#r-ok") && $("#r-ok").checked;
