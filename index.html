@@ -152,6 +152,17 @@ select.escolher { width: 100%; margin: 6px 0 10px; padding: 10px 12px; border-ra
 .placar { font: 800 clamp(2.6rem, 12vw, 3.6rem) var(--f-display); line-height: 1; font-variant-numeric: tabular-nums; }
 .fontes { margin: 0; padding-left: 18px; font-size: .78rem; color: var(--muted); display: grid; gap: 4px; }
 .toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: .9rem; max-width: 92vw; text-align: center; }
+/* Formulário do ranking */
+.form-rank { display: grid; gap: 10px; }
+.form-rank label { display: grid; gap: 4px; font-weight: 700; font-size: .9rem; }
+.form-rank input[type="text"] { font: inherit; font-weight: 400; color: var(--ink); background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.form-rank input[type="text"]:focus { outline: none; border-color: var(--accent); }
+.form-rank .consent { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; font-size: .84rem; color: var(--muted); }
+.form-rank .consent input { width: 22px; height: 22px; flex: none; margin-top: 2px; accent-color: var(--accent); }
+.msg-rank { margin: 0; font-weight: 700; }
+.msg-rank.ok { color: var(--ok); }
+.msg-rank.erro { color: var(--warn); }
+a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 /* Celulares estreitos: placar numa linha só */
 @media (max-width: 400px) {
   .hud { gap: 5px; }
@@ -198,6 +209,7 @@ select.escolher { width: 100%; margin: 6px 0 10px; padding: 10px 12px; border-ra
 <div id="modal" class="overlay" hidden><div class="janela" id="janela" role="dialog" aria-modal="true"></div></div>
 <div id="toast" class="toast" role="status" hidden></div>
 
+<script src="config.js"></script>
 <script src="dados.js"></script>
 <script src="jogo.js"></script>
 </body>

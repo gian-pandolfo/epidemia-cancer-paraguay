@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ranking · Epidemia: Paraguay contra el cáncer</title>
+<meta name="description" content="Ranking en vivo del juego Epidemia: Paraguay contra el cáncer.">
+<meta name="theme-color" content="#0d1514">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f07a5c'/%3E%3Cpath d='M20 44 32 14l12 30M24 35h16' stroke='%231b0d08' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<style>
+/* Ranking para o tablet do estande: tabela à esquerda, QR do jogo à direita. Atualiza sozinho a cada 5 s. */
+:root {
+  --bg: #0d1514; --surface: #141f1d; --surface-2: #1c2927; --ink: #e3eeeb; --muted: #9cb1ad; --line: #2a403c;
+  --accent: #f07a5c; --accent-ink: #1b0d08; --accent-soft: rgba(240, 122, 92, .18);
+  --ouro: #f2c94c; --prata: #c9d3d6; --bronze: #d99a6c; --ok: #6fd3a0; --warn: #f3a37f;
+  --f-display: "Bricolage Grotesque", "Segoe UI", Roboto, Arial, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", Roboto, Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.4 var(--f-body);
+  padding: calc(14px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) calc(14px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 14px;
+}
+h1, h2 { font-family: var(--f-display); margin: 0; }
+button { font: inherit; color: inherit; }
+.topo { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.topo h1 { font-size: clamp(1.6rem, 3.4vw, 2.6rem); font-weight: 800; line-height: 1; margin-right: auto; }
+.topo h1 small { display: block; font: 600 clamp(.95rem, 1.6vw, 1.2rem) var(--f-display); color: var(--muted); margin-top: 6px; }
+.btn-ico { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; min-width: 46px; height: 46px; padding: 0 14px; font-weight: 700; cursor: pointer; }
+.palco { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr); gap: 16px; min-height: 0; }
+.cartao { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px; min-height: 0; }
+.lista { position: relative; overflow: hidden; display: grid; align-content: start; gap: 8px; }
+.linha { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 7px 14px; border-radius: 14px; background: var(--surface-2); }
+.linha .pos { font: 800 1.6rem var(--f-display); text-align: center; font-variant-numeric: tabular-nums; }
+.linha .quem b { display: block; font-size: 1.12rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.linha .quem span { display: block; color: var(--muted); font-size: .82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.linha .pts { font: 800 1.5rem var(--f-display); font-variant-numeric: tabular-nums; }
+.linha.p1 { box-shadow: inset 4px 0 0 var(--ouro); } .linha.p1 .pos { color: var(--ouro); }
+.linha.p2 { box-shadow: inset 4px 0 0 var(--prata); } .linha.p2 .pos { color: var(--prata); }
+.linha.p3 { box-shadow: inset 4px 0 0 var(--bronze); } .linha.p3 .pos { color: var(--bronze); }
+.linha.nova { animation: chegou 2.4s ease-out; }
+@keyframes chegou { 0%, 40% { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); } }
+.vazio { color: var(--muted); font-size: 1.2rem; padding: 20px 6px; }
+.lado { display: grid; gap: 14px; align-content: start; }
+.qr-caixa { display: grid; gap: 10px; justify-items: center; text-align: center; }
+.qr-caixa h2 { font-size: clamp(1.3rem, 2.4vw, 1.8rem); font-weight: 800; }
+.qr { width: min(100%, 300px, 34vh); aspect-ratio: 1; background: #fff; border-radius: 14px; padding: 10px; }
+.qr svg { width: 100%; height: 100%; display: block; }
+.url { margin: 0; font-size: .85rem; color: var(--muted); word-break: break-all; }
+.estat { display: grid; gap: 4px; }
+.estat b { font: 800 2rem var(--f-display); font-variant-numeric: tabular-nums; }
+.estat span { color: var(--muted); font-size: .9rem; }
+.rodape { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; color: var(--muted); font-size: .82rem; }
+.estado.erro { color: var(--warn); font-weight: 700; }
+@media (orientation: portrait), (max-width: 760px) {
+  body { display: block; }
+  .palco { grid-template-columns: 1fr; margin-top: 14px; }
+  .lista { overflow: visible; }
+  .rodape { margin-top: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { .linha.nova { animation: none; } }
+</style>
+</head>
+<body>
+<header class="topo">
+  <h1><span id="t-titulo">Ranking</span><small id="t-sub">Epidemia: Paraguay contra el cáncer</small></h1>
+  <button class="btn-ico" id="btn-tela" type="button" aria-label="Pantalla completa" hidden>⛶</button>
+  <button class="btn-ico" id="btn-idioma" type="button">PT</button>
+</header>
+
+<main class="palco">
+  <section class="cartao lista" id="lista" aria-live="polite"></section>
+  <aside class="lado">
+    <div class="cartao qr-caixa">
+      <h2 id="t-escaneie">Escanea y juega</h2>
+      <div class="qr" id="qr"></div>
+      <p class="url" id="url"></p>
+    </div>
+    <div class="cartao estat"><b id="partidas">—</b><span id="t-partidas">partidas jugadas</span></div>
+  </aside>
+</main>
+
+<footer class="rodape">
+  <span id="t-lgpd">Nombre, facultad y curso se muestran solo durante el congreso y se borran el 31/10/2026.</span>
+  <span class="estado" id="estado"></span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="config.js"></script>
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const TXT = {
+  es: { titulo: "Ranking", sub: "Epidemia: Paraguay contra el cáncer", escaneie: "Escanea y juega", partidas: "partidas jugadas",
+    lgpd: "Nombre, facultad y curso se muestran solo durante el congreso y se borran el 31/10/2026.",
+    vazio: "Todavía no hay partidas en el ranking. ¡Sé el primero!", semUrl: "El ranking aún no está configurado.",
+    erro: "Sin conexión con el ranking. Reintentando…", atual: (h) => `Actualizado a las ${h}`, encerrado: "El ranking del congreso terminó.",
+    tela: "Pantalla completa", pts: "puntos" },
+  pt: { titulo: "Ranking", sub: "Epidemia: Paraguai contra o câncer", escaneie: "Escaneie e jogue", partidas: "partidas jogadas",
+    lgpd: "Nome, faculdade e turma aparecem só durante o congresso e são apagados em 31/10/2026.",
+    vazio: "Ainda não há partidas no ranking. Seja o primeiro!", semUrl: "O ranking ainda não está configurado.",
+    erro: "Sem conexão com o ranking. Tentando de novo…", atual: (h) => `Atualizado às ${h}`, encerrado: "O ranking do congresso terminou.",
+    tela: "Tela cheia", pts: "pontos" },
+};
+let lang = "es";
+try { if (localStorage.getItem("epidemia-py-lang") === '"pt"') lang = "pt"; } catch (e) { /* sem armazenamento */ }
+const t = (k) => TXT[lang][k];
+const cfg = () => window.EPIDEMIA_CONFIG || {};
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = (n) => new Intl.NumberFormat(lang === "pt" ? "pt-BR" : "es-PY").format(n);
+let ultimo = null, vistos = new Set(), primeiraCarga = true;
+
+function qrSvg(texto) {
+  if (typeof qrcode !== "function") return "";
+  const qr = qrcode(0, "Q");
+  qr.addData(texto);
+  qr.make();
+  const n = qr.getModuleCount(), m = 2;
+  let d = "";
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) d += `M${c + m},${r + m}h1v1h-1z`;
+  return `<svg viewBox="0 0 ${n + 2 * m} ${n + 2 * m}" shape-rendering="crispEdges" role="img" aria-label="QR"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+}
+
+function textos() {
+  document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
+  $("#t-titulo").textContent = t("titulo"); $("#t-sub").textContent = t("sub");
+  $("#t-escaneie").textContent = t("escaneie"); $("#t-partidas").textContent = t("partidas");
+  $("#t-lgpd").textContent = t("lgpd");
+  $("#btn-idioma").textContent = lang === "es" ? "PT" : "ES";
+  $("#btn-tela").setAttribute("aria-label", t("tela"));
+  const url = cfg().jogoUrl || location.href.replace(/ranking\.html.*$/, "");
+  $("#qr").innerHTML = qrSvg(url);
+  $("#url").textContent = url.replace(/^https?:\/\//, "");
+}
+
+function desenhar(d) {
+  $("#partidas").textContent = fmt(d.partidas || 0);
+  if (d.encerrado) { $("#lista").innerHTML = `<p class="vazio">${esc(t("encerrado"))}</p>`; return; }
+  if (!d.top || !d.top.length) { $("#lista").innerHTML = `<p class="vazio">${esc(t("vazio"))}</p>`; return; }
+  const linhas = d.top.slice(0, 12).map((r, i) => {
+    const chave = `${r.nome}|${r.turma}|${r.pontos}|${r.hora}`;
+    const nova = !primeiraCarga && !vistos.has(chave);
+    vistos.add(chave);
+    const detalhe = [r.faculdade, r.turma].filter(Boolean).join(" · ");
+    return `<div class="linha${i < 3 ? ` p${i + 1}` : ""}${nova ? " nova" : ""}"><span class="pos">${i + 1}</span>
+      <span class="quem"><b>${esc(r.nome)}</b><span>${esc(detalhe)}</span></span><span class="pts">${fmt(r.pontos)}</span></div>`;
+  });
+  $("#lista").innerHTML = linhas.join("");
+  primeiraCarga = false;
+  aparar();
+}
+
+/* No tablet deitado a lista não rola: tira as linhas que não cabem inteiras */
+function aparar() {
+  const lista = $("#lista");
+  if (getComputedStyle(lista).overflow !== "hidden") return;
+  const limite = lista.clientHeight - parseFloat(getComputedStyle(lista).paddingBottom);
+  [...lista.querySelectorAll(".linha")].forEach((l) => { if (l.offsetTop + l.offsetHeight > limite) l.remove(); });
+}
+window.addEventListener("resize", () => { if (ultimo) desenhar(ultimo); });
+
+async function atualizar() {
+  const url = cfg().rankingUrl;
+  const estado = $("#estado");
+  if (!url) { $("#lista").innerHTML = `<p class="vazio">${esc(t("semUrl"))}</p>`; estado.textContent = ""; return; }
+  try {
+    const r = await fetch(`${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`, { cache: "no-store" });
+    const d = await r.json();
+    if (!d.ok) throw new Error("resposta");
+    ultimo = d;
+    desenhar(d);
+    estado.className = "estado";
+    estado.textContent = t("atual")(d.atualizado || new Date().toLocaleTimeString());
+  } catch (e) {
+    estado.className = "estado erro";
+    estado.textContent = t("erro");
+  }
+}
+
+/* Tela sempre acesa no estande (quando o navegador permite) */
+let trava = null;
+async function manterAcesa() {
+  try { if ("wakeLock" in navigator && document.visibilityState === "visible") trava = await navigator.wakeLock.request("screen"); } catch (e) { /* sem permissão */ }
+}
+document.addEventListener("visibilitychange", manterAcesa);
+
+$("#btn-idioma").addEventListener("click", () => {
+  lang = lang === "es" ? "pt" : "es";
+  try { localStorage.setItem("epidemia-py-lang", JSON.stringify(lang)); } catch (e) { /* sem armazenamento */ }
+  textos();
+  if (ultimo) desenhar(ultimo); else atualizar();
+});
+const podeTela = document.fullscreenEnabled || document.webkitFullscreenEnabled;
+$("#btn-tela").hidden = !podeTela;
+$("#btn-tela").addEventListener("click", () => {
+  const el = document.documentElement;
+  const dentro = document.fullscreenElement || document.webkitFullscreenElement;
+  if (dentro) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  else (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+  manterAcesa();
+});
+
+textos();
+atualizar();
+manterAcesa();
+setInterval(atualizar, 5000);
+</script>
+</body>
+</html>

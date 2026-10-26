@@ -20,5 +20,10 @@ Mapa: límites de [geoBoundaries](https://www.geoboundaries.org) (CC BY 4.0; Run
 - `index.html`: pantalla y estilos.
 - `jogo.js`: reglas, textos (español y portugués) y fuentes.
 - `dados.js`: mapa y datos de los departamentos. Lo genera un script del proyecto a partir de la página del mapa del congreso; no editar a mano.
+- `ranking.html`: ranking en vivo para la tablet del stand (se actualiza cada 5 s, con el QR del juego).
+- `config.js`: dirección del ranking (`rankingUrl`) y del juego.
+- `apps-script/`: código de la planilla de Google que guarda el ranking y cómo instalarlo.
 
-Beta para pruebas. El ranking del congreso llega en una próxima versión.
+**Datos personales (LGPD/privacidad):** nombre, facultad y curso solo con autorización del jugador; se usan para el ranking del congreso y se borran el 31/10/2026.
+
+Beta para pruebas.

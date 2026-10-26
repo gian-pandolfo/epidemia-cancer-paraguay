@@ -100,7 +100,20 @@ const T = {
     ],
     fontesTit: "Fuentes",
     denovo: "Jugar de nuevo", compartir: "Compartir", copiado: "Enlace copiado",
-    beta: "Versión beta para pruebas: el ranking del congreso llega pronto. Cuéntanos qué te pareció.",
+    beta: "Versión beta para pruebas. Cuéntanos qué te pareció.",
+    rankTit: "Ranking del congreso",
+    rankIntro: "Entra al ranking que se muestra en el stand. Puedes usar tu nombre o un apodo.",
+    rankNome: "Nombre", rankFac: "Facultad", rankTurma: "Curso",
+    rankConsent: "Acepto que mi nombre, facultad y curso aparezcan en el ranking del congreso. Los datos quedan en una planilla de Google de Gianmarlon Pandolfo, autor del juego, y se borran el 31/10/2026.",
+    rankEnviar: "Entrar al ranking", rankEnviando: "Enviando…",
+    rankJa: (p) => `¡Listo! Estás en el ranking${p ? `, en el puesto ${p}` : ""}.`,
+    rankCampos: "Completa nombre, facultad y curso.",
+    rankSemOk: "Para entrar al ranking, marca la autorización.",
+    rankErro: "No se pudo enviar. Revisa la conexión e inténtalo de nuevo.",
+    rankFechado: "El ranking del congreso abre pronto.",
+    rankEncerrado: "El ranking del congreso ya terminó.",
+    rankVer: "Ver ranking",
+    ultimo: "Ver mi último resultado",
     shareTxt: "Juega Epidemia: Paraguay contra el cáncer",
     causas: { pulmao: "pulmón", prostata: "próstata", pancreas: "páncreas", mama: "mama", colo: "cuello uterino", empate: "empate mama = cuello uterino" },
   },
@@ -172,7 +185,20 @@ const T = {
     ],
     fontesTit: "Fontes",
     denovo: "Jogar de novo", compartir: "Compartilhar", copiado: "Link copiado",
-    beta: "Versão beta para testes: o ranking do congresso vem em breve. Conte o que achou.",
+    beta: "Versão beta para testes. Conte o que achou.",
+    rankTit: "Ranking do congresso",
+    rankIntro: "Entre no ranking que aparece no estande. Pode usar seu nome ou um apelido.",
+    rankNome: "Nome", rankFac: "Faculdade", rankTurma: "Turma",
+    rankConsent: "Aceito que meu nome, faculdade e turma apareçam no ranking do congresso. Os dados ficam numa planilha do Google de Gianmarlon Pandolfo, autor do jogo, e são apagados em 31/10/2026.",
+    rankEnviar: "Entrar no ranking", rankEnviando: "Enviando…",
+    rankJa: (p) => `Pronto! Você está no ranking${p ? `, na posição ${p}` : ""}.`,
+    rankCampos: "Preencha nome, faculdade e turma.",
+    rankSemOk: "Para entrar no ranking, marque a autorização.",
+    rankErro: "Não deu para enviar. Confira a conexão e tente de novo.",
+    rankFechado: "O ranking do congresso abre em breve.",
+    rankEncerrado: "O ranking do congresso já terminou.",
+    rankVer: "Ver ranking",
+    ultimo: "Ver meu último resultado",
     shareTxt: "Jogue Epidemia: Paraguai contra o câncer",
     causas: { pulmao: "pulmão", prostata: "próstata", pancreas: "pâncreas", mama: "mama", colo: "colo do útero", empate: "empate mama = colo do útero" },
   },
@@ -281,7 +307,7 @@ function novoEstado() {
   // Situação inicial simplificada: tratamento concentrado no INCAN (Central) e no IPS (Asunción)
   for (const a of ["quimio", "radio", "paliativos"]) deps.central.feitas[a] = -1;
   deps.asuncion.feitas.quimio = -1;
-  return { deps, anoIdx: 0, orc: 0, orcExtra: 0, pontos: 0, mod: {}, sel: "central", modo: "cob", fase: "evento", gasto: { P: 0, D: 0, T: 0, X: 0 }, licoesVistas: [], log: [], compradasAno: [], fim: false };
+  return { deps, id: Math.random().toString(36).slice(2, 10) + Date.now().toString(36), enviado: null, anoIdx: 0, orc: 0, orcExtra: 0, pontos: 0, mod: {}, sel: "central", modo: "cob", fase: "evento", gasto: { P: 0, D: 0, T: 0, X: 0 }, licoesVistas: [], log: [], compradasAno: [], fim: false };
 }
 
 function darGratis(id, a) {
@@ -533,21 +559,26 @@ function telaInicio() {
   $("#tela-jogo").hidden = true; $("#tela-fim").hidden = true; $("#barra").hidden = true; $("#tela-inicio").hidden = false;
   const salvo = ler(CHAVE);
   const temSalvo = salvo && !salvo.fim && salvo.deps;
+  const ultimoFim = salvo && salvo.fim && !salvo.enviado && CFG.rankingUrl && !rankingEncerrado();
   $("#tela-inicio").innerHTML = `
     <h1>${esc(t("h1"))}</h1>
     <p class="sub">${esc(t("intro"))}</p>
     <div class="cartao"><ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol></div>
     <div class="btns">${temSalvo ? `<button class="btn" id="btn-continuar" type="button">${esc(t("continuar"))}</button><button class="btn sec" id="btn-nova" type="button">${esc(t("nova"))}</button>`
-      : `<button class="btn" id="btn-nova" type="button">${esc(t("comecar"))}</button>`}</div>
+      : `<button class="btn" id="btn-nova" type="button">${esc(t("comecar"))}</button>`}${ultimoFim ? `<button class="btn sec" id="btn-ultimo" type="button">${esc(t("ultimo"))}</button>` : ""}</div>
     <p class="aviso">${esc(t("aviso"))}</p>`;
   renderHud();
 }
 
 function mostrarFim() {
   $("#tela-jogo").hidden = true; $("#barra").hidden = true; $("#tela-inicio").hidden = true; $("#tela-fim").hidden = false;
-  const recAnt = ler("epidemia-py-recorde") || 0;
+  if (S.recordeAnterior === undefined) {
+    S.recordeAnterior = ler("epidemia-py-recorde") || 0;
+    if (S.pontos > S.recordeAnterior) guardar("epidemia-py-recorde", S.pontos);
+    salvar();
+  }
+  const recAnt = S.recordeAnterior;
   const novo = S.pontos > recAnt;
-  if (novo) guardar("epidemia-py-recorde", S.pontos);
   const popTot = DEPS.reduce((s, d) => s + d.pop, 0);
   const eq = DEPS.filter((d) => equil(d.id) >= 1);
   const faltava = DEPS.reduce((s, d) => s + (1 - S.deps[d.id].vis0) * d.pop, 0);
@@ -560,6 +591,7 @@ function mostrarFim() {
   $("#tela-fim").innerHTML = `
     <h1>${esc(t("resTit"))}</h1>
     <div class="cartao"><div class="placar">⭐ ${fmtInt(S.pontos)}</div><p class="meta">${esc(t("pontos"))} · ${novo ? esc(t("novoRec")) : esc(t("recorde")(fmtInt(Math.max(recAnt, S.pontos))))}</p></div>
+    ${cartaoRanking()}
     <div class="cartao"><ul class="linhas">${t("resLinhas")(x).map((l) => `<li>${l}</li>`).join("")}</ul></div>
     <div class="cartao"><h2>${esc(t("realTit"))}</h2><ul class="linhas">${t("real").map((l) => `<li>${esc(l)}</li>`).join("")}</ul></div>
     <div class="btns"><button class="btn" id="btn-nova" type="button">${esc(t("denovo"))}</button><button class="btn sec" id="btn-compartir" type="button">${esc(t("compartir"))}</button></div>
@@ -567,6 +599,49 @@ function mostrarFim() {
     <div class="cartao"><h2>${esc(t("fontesTit"))}</h2><ol class="fontes">${FONTES.map((f) => `<li>${esc(f)}</li>`).join("")}</ol></div>`;
   renderHud();
   window.scrollTo(0, 0);
+}
+
+/* ---------- ranking do congresso ---------- */
+const CFG = window.EPIDEMIA_CONFIG || {};
+const rankingEncerrado = () => CFG.fimDadosPessoais && new Date() >= new Date(CFG.fimDadosPessoais);
+
+function cartaoRanking() {
+  const tit = `<h2>${esc(t("rankTit"))}</h2>`;
+  if (!CFG.rankingUrl) return `<div class="cartao">${tit}<p class="meta">${esc(t("rankFechado"))}</p></div>`;
+  if (S.enviado) return `<div class="cartao form-rank">${tit}<p class="msg-rank ok">${esc(t("rankJa")(S.enviado.posicao))}</p><div class="btns"><a class="btn sec" href="ranking.html">${esc(t("rankVer"))}</a></div></div>`;
+  if (rankingEncerrado()) return `<div class="cartao">${tit}<p class="meta">${esc(t("rankEncerrado"))}</p></div>`;
+  const j = ler("epidemia-py-jogador") || {};
+  return `<div class="cartao form-rank" id="form-rank">${tit}<p class="meta">${esc(t("rankIntro"))}</p>
+    <label>${esc(t("rankNome"))}<input type="text" id="r-nome" maxlength="40" autocomplete="name" value="${esc(j.nome || "")}"></label>
+    <label>${esc(t("rankFac"))}<input type="text" id="r-fac" maxlength="60" value="${esc(j.faculdade || "")}"></label>
+    <label>${esc(t("rankTurma"))}<input type="text" id="r-turma" maxlength="20" value="${esc(j.turma || "")}"></label>
+    <label class="consent"><input type="checkbox" id="r-ok"><span>${esc(t("rankConsent"))}</span></label>
+    <div class="btns"><button class="btn" type="button" id="btn-enviar">${esc(t("rankEnviar"))}</button></div>
+    <p class="msg-rank" id="r-msg" role="status"></p></div>`;
+}
+
+async function enviarRanking() {
+  const nome = $("#r-nome").value.trim(), faculdade = $("#r-fac").value.trim(), turma = $("#r-turma").value.trim();
+  const msg = $("#r-msg"), btn = $("#btn-enviar");
+  const erro = (k) => { msg.textContent = t(k); msg.className = "msg-rank erro"; };
+  if (nome.length < 2 || faculdade.length < 2 || !turma) return erro("rankCampos");
+  if (!$("#r-ok").checked) return erro("rankSemOk");
+  guardar("epidemia-py-jogador", { nome, faculdade, turma });
+  btn.disabled = true; btn.textContent = t("rankEnviando"); msg.textContent = "";
+  try {
+    const r = await fetch(CFG.rankingUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ nome, faculdade, turma, consentimento: true, pontos: S.pontos, anos: S.log.map((x) => x.pts), idioma: lang, versao: CFG.versao || "", id: S.id }),
+    });
+    const d = await r.json();
+    if (d.ok || d.erro === "repetido") { S.enviado = { posicao: d.posicao || null }; salvar(); mostrarFim(); return; }
+    if (d.erro === "encerrado") { btn.hidden = true; return erro("rankEncerrado"); }
+    if (d.erro === "campos") throw new Error("campos");
+    throw new Error(d.erro || "erro");
+  } catch (e) {
+    btn.disabled = false; btn.textContent = t("rankEnviar");
+    erro(e.message === "campos" ? "rankCampos" : "rankErro");
+  }
 }
 
 /* ---------- janelas ---------- */
@@ -635,6 +710,7 @@ function mostrarPainel() {
 function continuar() {
   S = ler(CHAVE);
   if (!S || S.fim) return novoJogo();
+  if (!S.id) S.id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
   render();
   if (S.fase === "evento") mostrarEvento();
   else if (S.fase === "resumo") mostrarResumo(S.log[S.log.length - 1]);
@@ -657,6 +733,8 @@ document.addEventListener("click", (ev) => {
   if (alvo.id === "btn-fechar") { fecharAno(); return; }
   if (alvo.id === "btn-ajuda") { mostrarAjuda(); return; }
   if (alvo.id === "btn-compartir") { compartilhar(); return; }
+  if (alvo.id === "btn-enviar") { enviarRanking(); return; }
+  if (alvo.id === "btn-ultimo") { S = ler(CHAVE); mostrarFim(); return; }
   if (alvo.id === "btn-idioma") {
     lang = lang === "es" ? "pt" : "es"; guardar("epidemia-py-lang", lang);
     document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
