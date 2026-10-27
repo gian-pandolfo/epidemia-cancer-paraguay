@@ -9,7 +9,7 @@ const ANOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
 const ORC_BASE = 15;   // receita por ano, que entra mês a mês
 const RAZAO_INC = 2.1;             // incidência ≈ 2,1 × óbitos (GLOBOCAN 2022: 13.783 casos / 6.581 óbitos)
 const CHAVE = "epidemia-py-v4";    // v4: personagens, habilidades, prestígio e manutenção (partidas salvas de versões anteriores não continuam)
-const RANKS = [0, 1500, 4000, 7500, 11000];   // pontos de cada cargo; cada promoção libera uma habilidade
+const RANKS = [0, 1200, 4000, 7500, 11000];   // pontos de cada cargo; cada promoção libera uma habilidade
 const CONV_DESDE = 2016;   // convênios a partir de 2016 (Don Patrón desde o começo)
 const CHAVE_LOGROS = "epidemia-py-logros";   // conquistas deste celular, entre partidas
 const MODOS_VIVOS = ["inc", "prev", "mort", "cura"];
@@ -55,8 +55,9 @@ const T = {
       "Cada acción tiene su nivel de atención: <b>1.ª primaria</b> (puerta de entrada), <b>2.ª secundaria</b> (hospital regional, por derivación) y <b>3.ª terciaria</b> (alta complejidad). La 2.ª necesita 1.ª en el departamento; la 3.ª, 2.ª cerca.",
       "🤝 Convenios: sin compra ni prestigio, pero se pagan todos los años.",
       "Arriba a la derecha: incidencia, prevalencia, muertes y curas del país por año; cambian en el acto con cada decisión. Tócalas para ver el mapa de cada una.",
-      "Cada año trae un hecho real, a veces un imprevisto (royalties, epidemias, donaciones, recortes del Congreso) y una demanda de la sociedad.",
+      "Cada año trae un hecho real, a veces un imprevisto (royalties, epidemias, donaciones, recortes del Congreso) y una demanda de la sociedad. Cumplir la demanda da ⭐ y 🎖️; rechazarla cuesta 🎖️ 1; prometer y no cumplir cuesta más.",
       "🎯 Misiones, ⚡ desafíos relámpago y 🏅 logros dan premios. ❤️ Vidas salvadas, 🍎 casos evitados y 🕯️ muertes sin diagnóstico muestran el efecto de tus decisiones (modelo del juego, comparado con no hacer nada).",
+      "Los ⭐ puntos salen sobre todo del resultado: cada vida salvada vale 1, cada caso evitado ½ y cada muerte sin diagnóstico quita ½. La estructura construida suma poco.",
       "Donde la estadística es baja, falta diagnóstico, no cáncer: diagnosticar revela casos ocultos y la tasa registrada sube. ¡Es buena señal!",
     ],
     aviso: "Simulación educativa (beta). Los datos de partida y el hecho histórico de cada año son reales, con fuente. Los efectos de las acciones, los personajes, los números en tiempo real, los imprevistos, las demandas y los puntos son del modelo del juego.",
@@ -182,7 +183,7 @@ const T = {
     eqFalta: (l) => `↑ Para subir: ${l}`, os3: "los 3 niveles",
     eqCompleto: "✓ Los 3 niveles completos",
     // v4: personagens, habilidades, prestígio, manutenção e níveis de atenção
-    linksNota: "↗ abre una copia guardada de la fuente (Internet Archive) cuando existe; si no, la página original.",
+    linksNota: "«ver ↗» abre el recorte del juego (PDF con resumen y enlace); si no hay, la copia guardada en el Internet Archive; si no, la página original.", verFonte: "ver",
     persTeaser: "Bob, Don Patrón o la Dra. Beatriz: elige quién lidera la lucha contra el cáncer en Paraguay.",
     pers: { escolher: "Elige tu personaje", jogarCom: (n) => `Jugar con ${n}`, passiva: "Lo que ya sabe hacer", lado: "Contactos" },
     cargos: ["Coordinador/a local", "Director/a regional", "Director/a nacional", "Viceministro/a", "Ministro/a de Salud"],
@@ -248,8 +249,12 @@ const T = {
     demandaTit: "Demanda del año", proxDemanda: "Ver la demanda del año",
     quem: { cid: "Ciudadanos", pub: "Institución pública", priv: "Institución privada", acad: "Institución académica", int: "Cooperación internacional" },
     semOrcOp: "sin presupuesto", inspirado: "Inspirado en",
-    compOk: (n, d) => `Compromiso cumplido: ${n} en ${d} (+🎖️ 4)`,
-    compFalhou: (n, d) => `Compromiso incumplido: ${n} en ${d} (−🎖️ 6)`,
+    promOk: (n, d, p, pr) => `Compromiso cumplido: ${n} en ${d} (+⭐ ${p} · +🎖️ ${pr})`,
+    promFalhou: (n, d, p, pr) => `Compromiso incumplido: ${n} en ${d} (−⭐ ${p} · −🎖️ ${pr})`,
+    demAgora: (p, pr) => `+⭐ ${p}${pr ? ` · +🎖️ ${pr}` : ""}`,
+    demSe: (p, pr, pf, prf) => `si cumples: +⭐ ${p} · +🎖️ ${pr} · si no: −⭐ ${pf} · −🎖️ ${prf}`,
+    demRegra: "Cumplir da puntos y prestigio; rechazar cuesta poco. Prometer y no cumplir cuesta más: cuanto mayor la promesa, mayor el premio y la pena.",
+    contaTit: "Puntos del año: 🏗️ ¼ de la estructura, ❤️ 1 por vida salvada, 🍎 ½ por caso evitado, 🕯️ −½ por muerte sin diagnóstico, 📣 demanda y ⚡ desafío (de 0 a 3.000 por año).",
     resPais: (c, m, k) => `País este año (modelo): ${c} casos diagnosticados, ${m} muertes y ${k} curas.`,
     resComp: (ok, tot) => `Compromisos cumplidos: <b>${ok}</b> de ${tot}`,
     resTot: (c, m, k) => `En 10 años (modelo del juego): <b>${c}</b> casos diagnosticados, <b>${m}</b> muertes y <b>${k}</b> curas.`,
@@ -268,8 +273,9 @@ const T = {
       "Cada ação tem seu nível de atenção: <b>1ª primária</b> (porta de entrada), <b>2ª secundária</b> (hospital regional, por encaminhamento) e <b>3ª terciária</b> (alta complexidade). A 2ª precisa de 1ª no departamento; a 3ª, de 2ª perto.",
       "🤝 Convênios: sem compra nem prestígio, mas se pagam todo ano.",
       "No alto à direita: incidência, prevalência, óbitos e curas do país por ano; mudam na hora a cada decisão. Toque nelas para ver o mapa de cada uma.",
-      "Cada ano traz um fato real, às vezes um imprevisto (royalties, epidemias, doações, cortes do Congresso) e uma demanda da sociedade.",
+      "Cada ano traz um fato real, às vezes um imprevisto (royalties, epidemias, doações, cortes do Congresso) e uma demanda da sociedade. Cumprir a demanda dá ⭐ e 🎖️; recusar custa 🎖️ 1; prometer e não cumprir custa mais.",
       "🎯 Missões, ⚡ desafios relâmpago e 🏅 conquistas dão prêmios. ❤️ Vidas salvas, 🍎 casos evitados e 🕯️ óbitos sem diagnóstico mostram o efeito das suas decisões (modelo do jogo, comparado com não fazer nada).",
+      "Os ⭐ pontos vêm sobretudo do resultado: cada vida salva vale 1, cada caso evitado ½ e cada óbito sem diagnóstico tira ½. A estrutura construída soma pouco.",
       "Onde a estatística é baixa, falta diagnóstico, não câncer: diagnosticar revela casos ocultos e a taxa registrada sobe. É bom sinal!",
     ],
     aviso: "Simulação educativa (beta). Os dados de partida e o fato histórico de cada ano são reais, com fonte. Os efeitos das ações, os personagens, os números em tempo real, os imprevistos, as demandas e os pontos são do modelo do jogo.",
@@ -395,7 +401,7 @@ const T = {
     eqFalta: (l) => `↑ Para subir: ${l}`, os3: "os 3 níveis",
     eqCompleto: "✓ Os 3 níveis completos",
     // v4: personagens, habilidades, prestígio, manutenção e níveis de atenção
-    linksNota: "↗ abre uma cópia guardada da fonte (Internet Archive) quando existe; se não, a página original.",
+    linksNota: "«ver ↗» abre o recorte do jogo (PDF com resumo e link); se não houver, a cópia guardada no Internet Archive; se não, a página original.", verFonte: "ver",
     persTeaser: "Bob, Don Patrón ou a Dra. Beatriz: escolha quem lidera a luta contra o câncer no Paraguai.",
     pers: { escolher: "Escolha seu personagem", jogarCom: (n) => `Jogar com ${n}`, passiva: "O que já sabe fazer", lado: "Contatos" },
     cargos: ["Coordenador/a local", "Diretor/a regional", "Diretor/a nacional", "Vice-ministro/a", "Ministro/a da Saúde"],
@@ -461,8 +467,12 @@ const T = {
     demandaTit: "Demanda do ano", proxDemanda: "Ver a demanda do ano",
     quem: { cid: "Cidadãos", pub: "Instituição pública", priv: "Instituição privada", acad: "Instituição acadêmica", int: "Cooperação internacional" },
     semOrcOp: "sem orçamento", inspirado: "Inspirado em",
-    compOk: (n, d) => `Compromisso cumprido: ${n} em ${d} (+🎖️ 4)`,
-    compFalhou: (n, d) => `Compromisso não cumprido: ${n} em ${d} (−🎖️ 6)`,
+    promOk: (n, d, p, pr) => `Compromisso cumprido: ${n} em ${d} (+⭐ ${p} · +🎖️ ${pr})`,
+    promFalhou: (n, d, p, pr) => `Compromisso não cumprido: ${n} em ${d} (−⭐ ${p} · −🎖️ ${pr})`,
+    demAgora: (p, pr) => `+⭐ ${p}${pr ? ` · +🎖️ ${pr}` : ""}`,
+    demSe: (p, pr, pf, prf) => `se cumprir: +⭐ ${p} · +🎖️ ${pr} · se não: −⭐ ${pf} · −🎖️ ${prf}`,
+    demRegra: "Cumprir dá pontos e prestígio; recusar custa pouco. Prometer e não cumprir custa mais: quanto maior a promessa, maior o prêmio e a pena.",
+    contaTit: "Pontos do ano: 🏗️ ¼ da estrutura, ❤️ 1 por vida salva, 🍎 ½ por caso evitado, 🕯️ −½ por óbito sem diagnóstico, 📣 demanda e ⚡ desafio (de 0 a 3.000 por ano).",
     resPais: (c, m, k) => `País neste ano (modelo): ${c} casos diagnosticados, ${m} óbitos e ${k} curas.`,
     resComp: (ok, tot) => `Compromissos cumpridos: <b>${ok}</b> de ${tot}`,
     resTot: (c, m, k) => `Em 10 anos (modelo do jogo): <b>${c}</b> casos diagnosticados, <b>${m}</b> óbitos e <b>${k}</b> curas.`,
@@ -575,28 +585,29 @@ const EVENTOS_ALEAT = [
     pt: ["Colegas da Dra. Beatriz", "Sociedades médicas organizam uma jornada de teste de HPV em {dep}.", "{dep} ganha de graça o teste de HPV e +🎖️ 1.", ""] },
 ];
 
-/* ---------- demandas da sociedade: uma por ano, estilo SimCity. Cada resposta custa, muda a confiança ou vira compromisso ---------- */
+/* ---------- demandas da sociedade: uma por ano, estilo SimCity. Atender dá ⭐ e 🎖️ pelo valor; recusar custa 🎖️ 1; promessa vira compromisso (prêmio ou pena no prazo) ---------- */
 const DEMANDAS = [
   { id: "hd", quem: "cid", alvo: () => alvoSem("quimio"),
     es: "Pacientes de {dep} viajan horas para la quimioterapia y piden un Hospital Día.",
     pt: "Pacientes de {dep} viajam horas para a quimioterapia e pedem um Hospital Día.",
     opcoes: [
-      { es: "Prometer un Hospital Día en {dep} hasta {ano2}", pt: "Prometer um Hospital Día em {dep} até {ano2}", prest: 2, aplicar: (dep) => prometer(dep, "quimio", 2) },
+      { es: "Prometer un Hospital Día en {dep} hasta {ano2}", pt: "Prometer um Hospital Día em {dep} até {ano2}", promessa: { a: "quimio", anos: 2 } },
       { es: "Convenio con una fundación local", pt: "Convênio com uma fundação local", conv: "quimio", prest: 3 },
-      { es: "Ahora no", pt: "Agora não", prest: -3 },
+      { es: "Ahora no", pt: "Agora não", prest: -1 },
     ] },
   { id: "vacuna", quem: "cid", alvo: () => alvoSem("vacuna"),
     es: "Madres de {dep} piden la vacuna contra el VPH en las escuelas.",
     pt: "Mães de {dep} pedem a vacina contra o HPV nas escolas.",
     opcoes: [
       { es: "Campaña de vacunación en {dep}", pt: "Campanha de vacinação em {dep}", compra: "vacuna", prest: 3 },
-      { es: "Ahora no", pt: "Agora não", prest: -3 },
+      { es: "Ahora no", pt: "Agora não", prest: -1 },
     ] },
   { id: "terreno", quem: "pub", alvo: () => alvoSem("mamo"),
     es: "La Gobernación de {dep} ofrece terreno y personal para un mamógrafo.",
     pt: "O governo departamental de {dep} oferece terreno e pessoal para um mamógrafo.",
     opcoes: [
-      { es: "Aceptar: este año el mamógrafo en {dep} cuesta 💰 2 menos", pt: "Aceitar: neste ano o mamógrafo em {dep} custa 💰 2 a menos", prest: 2, aplicar: (dep) => S.cupons.push({ dep, a: "mamo", valor: 2 }) },
+      { es: "Aceptar: construir el mamógrafo en {dep} este año, con 💰 2 de descuento", pt: "Aceitar: construir o mamógrafo em {dep} neste ano, com 💰 2 de desconto",
+        promessa: { a: "mamo", anos: 0, desconto: 2 }, aplicar: (dep) => S.cupons.push({ dep, a: "mamo", valor: 2 }) },
       { es: "Rechazar", pt: "Recusar", prest: -1 },
     ] },
   { id: "subregistro", quem: "acad", alvo: () => alvoMenorVis(),
@@ -612,7 +623,7 @@ const DEMANDAS = [
     pt: "Uma clínica privada de {dep} oferece mamografias por convênio.",
     opcoes: [
       { es: "Firmar el convenio", pt: "Assinar o convênio", conv: "mamo", prest: 1 },
-      { es: "Prefiero invertir en lo público", pt: "Prefiro investir no público", prest: 0 },
+      { es: "Prefiero invertir en lo público", pt: "Prefiro investir no público", prest: -1 },
     ] },
   { id: "remedios", quem: "cid", alvo: () => null, fonte: "La Nación, 09/03/2026; Decreto N° 2064/2019, art. 23",
     es: "La asociación de pacientes denuncia falta de medicamentos oncológicos.",
@@ -620,7 +631,7 @@ const DEMANDAS = [
     opcoes: [
       { es: "Compra de urgencia", pt: "Compra de urgência", custo: 3, gasto: "T", prest: 4 },
       { es: "Actualizar el Listado Nacional de Drogas Antineoplásicas: el año que viene la quimioterapia cuesta 💰 1 menos", pt: "Atualizar o Listado Nacional de Drogas Antineoplásicas: no ano que vem a quimioterapia custa 💰 1 a menos", prest: 2, aplicar: () => { S.modProx.quimio = (S.modProx.quimio || 0) - 1; } },
-      { es: "Ignorar", pt: "Ignorar", prest: -5 },
+      { es: "Ignorar", pt: "Ignorar", prest: -1 },
     ] },
   { id: "ops", quem: "int", alvo: () => alvoSem("vph"), fonte: "OPS/OMS, 12/02/2024",
     es: "La OPS/OMS ofrece apoyo al test de VPH en {dep} si el país pone el personal.",
@@ -634,15 +645,15 @@ const DEMANDAS = [
     pt: "Escolas de {dep} pedem palestras contra o tabaco.",
     opcoes: [
       { es: "Campaña antitabaco en {dep}", pt: "Campanha antitabaco em {dep}", compra: "tabaco", prest: 2 },
-      { es: "No", pt: "Não", prest: -2 },
+      { es: "No", pt: "Não", prest: -1 },
     ] },
   { id: "radio", quem: "cid", alvo: () => alvoSem("radio", ["alto-parana", "itapua"]), fonte: "La Nación, 23/07/2024",
     es: "La prensa muestra pacientes de {dep} que tienen que viajar a Capiatá para la radioterapia.",
     pt: "A imprensa mostra pacientes de {dep} que precisam viajar a Capiatá para a radioterapia.",
     opcoes: [
       { es: "Convenio con radioterapia privada", pt: "Convênio com radioterapia privada", conv: "radio", prest: 3 },
-      { es: "Prometer un acelerador en {dep} hasta {ano3}", pt: "Prometer um acelerador em {dep} até {ano3}", prest: 2, aplicar: (dep) => prometer(dep, "radio", 3) },
-      { es: "Ignorar", pt: "Ignorar", prest: -4 },
+      { es: "Prometer un acelerador en {dep} hasta {ano3}", pt: "Prometer um acelerador em {dep} até {ano3}", promessa: { a: "radio", anos: 3 } },
+      { es: "Ignorar", pt: "Ignorar", prest: -1 },
     ] },
   { id: "paliativos", quem: "pub", alvo: () => alvoSem("paliativos"),
     es: "El municipio de {dep} pide cuidados paliativos en casa.",
@@ -650,21 +661,21 @@ const DEMANDAS = [
     opcoes: [
       { es: "Convenio con una ONG", pt: "Convênio com uma ONG", conv: "paliativos", prest: 2 },
       { es: "Servicio público", pt: "Serviço público", compra: "paliativos", prest: 2 },
-      { es: "No", pt: "Não", prest: -2 },
+      { es: "No", pt: "Não", prest: -1 },
     ] },
   { id: "formacion", quem: "acad", alvo: () => null,
     es: "Una universidad propone formar oncólogos para el interior.",
     pt: "Uma universidade propõe formar oncologistas para o interior.",
     opcoes: [
       { es: "Becas: por 3 años el tratamiento cuesta 💰 1 menos", pt: "Bolsas: por 3 anos o tratamento custa 💰 1 a menos", custo: 2, gasto: "T", prest: 2, aplicar: () => { S.descTrat = { ate: S.anoIdx + 3, valor: 1 }; } },
-      { es: "No", pt: "Não", prest: 0 },
+      { es: "No", pt: "Não", prest: -1 },
     ] },
   { id: "lab", quem: "priv", alvo: () => alvoSem("vph"),
     es: "Un laboratorio privado ofrece procesar los tests de VPH de {dep} por convenio.",
     pt: "Um laboratório privado oferece processar os testes de HPV de {dep} por convênio.",
     opcoes: [
       { es: "Firmar el convenio", pt: "Assinar o convênio", conv: "vph", prest: 1 },
-      { es: "No", pt: "Não", prest: 0 },
+      { es: "No", pt: "Não", prest: -1 },
     ] },
 ];
 
@@ -1084,7 +1095,7 @@ const FONTE_CHAVES = {
 const CHAVES_FONTE = Object.keys(FONTE_CHAVES).sort((a, b) => b.length - a.length);
 // ↗ abre o recorte do jogo (sem anúncios, com o link do site real); sem recorte, a cópia do Internet Archive; senão, a original
 const urlFonte = (k) => (typeof LINKS_FONTES !== "undefined" && LINKS_FONTES[k] ? LINKS_FONTES[k].recorte || LINKS_FONTES[k].arquivo || LINKS_FONTES[k].url : null);
-const linkFonte = (k, n = "") => { const u = urlFonte(k); return u ? ` <a class="lk" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(LINKS_FONTES[k].url)}">${n}↗</a>` : ""; };
+const linkFonte = (k, n = "") => { const u = urlFonte(k); return u ? ` <a class="lk" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(LINKS_FONTES[k].url)}">${t("verFonte")}${n ? ` ${n}` : ""} ↗</a>` : ""; };
 /* Cada trecho da fonte ganha o link do seu documento, ao lado */
 function fonteHTML(texto) {
   return String(texto).split("; ").map((parte) => {
@@ -1120,7 +1131,7 @@ function novoEstado(pers = "bob") {
   return {
     deps, pers, hab: [], habSel: null, cargoAvisado: 0, abrirArvore: false, fichaAtual: null,
     id: Math.random().toString(36).slice(2, 10) + Date.now().toString(36), enviado: null,
-    anoIdx: 0, mes: 0, orc: 0, orcExtra: 0, pontos: 0, ptsAno: 0, prest: 5, prestInicio: 5,
+    anoIdx: 0, mes: 0, orc: 0, orcExtra: 0, pontos: 0, ptsAno: 0, demPts: 0, prest: 5, prestInicio: 5,
     mod: {}, modProx: {}, cupons: [], regiao: null, descTrat: null, comp: [], usadas: [], aleatUsados: [], evAleat: null, demanda: null,
     sel: "central", modo: "cob", fase: "evento", pausa: false, gasto: { P: 0, D: 0, T: 0, X: 0 },
     tot: novoInd(), licoesVistas: [], log: [], compradasAno: [], fechadasAno: [], fim: false,
@@ -1144,7 +1155,8 @@ function darGratis(id, a) {
   const d = S.deps[id];
   if (d.feitas[a] === undefined) { d.feitas[a] = S.anoIdx; d.pago[a] = 0; delete d.conv[a]; }
 }
-function prometer(dep, a, anos) { S.comp.push({ dep, a, ate: Math.min(ANOS.length - 1, S.anoIdx + anos), estado: "aberto" }); }
+/* Promessa de uma demanda: v = valor (💰) que decide o prêmio e a pena; extra = bônus do personagem, pago só ao cumprir */
+function prometer(dep, a, anos, v, extra) { S.comp.push({ dep, a, ate: Math.min(ANOS.length - 1, S.anoIdx + anos), estado: "aberto", v, extra }); }
 
 const ano = () => ANOS[S.anoIdx];
 const publico = (d, a) => d.feitas[a] !== undefined;
@@ -1204,15 +1216,47 @@ function valorVivo(m, id) {
   return (m === "inc" ? f.casos : m === "mort" ? f.mortes : f.curas) * por;
 }
 
+/* Bônus de pontos do departamento: pesquisa +20%, fila tira a metade, equilíbrio com o Polo regional +20% */
+function modPts(id) {
+  let m = temPesq(S.deps[id]) ? 1.2 : 1;
+  if (temFila(id)) m *= num("filaMeia") ? 0.75 : 0.5;
+  if (equil(id) >= 1) m *= mul("ptsEq");
+  return m;
+}
+/* Pontos de estrutura de um ano: cada nível de equilíbrio vale 10 vezes um nível solto */
 function pontosDep(id) {
   const d = S.deps[id], P = nivel(d, "P"), D = nivel(d, "D"), Tn = nivel(d, "T");
-  let p = (10 * Math.min(P, D, Tn) + P + D + Tn) * (DEP[id].pop / 100000);
-  if (temPesq(d)) p *= 1.2;
-  if (temFila(id)) p *= num("filaMeia") ? 0.75 : 0.5;
-  if (Math.min(P, D, Tn) >= 1) p *= mul("ptsEq");
-  return p;
+  return (10 * Math.min(P, D, Tn) + P + D + Tn) * (DEP[id].pop / 100000) * modPts(id);
 }
 const pontosAno = () => DEPS.reduce((s, d) => s + pontosDep(d.id), 0);
+
+/* Pontos do ano (pedido do Gi, 27/10/2026): o resultado pesa mais que a estrutura.
+   ¼ da estrutura + 1 por vida salva + ½ por caso evitado (com os bônus do departamento) − ½ por óbito sem diagnóstico.
+   A missão de ⭐× multiplica o ano, a demanda soma ou tira, e o ano fica entre 0 e 3.000 (o servidor do ranking confere) */
+const PESO = { estr: 0.25, vida: 1, evit: 0.5, semdx: 0.5 };
+function partesAno(estr, inds) {
+  const p = { estr: PESO.estr * estr, vidas: 0, evit: 0, semdx: 0 };
+  for (const d of DEPS) {
+    const m = modPts(d.id), x = inds[d.id];
+    p.vidas += PESO.vida * x.vidas * m;
+    p.evit += PESO.evit * x.evit * m;
+    p.semdx -= PESO.semdx * x.semdx;
+  }
+  return p;
+}
+function totalAno(p, mult, dem) {
+  const b = p.estr + p.vidas + p.evit + p.semdx;
+  return Math.min(3000, Math.max(0, Math.round((b > 0 ? b * mult : b) + dem)));
+}
+/* Pontos que o ano vai dar com o que já está feito (a mesma conta do fim do ano, sem o desafio relâmpago) */
+function previsaoAno() {
+  const resto = (12 - S.mes) / 12, inds = {};
+  for (const d of DEPS) {
+    const st = S.deps[d.id], a = anoDep(d.id);
+    inds[d.id] = { vidas: st.ind.vidas + a.vidas * resto, evit: st.ind.evit + a.evit * resto, semdx: st.ind.semdx + a.semdx * resto };
+  }
+  return totalAno(partesAno(S.ptsAno + pontosAno() * resto, inds), S.multAno, S.demPts || 0);
+}
 
 /* ---------- formatação ---------- */
 const fmtInt = (n) => new Intl.NumberFormat(lang === "pt" ? "pt-BR" : "es-PY", { maximumFractionDigits: 0 }).format(n);
@@ -1259,7 +1303,7 @@ function escolherDemanda() {
 
 /* ---------- ano: fato real (+ imprevisto) → demanda → 12 meses → resumo ---------- */
 function iniciarAno() {
-  S.mes = 0; S.ptsAno = 0; S.multAno = 1; S.quizOk = null; S.fechadasAno = [];
+  S.mes = 0; S.ptsAno = 0; S.demPts = 0; S.multAno = 1; S.quizOk = null; S.fechadasAno = [];
   S.mod = { ...S.modProx }; S.modProx = {}; S.cupons = []; S.regiao = null; S.compradasAno = []; S.prestInicio = S.prest;
   for (const id in S.deps) { S.deps[id].ind = novoInd(); S.deps[id].eqInicio = equil(id); }
   const receita = rendaAno();
@@ -1291,17 +1335,24 @@ function iniciarAno() {
   mostrarEvento();
 }
 
+/* Resultado de um ano inteiro no estado atual (modelo do jogo, comparado com não fazer nada) */
+function anoDep(id) {
+  const st = S.deps[id], f = fluxos(id);
+  const base = st.mort0 * st.cargaBase / st.carga0;   // óbitos se nada tivesse sido feito
+  return {
+    f, vidas: base - f.mortes,
+    evit: st.mort0 * RAZAO_INC * (st.cargaBase - st.carga) / st.carga0,   // casos que a prevenção evitou
+    semdx: f.mortes * (1 - f.v),   // morreram sem saber que tinham câncer
+  };
+}
 function simularMes() {
   for (const d of DEPS) {
-    const st = S.deps[d.id], f = fluxos(d.id);
+    const st = S.deps[d.id], a = anoDep(d.id), f = a.f;
     st.ind.casos += f.casos / 12; st.ind.mortes += f.mortes / 12; st.ind.curas += f.curas / 12;
-    const base = st.mort0 * st.cargaBase / st.carga0;   // óbitos se nada tivesse sido feito
-    st.ind.vidas += (base - f.mortes) / 12;
-    st.ind.evit += st.mort0 * RAZAO_INC * (st.cargaBase - st.carga) / st.carga0 / 12;   // casos que a prevenção evitou
-    st.ind.semdx += f.mortes * (1 - f.v) / 12;   // morreram sem saber que tinham câncer
+    st.ind.vidas += a.vidas / 12; st.ind.evit += a.evit / 12; st.ind.semdx += a.semdx / 12;
     st.prev = Math.max(0, st.prev + (f.casos - f.mortes * f.v - st.prev / 5) / 12);   // entra quem é diagnosticado; sai quem morre ou passa de 5 anos
   }
-  S.ptsAno += pontosAno() * S.multAno / 12;
+  S.ptsAno += pontosAno() / 12;   // estrutura; o ⭐× da missão entra no fim do ano, sobre o ano inteiro
 }
 
 
@@ -1309,8 +1360,9 @@ function fecharAno() {
   if (!S || S.fase !== "jogando") return;
   if (S.quizAno !== S.anoIdx) { S.quizDepois = true; abrirQuiz(); return; }   // o desafio do ano vem antes do resumo
   while (S.mes < 12) { simularMes(); S.mes++; }   // ⏩ termina o ano com o que já está feito
-  const pts = Math.min(3000, Math.round(S.ptsAno)) + (S.quizOk ? BONUS_QUIZ : 0);   // teto por ano do ranking + acerto do desafio
-  S.pontos += pts;
+  const inds = {};
+  for (const d of DEPS) inds[d.id] = S.deps[d.id].ind;
+  const partes = partesAno(S.ptsAno, inds);   // com o estado do ano, antes do envelhecimento de dezembro
   S.ptsAno = 0;
   const subiu = [], filas = [], comp = [], ind = novoInd();
   let novosEq = 0;
@@ -1328,14 +1380,26 @@ function fecharAno() {
   for (const k in ind) { ind[k] = Math.round(ind[k]); S.tot[k] += ind[k]; }
   for (const c of S.comp) {
     if (c.estado !== "aberto") continue;
-    if (temSlot(S.deps[c.dep], c.a)) { c.estado = "cumprido"; ganharPrest(4); comp.push({ ok: true, a: c.a, dep: c.dep }); }
-    else if (S.anoIdx >= c.ate) { c.estado = "falhou"; ganharPrest(-6); comp.push({ ok: false, a: c.a, dep: c.dep }); }
+    const v = c.v || ACOES[c.a].custo, x = c.extra || {};   // promessas salvas antes da beta9 não guardavam o valor
+    if (temSlot(S.deps[c.dep], c.a)) {
+      const pr = premioProm(v), prest = pr.prest + (x.prest || 0);
+      c.estado = "cumprido"; ganharPrest(prest); S.orc += x.orc || 0; S.demPts = (S.demPts || 0) + pr.pts;
+      comp.push({ ok: true, a: c.a, dep: c.dep, pts: pr.pts, prest });
+    } else if (S.anoIdx >= c.ate) {
+      const pe = penaProm(v);
+      c.estado = "falhou"; ganharPrest(-pe.prest); S.demPts = (S.demPts || 0) - pe.pts;
+      comp.push({ ok: false, a: c.a, dep: c.dep, pts: pe.pts, prest: pe.prest });
+    }
   }
+  const dem = S.demPts || 0;
+  const pts = totalAno(partes, S.multAno, dem) + (S.quizOk ? BONUS_QUIZ : 0);   // teto do ano no ranking + acerto do desafio
+  S.pontos += pts;
+  const parc = { estr: Math.round(partes.estr), vidas: Math.round(partes.vidas), evit: Math.round(partes.evit), semdx: Math.round(partes.semdx), mult: S.multAno, dem };
   ganharPrest(novosEq);
   ganharPrest(-Math.round(filas.length * (num("filaMeia") ? 0.5 : 1)));   // fila tira prestígio
   const n3 = DEPS.filter((d) => equil(d.id) >= 1).length;
   const licao = escolherLicao(filas.length > 0);
-  S.log.push({ ano: ano(), pts, subiu, filas, n3, licao, ind, comp, prest0: S.prestInicio, prest1: S.prest, fechadas: [...S.fechadasAno],
+  S.log.push({ ano: ano(), pts, parc, subiu, filas, n3, licao, ind, comp, prest0: S.prestInicio, prest1: S.prest, fechadas: [...S.fechadasAno],
     mis: S.mis.feitas.filter((f) => f.ano === ano()).map((f) => f.id), quiz: S.quizOk, est: estrelas(popEqPct()) });
   S.compradasAno = [];
   S.fase = "resumo";
@@ -2063,7 +2127,7 @@ function renderRodape() {
   } else b.innerHTML = `<span class="m-tit">${esc(t("semMissao"))}</span>`;
   b.setAttribute("aria-label", `${t("missoesTit")}: ${m ? `${m[lang][0]} ${progTxt(m)}` : t("semMissao")}`);
   const txt = $("#dica-txt");
-  txt.textContent = t("rodapeV4")(t("economia")(rendaAno() - manutAno()), fmtInt(Math.max(0, vidasTotal())), fmtInt(S.ptsAno + pontosAno() * S.multAno * (12 - S.mes) / 12));
+  txt.textContent = t("rodapeV4")(t("economia")(rendaAno() - manutAno()), fmtInt(Math.max(0, vidasTotal())), fmtInt(previsaoAno()));
   txt.title = t("rodapeTit");
 }
 
@@ -2250,6 +2314,20 @@ function opcaoCusto(o, dep) {
   if (o.conv) return { valor: anuidadeConv(o.conv), anual: true };
   return { valor: o.custo || 0 };
 }
+/* Demanda (decisão do Gi, 27/10/2026): cumprir dá ⭐ e 🎖️ pelo valor da proposta (o que ela custa em 💰); prometer e não
+   cumprir tira 1,5 vez mais; recusar custa só 🎖️ 1. A proposta maior vale mais e pune mais */
+const PTS_VALOR = 50, PTS_FALHA = 1.5;
+const recusa = (o) => !o.compra && !o.conv && !o.custo && !o.aplicar && !o.promessa;
+const valorOpcao = (o, dep) => (o.promessa ? Math.max(1, ACOES[o.promessa.a].custo - (o.promessa.desconto || 0)) : Math.max(1, opcaoCusto(o, dep).valor));
+const premioProm = (v) => ({ pts: Math.round(PTS_VALOR * v), prest: Math.round(2 + v / 2) });
+const penaProm = (v) => ({ pts: Math.round(PTS_VALOR * PTS_FALHA * v), prest: Math.round(2 + v) });
+function efeitoOpcao(o, dep) {
+  const v = valorOpcao(o, dep);
+  if (recusa(o)) return o.prest ? `−🎖️ ${Math.abs(o.prest)}` : "";
+  if (!o.promessa) return t("demAgora")(fmtInt(Math.round(PTS_VALOR * v)), o.prest || 0);
+  const pr = premioProm(v), pe = penaProm(v);
+  return t("demSe")(fmtInt(pr.pts), pr.prest, fmtInt(pe.pts), pe.prest);
+}
 
 function mostrarDemanda() {
   janela = "demanda";
@@ -2257,7 +2335,7 @@ function mostrarDemanda() {
   const sub = (s) => s.replaceAll("{dep}", dep ? DEP[dep].nome : "").replaceAll("{ano2}", ANOS[Math.min(9, S.anoIdx + 2)]).replaceAll("{ano3}", ANOS[Math.min(9, S.anoIdx + 3)]);
   const ops = dm.opcoes.map((o, i) => {
     const c = opcaoCusto(o, dep), pode = c.valor <= S.orc && !c.bloq;
-    const detalhe = [c.anual ? t("custoAno")(fmtM(c.valor)) : c.valor ? t("custo")(fmtM(c.valor)) : "", o.prest ? `${o.prest > 0 ? "+" : "−"}🎖️ ${Math.abs(o.prest)}` : "", c.bloq ? c.bloq.curto : pode ? "" : t("semOrcOp")].filter(Boolean).join(" · ");
+    const detalhe = [c.anual ? t("custoAno")(fmtM(c.valor)) : c.valor ? t("custo")(fmtM(c.valor)) : "", efeitoOpcao(o, dep), c.bloq ? c.bloq.curto : pode ? "" : t("semOrcOp")].filter(Boolean).join(" · ");
     return `<button type="button" data-opcao="${i}" ${pode ? "" : "disabled"}><span>${esc(sub(o[lang]))}</span>${detalhe ? `<small>${esc(detalhe)}</small>` : ""}</button>`;
   }).join("");
   abrirModal(`
@@ -2265,6 +2343,7 @@ function mostrarDemanda() {
     <h2>${esc(t("demandaTit"))}</h2>
     <p>${esc(sub(dm[lang]))}</p>
     <div class="opcoes">${ops}</div>
+    <p class="meta">${esc(t("demRegra"))}</p>
     ${dm.fonte ? `<p class="fonte">${esc(t("inspirado"))}: ${fonteHTML(dm.fonte)}</p>` : ""}
     <p class="meta">🎖️ ${S.prest} · 💰 ${fmtM(S.orc)}</p>`);
 }
@@ -2274,15 +2353,18 @@ function escolherOpcao(i) {
   const dm = DEMANDAS.find((x) => x.id === S.demanda.id), dep = S.demanda.dep, o = dm.opcoes[i];
   const c = opcaoCusto(o, dep);
   if (c.valor > S.orc || c.bloq) return;
-  const eq0 = dep ? equil(dep) : 0;
+  const eq0 = dep ? equil(dep) : 0, v = valorOpcao(o, dep);
   S.orc -= c.valor;
   if (o.compra) { const d = S.deps[dep]; S.gasto[ACOES[o.compra].nivel] += c.valor; d.feitas[o.compra] = S.anoIdx; d.pago[o.compra] = 0; delete d.conv[o.compra]; S.compradasAno.push(o.compra); }
   else if (o.conv) { S.gasto[ACOES[o.conv].nivel] += c.valor; S.deps[dep].conv[o.conv] = { ano: S.anoIdx, pago: 0 }; S.compradasAno.push(licaoDe(o.conv, true)); }
   else if (o.custo) S.gasto[o.gasto || "T"] += o.custo;
   if (o.aplicar) o.aplicar(dep);
-  const atendeu = (o.prest || 0) > 0;   // respostas positivas rendem os bônus do personagem
-  ganharPrest((o.prest || 0) + (atendeu ? num("demPrest") + (dm.quem === "acad" ? num("demMedPrest") : 0) : 0));
-  if (atendeu) S.orc += num("demOrc");
+  if (recusa(o)) ganharPrest(o.prest || 0);   // recusar: pequena perda (decisão do Gi)
+  else {
+    const extra = num("demPrest") + (dm.quem === "acad" ? num("demMedPrest") : 0);   // bônus do personagem por demanda atendida
+    if (o.promessa) prometer(dep, o.promessa.a, o.promessa.anos, v, { prest: extra, orc: num("demOrc") });   // prêmio ou pena no prazo
+    else { ganharPrest((o.prest || 0) + extra); S.orc += num("demOrc"); S.demPts = (S.demPts || 0) + Math.round(PTS_VALOR * v); }
+  }
   S.demanda = null;
   S.fase = "jogando";
   if (dep) S.sel = dep;
@@ -2294,17 +2376,25 @@ function escolherOpcao(i) {
   if (dep && equil(dep) > eq0) festejarNivel(dep, equil(dep));
 }
 
+/* A conta dos pontos do ano, parte por parte (o ano fica entre 0 e 3.000) */
+function contaAno(r) {
+  const p = r.parc, s = (x) => `${x < 0 ? "−" : "+"}${fmtInt(Math.abs(x))}`;
+  return [`🏗️ ${s(p.estr)}`, `❤️ ${s(p.vidas)}`, `🍎 ${s(p.evit)}`, `🕯️ ${s(p.semdx)}`, p.mult > 1 ? `⭐×${fmt1(p.mult)}` : "",
+    p.dem ? `📣 ${s(p.dem)}` : "", r.quiz ? `⚡ +${BONUS_QUIZ}` : ""].filter(Boolean).join(" · ");
+}
+
 function mostrarResumo(r) {
   janela = "resumo";
   const [licao, fonte] = LICOES[r.licao][lang];
   const mis = (r.mis || []).map((id) => missao(id)[lang][0]).join(", ");
   const ultimo = S.anoIdx >= ANOS.length - 1;
-  const comps = (r.comp || []).map((c) => `<li>${esc((c.ok ? t("compOk") : t("compFalhou"))(t("curtas")[c.a], DEP[c.dep].nome))}</li>`).join("");
+  const comps = (r.comp || []).map((c) => `<li>${esc((c.ok ? t("promOk") : t("promFalhou"))(t("curtas")[c.a], DEP[c.dep].nome, fmtInt(c.pts ?? 0), c.prest ?? (c.ok ? 4 : 6)))}</li>`).join("");
   abrirModal(`
     <p class="ano">${esc(t("fimAno")(r.ano))}</p>
     <div class="topo-res"><h2 id="pts-ano">${esc(t("ptsAno")(0))}</h2>${estrelasHTML(r.est || 0)}</div>
     <div class="metricas">${metrica("❤️", Math.abs(r.ind.vidas), r.ind.vidas >= 0 ? t("metVidas") : t("vidasPerd"), "ok")}${metrica("🍎", r.ind.evit, t("metEvit"), "ok")}${metrica("🕯️", r.ind.semdx, t("metSemDx"))}</div>
-    <p class="fonte">${esc(t("metModelo"))}</p>
+    ${r.parc ? `<p class="meta conta">${esc(contaAno(r))}</p>` : ""}
+    <p class="fonte">${esc(t("metModelo"))} ${esc(t("contaTit"))}</p>
     <ul class="linhas">
       <li>${esc(t("resPais")(fmtInt(r.ind.casos), fmtInt(r.ind.mortes), fmtInt(r.ind.curas)))}</li>
       ${r.subiu.length ? `<li>${esc(t("resSubiu")(r.subiu.length > 6 ? `${r.subiu.slice(0, 6).join(", ")} +${r.subiu.length - 6}` : r.subiu.join(", ")))}</li>` : ""}

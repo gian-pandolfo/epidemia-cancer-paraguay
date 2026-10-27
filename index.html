@@ -289,8 +289,10 @@ main { max-width: 640px; margin: 0 auto; }
 .ficha-custos b { font: 800 1rem var(--f-display); }
 .ficha-btns { display: grid; gap: 8px; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.lk { color: var(--accent); font-weight: 800; text-decoration: none; white-space: nowrap; }
-.lk:hover, .lk:focus-visible { text-decoration: underline; }
+/* link da fonte como botão pequeno (pedido do Gi, 27/10/2026: um pouco mais evidente) */
+.lk { display: inline-block; margin-left: 4px; padding: 0 8px; border: 1px solid currentColor; border-radius: 999px; color: var(--accent);
+  background: color-mix(in srgb, currentColor 14%, transparent); font-weight: 800; font-size: .92em; line-height: 1.6; text-decoration: none; white-space: nowrap; }
+.lk:hover, .lk:focus-visible { background: color-mix(in srgb, currentColor 28%, transparent); }
 /* Dados do jogador antes de começar (ranking) */
 .form-rank { display: grid; gap: 10px; }
 .form-rank label { display: grid; gap: 4px; font-weight: 700; font-size: .9rem; }
@@ -536,6 +538,7 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
   <button type="button" class="chip dinheiro" id="h-dinheiro" hidden></button>
   <button type="button" class="chip prest" id="h-prest" hidden></button>
   <span class="chip" id="h-pontos" hidden></span>
+  <button class="btn-ico" id="btn-som" type="button" aria-label="Música" aria-pressed="false">🔇</button>
   <button class="btn-ico" id="btn-ajuda" type="button" aria-label="Ayuda">?</button>
   <button class="btn-ico" id="btn-idioma" type="button">PT</button>
 </header>
@@ -573,10 +576,11 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
 <div id="faixa" class="faixa" role="status" aria-live="polite" hidden></div>
 </div>
 
-<script src="config.js?v=8"></script>
-<script src="dados.js?v=8"></script>
-<script src="links.js?v=8"></script>
-<script src="icones.js?v=8"></script>
-<script src="jogo.js?v=8"></script>
+<script src="config.js?v=9"></script>
+<script src="dados.js?v=9"></script>
+<script src="links.js?v=9"></script>
+<script src="icones.js?v=9"></script>
+<script src="jogo.js?v=9"></script>
+<script src="musica.js?v=9"></script>
 </body>
 </html>

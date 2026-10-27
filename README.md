@@ -42,6 +42,7 @@ Mapa: límites de [geoBoundaries](https://www.geoboundaries.org) (CC BY 4.0; Run
 - `dados.js`: mapa y datos de los departamentos. Lo genera un script del proyecto a partir de la página del mapa del congreso; no editar a mano.
 - `links.js`: enlaces de las fuentes (página original y copia del Internet Archive).
 - `icones.js`: íconos de trazo de la interfaz (acciones, marcador, árbol de habilidades).
+- `musica.js`: música de fondo original, generada en el propio celular (Web Audio); sin archivos de audio ni obras de terceros. Botón 🔊/🔇.
 - `arte/`: ilustraciones en SVG (cena principal, emblema, retratos y escenas). Las genera un script del proyecto; no editar a mano.
 - `ranking.html`: ranking en vivo para la tablet del stand (se actualiza cada 5 s, con el QR del juego).
 - `config.js`: dirección del ranking (`rankingUrl`) y del juego.
@@ -74,3 +75,14 @@ Pedido do Gi: sem login. Ao tocar em Comenzar, a janela **Antes de empezar** ped
 - `apps-script/Codigo.gs` (versão 2): aba **Partidas** (uma linha por partida), ranking com a melhor partida de cada e-mail, aba **Resumo** pelo menu, apagar nome e e-mail em 30/11/2026. Aceita também o envio da versão 1 do jogo.
 - Sem o `rankingUrl` (ranking desligado) ou depois de 31/10/2026, a janela não aparece e ninguém dá dados.
 
+
+## Pontos pelo resultado, demandas com risco e música (beta9, 27/10/2026)
+
+Pedidos do Gi depois de jogar: muitos pontos sem jogar bem; a demanda precisava de prêmio e de pena; música de fundo.
+
+- **Pontos do ano** (`partesAno` e `totalAno` em `jogo.js`): ¼ da estrutura + 1 por vida salva + ½ por caso evitado − ½ por óbito sem diagnóstico (modelo do jogo, comparado com não fazer nada). Os bônus do departamento (pesquisa, fila, equilíbrio com o Polo regional) valem também sobre vidas e casos evitados; a missão de ⭐× multiplica o ano inteiro. O ano fica entre 0 e 3.000 (+100 do desafio relâmpago), o mesmo limite que o servidor confere. O resumo do ano mostra a conta parte por parte.
+- **Demanda do ano:** cumprir dá ⭐ (50 por 💰 de valor da proposta) e 🎖️; recusar custa só 🎖️ 1; prometer e não cumprir no prazo tira 1,5 vez o prêmio em ⭐ e mais 🎖️. A proposta maior vale mais e pune mais. Aceitar o terreno do mamógrafo virou compromisso de construí-lo no mesmo ano.
+- Calibrado com 42 partidas automáticas (7 estratégias × 3 personagens × 2 sorteios): não fazer nada ≈ 600 (só o desafio), só tratamento ≈ 900, ao acaso ≈ 4.900, só diagnóstico ≈ 5.400, só prevenção ≈ 7.200, equilibrado ≈ 10.100, construir tudo nos departamentos maiores ≈ 15.100.
+- **Fontes:** o link de cada fonte virou um botão «ver ↗».
+- **Música** (`musica.js`): composição original tocada pelo próprio celular (Web Audio): violão de cordas duplas, como o ronroco, em ré menor, no clima de *The Last of Us*, sem copiar melodia. Sem arquivo de áudio nem obra de terceiros. Botão 🔊/🔇 no topo; começa no primeiro toque e para quando o jogo sai da tela.
+- Partidas salvas na beta8 continuam na beta9 (mesma chave `epidemia-py-v4`; testado).
