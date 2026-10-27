@@ -134,6 +134,7 @@ const T = {
     beta: "Versión beta para pruebas. Cuéntanos qué te pareció.",
     rankTit: "Ranking del congreso",
     rankNome: "Nombre", rankEmail: "E-mail", rankFac: "Facultad", rankTurma: "Curso",
+    phNome: "Tu nombre", phEmail: "ejemplo@ejemplo.com", phFac: "Uninter", phTurma: "B2",   // exemplos em cinza nos campos
     rankEnviando: "Enviando tu puntuación al ranking…",
     rankJa: (p) => `¡Listo! Estás en el ranking${p ? `, en el puesto ${p}` : ""}.`,
     rankPendente: "No se pudo enviar ahora: tu puntuación se enviará sola cuando haya conexión.",
@@ -343,6 +344,7 @@ const T = {
     beta: "Versão beta para testes. Conte o que achou.",
     rankTit: "Ranking do congresso",
     rankNome: "Nome", rankEmail: "E-mail", rankFac: "Faculdade", rankTurma: "Turma",
+    phNome: "Seu nome", phEmail: "exemplo@exemplo.com", phFac: "Uninter", phTurma: "B2",
     rankEnviando: "Enviando sua pontuação ao ranking…",
     rankJa: (p) => `Pronto! Você está no ranking${p ? `, na posição ${p}` : ""}.`,
     rankPendente: "Não deu para enviar agora: sua pontuação vai sozinha quando houver conexão.",
@@ -2102,10 +2104,10 @@ function mostrarDados(v = ler("epidemia-py-jogador") || {}) {
   janela = "dados";
   abrirModal(`<h2>${esc(t("dadosTit"))}</h2><p class="meta">${esc(t("dadosIntro"))}</p>
     <div class="form-rank">
-      <label>${esc(t("rankNome"))}<input type="text" id="d-nome" maxlength="40" autocomplete="name" value="${esc(v.nome || "")}"></label>
-      <label>${esc(t("rankEmail"))}<input type="email" id="d-email" maxlength="254" autocomplete="email" value="${esc(v.email || "")}"></label>
-      <label>${esc(t("rankFac"))}<input type="text" id="d-fac" maxlength="60" value="${esc(v.faculdade || "")}"></label>
-      <label>${esc(t("rankTurma"))}<input type="text" id="d-turma" maxlength="20" value="${esc(v.turma || "")}"></label>
+      <label>${esc(t("rankNome"))}<input type="text" id="d-nome" maxlength="40" autocomplete="name" placeholder="${esc(t("phNome"))}" value="${esc(v.nome || "")}"></label>
+      <label>${esc(t("rankEmail"))}<input type="email" id="d-email" maxlength="254" autocomplete="email" placeholder="${esc(t("phEmail"))}" value="${esc(v.email || "")}"></label>
+      <label>${esc(t("rankFac"))}<input type="text" id="d-fac" maxlength="60" placeholder="${esc(t("phFac"))}" value="${esc(v.faculdade || "")}"></label>
+      <label>${esc(t("rankTurma"))}<input type="text" id="d-turma" maxlength="20" placeholder="${esc(t("phTurma"))}" value="${esc(v.turma || "")}"></label>
       <details class="termos"${v.termosAbertos ? " open" : ""}><summary>${esc(t("termosTit"))}</summary><ul>${t("termos")(contato()).map((l) => `<li>${esc(l)}</li>`).join("")}</ul></details>
       <label class="consent"><input type="checkbox" id="d-ok"${v.ok ? " checked" : ""}><span>${esc(t("dadosOk"))}</span></label>
       <p class="msg-rank" id="d-msg" role="status"></p>
