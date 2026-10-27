@@ -195,7 +195,8 @@ const T = {
     funcoes: { P: "Prevención", D: "Diagnóstico", T: "Tratamiento", X: "Investigación" },
     fichaCompra: "Compra", fichaPrest: "Prestigio", fichaManut: "Mantenimiento", porAnoCurto: "/año",
     fichaImplementar: (c, p) => `Implementar · 💰 ${c}${p ? ` · 🎖️ ${p}` : ""}`,
-    fichaConv: (c) => `🤝 Convenio: 💰 ${c} por año (ahora y cada enero), sin compra ni prestigio`,
+    fichaConv: (c) => `🤝 Convenio · 💰 ${c}/año`, fichaConvNota: "Convenio: se paga ahora y cada enero, sin compra ni prestigio.",
+    fichaAperta: (x) => `⚠️ Con esto, el mantenimiento de enero supera el presupuesto en 💰 ${x}: se cerrará lo más caro.`,
     fichaManutNota: "El mantenimiento se paga cada enero, a partir del año siguiente.",
     evEconomia: (r, m) => `Presupuesto del año: +💰 ${r} · mantenimiento y convenios: −💰 ${m}`,
     evFechou: (l) => `Sin dinero para el mantenimiento: se cerró ${l} (−🎖️ 2 cada uno).`,
@@ -207,7 +208,7 @@ const T = {
     bloqRef2: "🔒 2.ª", bloqRef2Txt: "La atención terciaria necesita atención secundaria en el departamento o en un vecino (derivación).",
     bloqPrest: (p) => `Necesitas 🎖️ ${p} de prestigio.`, bloqOrc: "Presupuesto insuficiente.", bloqConvAno: (a) => `🤝 Convenios desde ${a}`,
     semPrest: "Prestigio insuficiente",
-    economia: (r) => `💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/año`,
+    economia: (r) => `${r < 0 ? "⚠️ " : ""}💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/año`,
     fechouTxt: (ico, n, d) => `Sin dinero: se cerró ${ico} ${n} en ${d} (−🎖️ 2)`,
     resPrestAno: (a, b) => `Prestigio: 🎖️ ${a} → ${b}`, resPrest: (c) => `Prestigio al final: 🎖️ <b>${c}</b>`,
     resFechou: (l) => `Cierres por falta de dinero: ${l}`, resHab: (l) => `Habilidades elegidas: ${l}`,
@@ -413,7 +414,8 @@ const T = {
     funcoes: { P: "Prevenção", D: "Diagnóstico", T: "Tratamento", X: "Pesquisa" },
     fichaCompra: "Compra", fichaPrest: "Prestígio", fichaManut: "Manutenção", porAnoCurto: "/ano",
     fichaImplementar: (c, p) => `Implantar · 💰 ${c}${p ? ` · 🎖️ ${p}` : ""}`,
-    fichaConv: (c) => `🤝 Convênio: 💰 ${c} por ano (agora e todo janeiro), sem compra nem prestígio`,
+    fichaConv: (c) => `🤝 Convênio · 💰 ${c}/ano`, fichaConvNota: "Convênio: paga-se agora e todo janeiro, sem compra nem prestígio.",
+    fichaAperta: (x) => `⚠️ Com isto, a manutenção de janeiro passa do orçamento em 💰 ${x}: o mais caro vai fechar.`,
     fichaManutNota: "A manutenção se paga todo janeiro, a partir do ano seguinte.",
     evEconomia: (r, m) => `Orçamento do ano: +💰 ${r} · manutenção e convênios: −💰 ${m}`,
     evFechou: (l) => `Sem dinheiro para a manutenção: fechou ${l} (−🎖️ 2 cada).`,
@@ -425,7 +427,7 @@ const T = {
     bloqRef2: "🔒 2ª", bloqRef2Txt: "A atenção terciária precisa de atenção secundária no departamento ou num vizinho (encaminhamento).",
     bloqPrest: (p) => `Você precisa de 🎖️ ${p} de prestígio.`, bloqOrc: "Orçamento insuficiente.", bloqConvAno: (a) => `🤝 Convênios a partir de ${a}`,
     semPrest: "Prestígio insuficiente",
-    economia: (r) => `💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/ano`,
+    economia: (r) => `${r < 0 ? "⚠️ " : ""}💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/ano`,
     fechouTxt: (ico, n, d) => `Sem dinheiro: fechou ${ico} ${n} em ${d} (−🎖️ 2)`,
     resPrestAno: (a, b) => `Prestígio: 🎖️ ${a} → ${b}`, resPrest: (c) => `Prestígio no fim: 🎖️ <b>${c}</b>`,
     resFechou: (l) => `Fechamentos por falta de dinheiro: ${l}`, resHab: (l) => `Habilidades escolhidas: ${l}`,
@@ -1955,6 +1957,8 @@ function mostrarAcao(id, a) {
   const pode = !pub && !b && c <= S.orc && p <= S.prest;
   const motivo = pub ? t("fichaAtivo") : b ? b.txt : c > S.orc ? t("bloqOrc") : p > S.prest ? t("bloqPrest")(p) : "";
   const temConv = ACOES[a].conv && !pub, convOk = ano() >= convLib();
+  // janeiro: renda menos manutenção depois desta compra (ou deste convênio); negativo = algo vai fechar
+  const saldoJan = rendaAno() - manutAno(), apertaCompra = !pub && saldoJan - manutAcao(a) < 0, apertaConv = temConv && !cv && saldoJan - anuidadeConv(a) < 0;
   abrirModal(`
     <div class="ficha-topo"><span class="ficha-ico" aria-hidden="true" style="--nv: ${ACOES[a].nivel === "X" ? "var(--ouro)" : `var(--nv-${ACOES[a].nivel.toLowerCase()})`}">${ico(a)}</span><div><h2>${esc(nome)}</h2><p class="meta">${esc(DEP[id].nome)} · ${esc(t("funcoes")[ACOES[a].nivel])} → ${esc(alvo)}</p></div></div>
     <p><span class="nat n${at}">${esc(t("niveisAt")[at])}</span></p>
@@ -1963,8 +1967,9 @@ function mostrarAcao(id, a) {
       <div><small>${esc(t("fichaPrest"))}</small><b>${ico("medalha")} ${p}</b></div>
       <div><small>${esc(t("fichaManut"))}</small><b>${ico("moeda")} ${fmtM(m)}${esc(t("porAnoCurto"))}</b></div>
     </div>
-    <p class="meta">${esc(t("fichaManutNota"))}</p>
+    <p class="meta">${esc(t("fichaManutNota"))}${temConv && !cv ? ` ${esc(t("fichaConvNota"))}` : ""}</p>
     ${motivo && !cv ? `<p class="fila">${esc(motivo)}</p>` : ""}
+    ${!motivo && (apertaCompra || apertaConv) ? `<p class="fila">${esc(t("fichaAperta")(fmtM(-(saldoJan - (apertaCompra ? manutAcao(a) : anuidadeConv(a))))))}</p>` : ""}
     ${cv ? `<p class="meta">${esc(t("fichaConvAtivo"))}</p>` : ""}
     <div class="ficha-btns">
       ${desfazivel(d, a) ? `<button class="btn sec" type="button" data-ficha="desfazer">${esc(t("fichaDesfazer")(fmtM(d.pago[a] || 0), d.prestPago[a] || 0))}</button>`
@@ -2137,6 +2142,7 @@ function renderRodape() {
   const prev = previsaoAno();   // saldo do ano até agora: negativo quando os óbitos sem diagnóstico pesam mais
   txt.textContent = t("rodapeV4")(t("economia")(rendaAno() - manutAno()), fmtInt(Math.max(0, vidasTotal())), `${prev < 0 ? "−" : "+"}${fmtInt(Math.abs(prev))}`);
   txt.title = t("rodapeTit");
+  txt.classList.toggle("alerta", rendaAno() - manutAno() < 0);   // em janeiro vai faltar dinheiro: algo fecha
 }
 
 function escolherConsequencia() {

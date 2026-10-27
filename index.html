@@ -55,7 +55,7 @@ main { max-width: 640px; margin: 0 auto; }
 .hud .marca { font: 800 1rem var(--f-display); margin-right: auto; line-height: 1.1; }
 .hud .marca small { display: block; font: 400 .72rem var(--f-body); color: var(--muted); }
 .hud .marca[hidden] + .chip { margin-right: auto; }
-.chip { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; min-height: 32px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .chip.dinheiro { color: var(--ink); }
 /* O chip da data também é o botão de pausa */
 .chip.ano { cursor: pointer; color: var(--ink); }
@@ -200,6 +200,7 @@ main { max-width: 640px; margin: 0 auto; }
 .missao-mini .m-barra { grid-column: 1 / -1; display: block; height: 4px; border-radius: 4px; background: var(--line); overflow: hidden; }
 .missao-mini .m-barra i { display: block; height: 100%; border-radius: 4px; background: var(--ouro); transition: width .5s ease; }
 #dica-txt { font-variant-numeric: tabular-nums; }
+#dica-txt.alerta { color: var(--warn); font-weight: 700; }
 .faixa { position: fixed; left: 50%; top: calc(54px + env(safe-area-inset-top, 0px)); z-index: 70; display: flex; gap: 10px; align-items: center; width: min(370px, calc(100% - 24px)); padding: 10px 14px; border-radius: 16px; background: var(--surface); border: 2px solid var(--accent); box-shadow: 0 12px 30px rgba(0, 0, 0, .35); transform: translate(-50%, -170%); transition: transform .4s cubic-bezier(.2, 1.3, .4, 1); pointer-events: none; }
 .faixa.on { transform: translate(-50%, 0); }
 .faixa.ouro { border-color: var(--ouro); background: var(--ouro-bg); }
