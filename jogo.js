@@ -50,7 +50,7 @@ const T = {
       "Elige tu personaje: Bob, Don Patrón o la Dra. Beatriz. Cada uno tiene ventajas propias y un árbol de habilidades: al subir de cargo con tus ⭐ eliges una nueva.",
       "Lee con calma, decide y toca «Cerrar el año» para avanzar. En enero llega el 💰 del año y se paga el mantenimiento de todo lo que implementaste; sin dinero, lo más caro se cierra.",
       "Implementar también cuesta 🎖️ prestigio, que ganas con metas, misiones y respuestas a la sociedad. Toca una acción para ver costos y requisitos antes de invertir.",
-      "Tres funciones: <b>Prevención</b>, <b>Diagnóstico</b> y <b>Tratamiento</b>. El <b>equilibrio</b> de un departamento es la más baja de las tres: solo las tres juntas curan más y multiplican los puntos. Diagnóstico sin tratamiento forma fila.",
+      "Tres funciones: <b>Prevención</b>, <b>Diagnóstico</b> y <b>Tratamiento</b>. El <b>equilibrio</b> de un departamento es la más baja de las tres: solo las tres juntas curan más y multiplican los puntos. Diagnóstico sin tratamiento forma fila. En el mapa, el equilibrio es la <b>luz</b> y la <b>niebla</b> son los casos ocultos: diagnosticar la disipa.",
       "Cada acción tiene su nivel de atención: <b>1.ª primaria</b> (puerta de entrada), <b>2.ª secundaria</b> (hospital regional, por derivación) y <b>3.ª terciaria</b> (alta complejidad). La 2.ª necesita 1.ª en el departamento; la 3.ª, 2.ª cerca.",
       "🤝 Convenios: sin compra ni prestigio, pero se pagan todos los años.",
       "Arriba a la derecha: incidencia, prevalencia, muertes y curas del país por año; cambian en el acto con cada decisión. Tócalas para ver el mapa de cada una.",
@@ -64,12 +64,14 @@ const T = {
       "<b>Desarrollo:</b> Gianmarlon Pandolfo, estudiante de Medicina (UNINTER Tres Fronteras).",
       "<b>Trabajo base:</b> Silva GIS, Pandolfo GA, et al. <i>Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control</i>. Revisión sistemática, 2026.",
       "<b>Coautoría:</b> Claude Opus 5.5 (Anthropic), en el diseño del juego, la programación y la verificación de las fuentes.",
+      "<b>Arte:</b> ilustraciones vectoriales hechas para el juego (estilo «luz contra la niebla»). Tipografías Big Shoulders Display y Atkinson Hyperlegible (licencia OFL).",
     ],
     comecar: "Empezar", continuar: "Continuar partida", nova: "Nueva partida",
     ajuda: "Cómo se juega", fechar: "Cerrar",
     anoDe: (a, i) => `${a} · año ${i} de 10`,
-    modoCob: "Equilibrio", modoReg: "Tasas",
-    legCob: "Equilibrio = nivel más bajo", legReg: "Tasa estandarizada /100 mil",
+    modoCob: "Luz", modoReg: "Tasas",
+    legCob: "Luz = equilibrio", legReg: "Tasa estandarizada /100 mil", legNevoa: "Niebla = casos ocultos",
+    capaAlt: "Anochecer en Paraguay: un hospital encendido ilumina la red de salud; a la derecha, la niebla del subregistro.",
     curtas: { vacuna: "Vacuna VPH", tabaco: "Antitabaco", habitos: "Hábitos", vph: "Test VPH", mamo: "Mamógrafo", registro: "Registro",
       quimio: "Hospital Día", radio: "Acelerador", paliativos: "Paliativos", pesquisa: "Centro de investigación" },
     infoPop: (p) => `${p} hab. (Censo 2022)`,
@@ -226,7 +228,7 @@ const T = {
       "Escolha seu personagem: Bob, Don Patrón ou a Dra. Beatriz. Cada um tem vantagens próprias e uma árvore de habilidades: ao subir de cargo com suas ⭐ você escolhe uma nova.",
       "Leia com calma, decida e toque em «Fechar o ano» para avançar. Em janeiro chega o 💰 do ano e se paga a manutenção de tudo o que você implantou; sem dinheiro, o mais caro fecha.",
       "Implantar também custa 🎖️ prestígio, que você ganha com metas, missões e respostas à sociedade. Toque numa ação para ver custos e requisitos antes de investir.",
-      "Três funções: <b>Prevenção</b>, <b>Diagnóstico</b> e <b>Tratamento</b>. O <b>equilíbrio</b> de um departamento é a mais baixa das três: só as três juntas curam mais e multiplicam os pontos. Diagnóstico sem tratamento forma fila.",
+      "Três funções: <b>Prevenção</b>, <b>Diagnóstico</b> e <b>Tratamento</b>. O <b>equilíbrio</b> de um departamento é a mais baixa das três: só as três juntas curam mais e multiplicam os pontos. Diagnóstico sem tratamento forma fila. No mapa, o equilíbrio é a <b>luz</b> e a <b>névoa</b> são os casos ocultos: diagnosticar a dissipa.",
       "Cada ação tem seu nível de atenção: <b>1ª primária</b> (porta de entrada), <b>2ª secundária</b> (hospital regional, por encaminhamento) e <b>3ª terciária</b> (alta complexidade). A 2ª precisa de 1ª no departamento; a 3ª, de 2ª perto.",
       "🤝 Convênios: sem compra nem prestígio, mas se pagam todo ano.",
       "No alto à direita: incidência, prevalência, óbitos e curas do país por ano; mudam na hora a cada decisão. Toque nelas para ver o mapa de cada uma.",
@@ -240,12 +242,14 @@ const T = {
       "<b>Desenvolvimento:</b> Gianmarlon Pandolfo, estudante de Medicina (UNINTER Tres Fronteras).",
       "<b>Trabalho base:</b> Silva GIS, Pandolfo GA, et al. <i>Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control</i>. Revisão sistemática, 2026.",
       "<b>Coautoria:</b> Claude Opus 5.5 (Anthropic), no desenho do jogo, na programação e na conferência das fontes.",
+      "<b>Arte:</b> ilustrações vetoriais feitas para o jogo (estilo «luz contra a névoa»). Tipografias Big Shoulders Display e Atkinson Hyperlegible (licença OFL).",
     ],
     comecar: "Começar", continuar: "Continuar partida", nova: "Nova partida",
     ajuda: "Como se joga", fechar: "Fechar",
     anoDe: (a, i) => `${a} · ano ${i} de 10`,
-    modoCob: "Equilíbrio", modoReg: "Taxas",
-    legCob: "Equilíbrio = nível mais baixo", legReg: "Taxa padronizada /100 mil",
+    modoCob: "Luz", modoReg: "Taxas",
+    legCob: "Luz = equilíbrio", legReg: "Taxa padronizada /100 mil", legNevoa: "Névoa = casos ocultos",
+    capaAlt: "Entardecer no Paraguai: um hospital aceso ilumina a rede de saúde; à direita, a névoa do sub-registro.",
     curtas: { vacuna: "Vacina HPV", tabaco: "Antitabaco", habitos: "Hábitos", vph: "Teste HPV", mamo: "Mamógrafo", registro: "Registro",
       quimio: "Hospital Día", radio: "Acelerador", paliativos: "Paliativos", pesquisa: "Centro de pesquisa" },
     infoPop: (p) => `${p} hab. (Censo 2022)`,
@@ -596,7 +600,7 @@ const DEMANDAS = [
 
 /* ---------- personagens: passiva + árvore de 3 especializações × 4 cargos (estilo XCOM 2); arvore[cargo][especialização] ---------- */
 const PERSONAGENS = {
-  bob: { ico: "🧑‍💻", cor: "#6f9bd2",
+  bob: { ico: "🧑‍💻", cor: "#79B0DE",
     ef: { custo: { pesquisa: 0.6, n1: 0.8 }, ano: { radio: 3, pesquisa: 1 }, sorte: { opensource: 4, academia: 2 } },
     arvore: [["b_reg", "b_beca", "b_agentes"], ["b_ia", "b_uni", "b_tele"], ["b_vig", "b_ensaios", "b_movel"], ["b_pred", "b_paper", "b_aps40"]],
     es: { nome: "Bob", papel: "Estudiante de Medicina", lado: "Comunidad open source",
@@ -607,7 +611,7 @@ const PERSONAGENS = {
       bio: "Entusiasta da epidemiologia e das novas tecnologias, aprendiz de inteligência artificial. Engenhoso para inventar soluções na atenção primária.",
       ramos: ["🤖 Tecnologia e IA", "🔬 Pesquisa", "🏘️ APS inventiva"],
       tracos: ["🎓 Centro de pesquisa 40% mais barato", "☢️ Acelerador disponível 3 anos antes", "🏘️ Atenção primária 20% mais barata", "💻 A comunidade open source o ajuda"] } },
-  patron: { ico: "🤵", cor: "#c9a227",
+  patron: { ico: "🤵", cor: "#D9B25F",
     ef: { renda: 1 / 3, conv: { todos: 0.6 }, convDesde: 2015, sorte: { religiosa: 3, empresa: 3, itaipu: 2, yacyreta: 2, gobierno: 2 } },
     arvore: [["p_chave", "p_kermes", "p_camara"], ["p_concessao", "p_caridade", "p_royalties"], ["p_acelconc", "p_fundacao", "p_zona"], ["p_grande", "p_mecenas", "p_polo"]],
     es: { nome: "Don Patrón", papel: "Empresario", lado: "Instituciones religiosas",
@@ -618,7 +622,7 @@ const PERSONAGENS = {
       bio: "Bem-sucedido nos negócios, vê na saúde uma oportunidade de desenvolver a região. Sua ambição acaba fazendo o bem. Religioso.",
       ramos: ["🤝 Parcerias público-privadas", "🙏 Filantropia", "🏗️ Desenvolvimento regional"],
       tracos: ["💰 +4 por ano", "🤝 Convênios 40% mais baratos e desde 2015", "🍀 Mais doações e royalties", "⛪ As instituições religiosas o ajudam"] } },
-  beatriz: { ico: "👩‍⚕️", cor: "#c48ee0",
+  beatriz: { ico: "👩‍⚕️", cor: "#E08BC0",
     ef: { custo: { n1: 0.9, n2: 0.8, n3: 0.8 }, prest: { n2: -1, n3: -1 }, cura: 0.02, demMedPrest: 2, sorte: { medicas: 4, academia: 2 } },
     arvore: [["d_gestao", "d_colegas", "d_protocolos"], ["d_rede", "d_residentes", "d_mbe"], ["d_acel", "d_tamizaje", "d_rcbp"], ["d_centro", "d_lider", "d_excel"]],
     es: { nome: "Dra. Beatriz", papel: "Médica", lado: "Instituciones médicas",
@@ -1168,7 +1172,7 @@ function comprar(id, a) {
   render();
   const [nome, alvo] = t("acoes")[a];
   toast(tinhaConv ? t("convTroca") : t("compra")(ACOES[a].ico, nome, alvo));
-  destacar(id, ACOES[a].ico);
+  destacar(id, a);
   if (equil(id) > eq0) festejarNivel(id, equil(id));
 }
 
@@ -1186,7 +1190,7 @@ function contratar(id, a) {
   salvar();
   render();
   toast(t("compra")("🤝", t("convNomes")[a], t("custoAno")(fmtM(c))));
-  destacar(id, "🤝");
+  destacar(id, "convenio");
   if (equil(id) > eq0) festejarNivel(id, equil(id));
 }
 function cancelarConv(id, a) {
@@ -1220,8 +1224,12 @@ function desfazerConv(id, a) {
 }
 
 /* ---------- mapa ---------- */
+const CENTRO = {};   // centro e tamanho de cada departamento no desenho (para a luz e a névoa)
 function montarMapa() {
-  $("#mapa-wrap").innerHTML = `<svg id="mapa" viewBox="${MAPA.viewBox}" role="group" aria-label="Paraguay"><g id="g-deps">${MAPA.deps}</g><g id="g-lbl">${MAPA.lbl}</g><g id="g-alerta" class="alerta"></g><g id="g-fx"></g></svg>`;
+  $("#mapa-wrap").innerHTML = `<svg id="mapa" viewBox="${MAPA.viewBox}" role="group" aria-label="Paraguay"><defs>`
+    + `<radialGradient id="m-luz"><stop offset="0" stop-color="#FFD27A" stop-opacity=".8"/><stop offset=".35" stop-color="#F6B04C" stop-opacity=".38"/><stop offset="1" stop-color="#F0A43A" stop-opacity="0"/></radialGradient>`
+    + `<radialGradient id="m-nevoa"><stop offset="0" stop-color="#AEBDCD" stop-opacity=".5"/><stop offset=".6" stop-color="#9FB0C2" stop-opacity=".24"/><stop offset="1" stop-color="#9FB0C2" stop-opacity="0"/></radialGradient></defs>`
+    + `<g id="g-deps">${MAPA.deps}</g><g id="g-nevoa"></g><g id="g-luz"></g><g id="g-lbl">${MAPA.lbl}</g><g id="g-alerta" class="alerta"></g><g id="g-fx"></g></svg>`;
   const mk = document.querySelector("#mapa .dep-marker");
   if (mk) mk.setAttribute("r", "36");
   document.querySelectorAll("#mapa .dep").forEach((el) => {
@@ -1229,6 +1237,55 @@ function montarMapa() {
     el.setAttribute("role", "button");
     el.setAttribute("aria-label", DEP[el.dataset.dep].nome);
   });
+  // tirado do próprio traçado (o mapa ainda está escondido, então sem getBBox); fica a maior parte de cada departamento
+  document.querySelectorAll("#mapa path.dep").forEach((p) => {
+    const n = (p.getAttribute("d").match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (let i = 0; i + 1 < n.length; i += 2) { x0 = Math.min(x0, n[i]); x1 = Math.max(x1, n[i]); y0 = Math.min(y0, n[i + 1]); y1 = Math.max(y1, n[i + 1]); }
+    const id = p.dataset.dep, c = CENTRO[id];
+    if (!c || (x1 - x0) * (y1 - y0) > c.w * c.h) CENTRO[id] = { x: (x0 + x1) / 2, y: (y0 + y1) / 2, w: x1 - x0, h: y1 - y0 };
+  });
+  if (mk) CENTRO[mk.dataset.dep] = { x: +mk.getAttribute("cx"), y: +mk.getAttribute("cy"), w: 90, h: 90 };
+}
+
+/* Renda ñandutí acesa: o INCAN, em Capiatá (única radioterapia pública), é a grande luz do país */
+let incanSVG = "";
+function nanduti(cx, cy, r, raios = 16, aneis = 3) {
+  const f = (x) => Math.round(x * 10) / 10;
+  let g = '<g fill="none" stroke="#FFE2A0" stroke-linecap="round" opacity=".9">';
+  for (let i = 0; i < raios; i++) {
+    const a = 2 * Math.PI * i / raios;
+    g += `<line x1="${f(cx + 0.18 * r * Math.cos(a))}" y1="${f(cy + 0.18 * r * Math.sin(a))}" x2="${f(cx + r * Math.cos(a))}" y2="${f(cy + r * Math.sin(a))}" stroke-width="2.4"/>`;
+  }
+  for (let k = 1; k <= aneis; k++) {
+    const rr = r * (0.18 + 0.82 * k / aneis);
+    g += `<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(rr)}" stroke-width="3" stroke-dasharray="${f(rr * 0.05)} ${f(rr * 0.07)}"/>`;
+  }
+  for (let i = 0; i < raios; i++) {
+    const a = 2 * Math.PI * (i + 0.5) / raios, rr = r * 0.6;
+    g += `<circle cx="${f(cx + rr * Math.cos(a))}" cy="${f(cy + rr * Math.sin(a))}" r="${f(r * 0.075)}" stroke-width="2.4"/>`;
+  }
+  return `${g}</g><circle cx="${f(cx)}" cy="${f(cy)}" r="${f(r * 0.14)}" fill="#FFF0C8"/>`;
+}
+/* Luz: cada departamento brilha conforme o equilíbrio (0 a 3) */
+function luzesHTML() {
+  const h = DEPS.map((d) => {
+    const e = equil(d.id), c = CENTRO[d.id];
+    if (!e || !c) return "";
+    return `<circle cx="${Math.round(c.x)}" cy="${Math.round(c.y)}" r="${[0, 120, 180, 260][e]}" fill="url(#m-luz)" opacity="${[0, 0.5, 0.75, 1][e]}"/>`;
+  }).join("");
+  if (!incanSVG && CENTRO.central) incanSVG = nanduti(CENTRO.central.x + 40, CENTRO.central.y - 30, 110);
+  return h + incanSVG;
+}
+/* Névoa: sem diagnóstico nem pesquisa ninguém sabe o tamanho do subregistro (névoa cheia); com diagnóstico, ela mostra os casos ocultos */
+function nevoaHTML() {
+  return DEPS.map((d) => {
+    const c = CENTRO[d.id];
+    if (!c) return "";
+    const op = ocultoConhecido(d.id) ? Math.min(1, (1 - vis(d.id)) / 0.4) : 0.85;
+    if (op < 0.06) return "";
+    return `<ellipse cx="${Math.round(c.x)}" cy="${Math.round(c.y)}" rx="${Math.round(Math.max(120, c.w * 0.5))}" ry="${Math.round(Math.max(100, c.h * 0.46))}" fill="url(#m-nevoa)" opacity="${op.toFixed(2)}"/>`;
+  }).join("");
 }
 
 const classeReg = (x) => (x < 60 ? 1 : x < 80 ? 2 : x < 100 ? 3 : 4);
@@ -1243,7 +1300,7 @@ function corDep(id) {
 
 function legendaHTML() {
   const caixa = (cor, txt) => `<span><i style="background:var(${cor})"></i>${txt}</span>`;
-  if (S.modo === "cob") return `<span class="leg-tit">${esc(t("legCob"))}</span>${[0, 1, 2, 3].map((n) => caixa(`--cob${n}`, n)).join("")}`;
+  if (S.modo === "cob") return `<span class="leg-tit">${esc(t("legCob"))}</span>${[0, 1, 2, 3].map((n) => caixa(`--cob${n}`, n)).join("")}<span class="leg-nevoa"><i></i>${esc(t("legNevoa"))}</span>`;
   if (S.modo === "reg") return `<span class="leg-tit">${esc(t("legReg"))}</span>${["<60", "60–80", "80–100", "≥100"].map((r, i) => caixa(`--reg${i + 1}`, r)).join("")}`;
   const L = LIM[S.modo].map(fmtInt), cor = S.modo === "cura" ? "--cur" : "--reg";
   return `<span class="leg-tit">${esc(t("legVivo")[S.modo])}</span>${[`<${L[0]}`, `${L[0]}–${L[1]}`, `${L[1]}–${L[2]}`, `≥${L[2]}`].map((r, i) => caixa(`${cor}${i + 1}`, r)).join("")}`;
@@ -1258,37 +1315,50 @@ function pintarMapa() {
   const sel = document.querySelector(`#mapa path.dep[data-dep="${S.sel}"]`);
   if (sel && sel !== sel.parentNode.lastElementChild) sel.parentNode.appendChild(sel);
   document.querySelectorAll("#mapa .lbl").forEach((el) => el.classList.toggle("sel", el.dataset.dep === S.sel));
-  // "!" onde há fila; 📌 onde há promessa em aberto
+  const modoLuz = S.modo === "cob";   // a camada de luz também mostra a névoa dos casos ocultos
+  $("#g-luz").innerHTML = modoLuz ? luzesHTML() : "";
+  $("#g-nevoa").innerHTML = modoLuz ? nevoaHTML() : "";
+  // losango "!" onde há fila; bandeira onde há promessa em aberto; alvo das missões
   $("#g-alerta").innerHTML = DEPS.filter((d) => temFila(d.id)).map((d) => {
     const [x, y0] = posLbl(d.id), y = y0 - 70;
-    return `<circle cx="${x}" cy="${y}" r="30"/><text x="${x}" y="${y + 16}">!</text>`;
+    return `<path class="losango" d="M${x},${y - 34} l34,34 -34,34 -34,-34z"/><text x="${x}" y="${y + 16}">!</text>`;
   }).join("") + S.comp.filter((c) => c.estado === "aberto").map((c) => {
     const [x, y] = posLbl(c.dep);
-    return `<text class="pino" x="${x + 80}" y="${y - 30}">📌</text>`;
+    return `<path class="pino" d="M${x + 70},${y - 10} v-74 h46 l-12,16 12,16 h-46"/>`;
   }).join("") + alvosMissao().map((id) => {
     const [x, y] = posLbl(id);
-    return `<text class="alvo" x="${x - 85}" y="${y - 30}">🎯</text>`;
+    return `<circle class="anel" cx="${x - 95}" cy="${y - 45}" r="32"/><circle class="anel" cx="${x - 95}" cy="${y - 45}" r="13"/>`;
   }).join("");
   $("#legenda").innerHTML = legendaHTML();
   $("#legenda").classList.toggle("q4", S.modo === "cob");   // 0 1 2 3 cabem numa linha só
   document.querySelectorAll("[data-modo]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.modo === S.modo)));
 }
 
-/* Cada ação faz o departamento piscar no mapa, com o ícone subindo */
-function destacar(id, ico) {
+/* Cada ação faz o departamento piscar no mapa, com o ícone de traço subindo (nome do ícone; outro texto sobe como texto) */
+function destacar(id, nome) {
   if (!id || !$("#mapa")) return;
   const els = document.querySelectorAll(`#mapa .dep[data-dep="${id}"]`);
   els.forEach((el) => el.classList.remove("pulso"));
   void $("#mapa").getBoundingClientRect();
   els.forEach((el) => el.classList.add("pulso"));
-  if (!ico) return;
-  const [x, y] = posLbl(id);
-  const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  tx.setAttribute("x", x);
-  tx.setAttribute("y", y - 40);
-  tx.textContent = ico;
-  $("#g-fx").appendChild(tx);
-  setTimeout(() => tx.remove(), 1600);
+  if (!nome) return;
+  const [x, y] = posLbl(id), NS = "http://www.w3.org/2000/svg";
+  let el;
+  if (ICONES[nome]) {
+    el = document.createElementNS(NS, "g");
+    el.setAttribute("class", "fx-ico");
+    const p = document.createElementNS(NS, "path");
+    p.setAttribute("d", ICONES[nome]);
+    p.setAttribute("transform", `translate(${x - 48} ${y - 150}) scale(4)`);
+    el.appendChild(p);
+  } else {
+    el = document.createElementNS(NS, "text");
+    el.setAttribute("x", x);
+    el.setAttribute("y", y - 40);
+    el.textContent = nome;
+  }
+  $("#g-fx").appendChild(el);
+  setTimeout(() => el.remove(), 1600);
 }
 
 /* ---------- painel do departamento ---------- */
@@ -1298,10 +1368,11 @@ function slotHTML(id, a) {
   const pub = publico(d, a), cv = !!d.conv[a], b = !pub && !cv ? bloqueio(id, a) : null;
   const c = custo(a, id), p = prestCusto(a), at = ACOES[a].at, nv = ACOES[a].nivel;
   const preco = pub ? t("ativo") : cv ? t("convFeito") : b ? b.curto : `💰${fmtM(c)}${p ? ` 🎖️${p}` : ""}`;
+  const precoHTML = pub || cv || b ? esc(preco) : `${ico("moeda")}${fmtM(c)}${p ? ` ${ico("medalha")}${p}` : ""}`;
   const falta = !pub && !cv && !b && (c > S.orc || p > S.prest);
-  return `<div class="slot" style="--nv: var(--nv-${nv === "X" ? "d" : nv.toLowerCase()})"><button type="button" class="acao${pub || cv ? " feita" : ""}${cv ? " conv-on" : ""}${desfazivel(d, a) ? " desfaz" : ""}${b ? " bloq" : ""}${falta ? " falta" : ""}" data-acao="${a}"
+  return `<div class="slot" style="--nv: ${nv === "X" ? "var(--ouro)" : `var(--nv-${nv.toLowerCase()})`}"><button type="button" class="acao${pub || cv ? " feita" : ""}${cv ? " conv-on" : ""}${desfazivel(d, a) ? " desfaz" : ""}${b ? " bloq" : ""}${falta ? " falta" : ""}" data-acao="${a}"
     aria-pressed="${pub || cv}" aria-label="${esc(`${nome} (${alvo}) · ${t("niveisAt")[at]}: ${preco}`)}">
-    <span class="ico" aria-hidden="true">${ACOES[a].ico}</span><span class="nome">${esc(t("curtas")[a])}</span><span class="custo">${esc(preco)}</span><span class="nat n${at}" aria-hidden="true">${t("nivAtCurto")[at]}</span></button></div>`;
+    <span class="ico" aria-hidden="true">${ico(a)}</span><span class="nome">${esc(t("curtas")[a])}</span><span class="custo">${precoHTML}</span><span class="nat n${at}" aria-hidden="true">${t("nivAtCurto")[at]}</span></button></div>`;
 }
 
 /* Linha do departamento que acompanha a camada do mapa: taxa do Atlas ou o número ao vivo da camada escolhida */
@@ -1342,8 +1413,11 @@ function renderHud() {
   const jogando = S && !S.fim && !$("#tela-jogo").hidden, aj = $("#btn-ajuda");
   $("#h-sub").textContent = t("sub");
   $("#btn-idioma").textContent = lang === "es" ? "PT" : "ES";
-  if (jogando) { aj.textContent = PERSONAGENS[S.pers].ico; aj.setAttribute("aria-label", t("arvTit")); aj.classList.toggle("alerta-asc", pendentes() > 0); }
-  else { aj.textContent = "?"; aj.setAttribute("aria-label", t("ajuda")); aj.classList.remove("alerta-asc"); }
+  if (jogando) {
+    if (aj.dataset.retrato !== S.pers) { aj.innerHTML = `<img src="arte/${S.pers}.svg" alt="">`; aj.dataset.retrato = S.pers; }   // não usar data-pers: é o atributo dos cartões de escolha
+    aj.classList.add("retrato"); aj.style.setProperty("--cor", PERSONAGENS[S.pers].cor);
+    aj.setAttribute("aria-label", t("arvTit")); aj.classList.toggle("alerta-asc", pendentes() > 0);
+  } else { aj.textContent = "?"; delete aj.dataset.retrato; aj.classList.remove("retrato", "alerta-asc"); aj.setAttribute("aria-label", t("ajuda")); }
   for (const k of ["#h-ano", "#h-dinheiro", "#h-prest", "#h-pontos"]) $(k).hidden = !jogando;
   document.querySelector(".hud .marca").hidden = jogando;
 }
@@ -1354,15 +1428,17 @@ function montarVivo() {
   $("#vivo").setAttribute("aria-label", t("vivoAria"));
 }
 
+const SR_PLACAR = { es: ["Año", "Dinero", "Prestigio", "Puntos"], pt: ["Ano", "Dinheiro", "Prestígio", "Pontos"] };
 /* Atualizado a cada mês: placar, contadores do país, números do departamento e barra de baixo */
 function renderVivo() {
   if (!S || S.fim) return;
-  $("#h-ano").textContent = String(ano());
+  const sr = SR_PLACAR[lang];   // o ícone é só desenho: o nome vai escondido para o leitor de tela
+  $("#h-ano").innerHTML = `${ico("ano")}<span class="sr">${sr[0]} </span><b>${ano()}</b>`;
   $("#h-ano").title = t("anoDe")(ano(), S.anoIdx + 1);
-  $("#h-dinheiro").textContent = `💰 ${Math.floor(S.orc)}`;
-  $("#h-prest").textContent = `🎖️ ${S.prest}`;
+  $("#h-dinheiro").innerHTML = `${ico("moeda")}<span class="sr">${sr[1]} </span><b>${Math.floor(S.orc)}</b>`;
+  $("#h-prest").innerHTML = `${ico("medalha")}<span class="sr">${sr[2]} </span><b>${S.prest}</b>`;
   $("#btn-ajuda").classList.toggle("alerta-asc", pendentes() > 0);
-  $("#h-pontos").textContent = `⭐ ${fmtInt(S.pontos + S.ptsAno)}`;
+  $("#h-pontos").innerHTML = `${ico("estrela")}<span class="sr">${sr[3]} </span><b>${fmtInt(S.pontos + S.ptsAno)}</b>`;
   const tot = { inc: 0, prev: 0, mort: 0, cura: 0 };   // por ano, com o que funciona agora: muda na hora a cada decisão
   for (const d of DEPS) { const f = fluxos(d.id); tot.inc += f.casos; tot.prev += S.deps[d.id].prev; tot.mort += f.mortes; tot.cura += f.curas; }
   for (const m of MODOS_VIVOS) { const b = document.querySelector(`#vivo [data-modo="${m}"] b`); if (b) b.textContent = fmtInt(tot[m]); }
@@ -1385,16 +1461,20 @@ function render() {
   talvezAbrirArvore();
 }
 
+/* Retrato em silhueta do personagem (arte/<id>.svg), recortado em círculo */
+const avatarHTML = (k) => `<span class="avatar" style="--cor:${PERSONAGENS[k].cor}" aria-hidden="true"><img src="arte/${k}.svg" alt=""></span>`;
+
 function telaInicio() {
   $("#tela-jogo").hidden = true; $("#tela-fim").hidden = true; $("#barra").hidden = true; $("#tela-inicio").hidden = false;
   const salvo = ler(CHAVE);
   const temSalvo = salvo && !salvo.fim && salvo.deps;
   const ultimoFim = salvo && salvo.fim && !salvo.enviado && CFG.rankingUrl && !rankingEncerrado();
   $("#tela-inicio").innerHTML = `
+    <img class="capa" src="arte/capa.svg" alt="${esc(t("capaAlt"))}">
     <h1>${esc(t("h1"))}</h1>
     <p class="sub">${esc(t("intro"))}</p>
     <details class="cartao regras"><summary>${esc(t("ajuda"))}</summary><ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol></details>
-    <div class="pers-teaser">${Object.values(PERSONAGENS).map((P) => `<span class="avatar" style="--cor:${P.cor}" aria-hidden="true">${P.ico}</span>`).join("")}<span>${esc(t("persTeaser"))}</span></div>
+    <div class="pers-teaser">${Object.keys(PERSONAGENS).map(avatarHTML).join("")}<span>${esc(t("persTeaser"))}</span></div>
     <div class="btns">${temSalvo ? `<button class="btn" id="btn-continuar" type="button">${esc(t("continuar"))}</button><button class="btn sec" id="btn-nova" type="button">${esc(t("nova"))}</button>`
       : `<button class="btn" id="btn-nova" type="button">${esc(t("comecar"))}</button>`}${ultimoFim ? `<button class="btn sec" id="btn-ultimo" type="button">${esc(t("ultimo"))}</button>` : ""}</div>
     ${inicioExtra()}
@@ -1432,7 +1512,7 @@ function mostrarFim() {
     <h1>${esc(t("resTit"))}</h1>
     <div class="cartao"><div class="topo-res"><div class="placar">⭐ ${fmtInt(S.pontos)}</div>${estrelasHTML(estrelas(popEqPct()))}</div>
       <p class="cargo">${esc(t("cargo")(cargo))}</p>
-      <p class="meta">${P.ico} ${esc(P[lang].nome)}${S.hab.length ? ` · ${S.hab.map((id) => HAB[id].ico).join(" ")}` : ""}</p>
+      <p class="meta"><span class="retrato-mini" style="--cor:${P.cor}" aria-hidden="true"><img src="arte/${S.pers}.svg" alt=""></span> ${esc(P[lang].nome)}${S.hab.length ? ` · ${S.hab.map((id) => ico(HAB_ICO[id])).join(" ")}` : ""}</p>
       <p class="meta">${esc(t("pontos"))} · ${novo ? esc(t("novoRec")) : esc(t("recorde")(fmtInt(Math.max(recAnt, S.pontos))))}</p></div>
     <div class="cartao"><div class="metricas">${metrica("❤️", Math.abs(S.tot.vidas), S.tot.vidas >= 0 ? t("metVidas") : t("vidasPerd"), "ok")}${metrica("🍎", S.tot.evit, t("metEvit"), "ok")}${metrica("🕯️", S.tot.semdx, t("metSemDx"))}</div>
       <p class="fonte">${esc(t("metModelo"))}</p></div>
@@ -1533,19 +1613,19 @@ function mostrarArvore() {
   const celula = (r, c) => {
     const id = P.arvore[c][r], h = HAB[id];
     const estado = S.hab.includes(id) ? "escolhida" : c < col ? "perdida" : c === col && pend > 0 ? "opcao" : "bloqueada";
-    return `<button type="button" class="hab ${estado}${sel === id ? " sel" : ""}" data-hab="${id}"><span aria-hidden="true">${h.ico}</span><small>${esc(h[lang][0])}</small></button>`;
+    return `<button type="button" class="hab ${estado}${sel === id ? " sel" : ""}" data-hab="${id}"><span class="hab-ico" aria-hidden="true">${ico(HAB_ICO[id])}</span><small>${esc(h[lang][0])}</small></button>`;
   };
-  const ramos = tx.ramos.map((ramo, r) => `<div class="ramo"><p class="ramo-tit">${esc(ramo)}</p><div class="ramo-cels">${[0, 1, 2, 3].map((c) => celula(r, c)).join("")}</div></div>`).join("");
+  const ramos = tx.ramos.map((ramo, r) => `<div class="ramo"><p class="ramo-tit" style="--cor:${P.cor}">${esc(semEmoji(ramo))}</p><div class="ramo-cels">${[0, 1, 2, 3].map((c) => celula(r, c)).join("")}</div></div>`).join("");
   const h = sel && HAB[sel];
   const pode = h && pend > 0 && P.arvore[col] && P.arvore[col].includes(sel);
   abrirModal(`
-    <div class="perfil"><span class="avatar" style="--cor:${P.cor}" aria-hidden="true">${P.ico}</span><div><h2>${esc(tx.nome)}</h2><p class="meta">${esc(tx.papel)} · <b>${esc(t("cargos")[cargo])}</b></p></div></div>
+    <div class="perfil">${avatarHTML(S.pers)}<div><h2>${esc(tx.nome)}</h2><p class="meta">${esc(tx.papel)} · <b>${esc(t("cargos")[cargo])}</b></p></div></div>
     ${pend > 0 ? `<p class="efeito">${esc(t("arvAscenso")(t("cargos")[col + 1]))}</p>` : ""}
     <div class="prog"><i style="width:${pct}%"></i></div><p class="meta">${esc(topo ? t("arvTopo") : t("arvProx")(t("cargos")[cargo + 1], fmtInt(RANKS[cargo + 1])))}</p>
     <div class="arvore"><div class="cargos-cab">${[1, 2, 3, 4].map((i) => `<small>${esc(t("cargos")[i])}</small>`).join("")}</div>${ramos}</div>
-    ${h ? `<div class="hab-desc"><b>${h.ico} ${esc(h[lang][0])}</b><p>${esc(h[lang][1])}</p>${pode ? `<button class="btn" type="button" data-hab-ok="${sel}">${esc(t("arvEscolher"))}</button>` : `<p class="meta">${esc(S.hab.includes(sel) ? t("arvEscolhida") : t("arvBloq"))}</p>`}</div>` : ""}
-    <div class="cartao mini-lista"><b>${esc(t("pers").passiva)}</b><ul class="linhas">${tx.tracos.map((x) => `<li>${esc(x)}</li>`).join("")}</ul><p class="meta">${esc(t("pers").lado)}: ${esc(tx.lado)}</p></div>
-    <div class="btns"><button class="btn sec" type="button" data-abrir="missoes">🎯 ${esc(t("missoesTit"))}</button><button class="btn sec" type="button" data-abrir="ajuda">${esc(t("ajuda"))}</button></div>
+    ${h ? `<div class="hab-desc"><b>${ico(HAB_ICO[sel])} ${esc(h[lang][0])}</b><p>${esc(h[lang][1])}</p>${pode ? `<button class="btn" type="button" data-hab-ok="${sel}">${esc(t("arvEscolher"))}</button>` : `<p class="meta">${esc(S.hab.includes(sel) ? t("arvEscolhida") : t("arvBloq"))}</p>`}</div>` : ""}
+    <div class="cartao mini-lista"><b>${esc(t("pers").passiva)}</b><ul class="linhas">${tx.tracos.map((x) => `<li>${esc(semEmoji(x))}</li>`).join("")}</ul><p class="meta">${esc(t("pers").lado)}: ${esc(tx.lado)}</p></div>
+    <div class="btns"><button class="btn sec" type="button" data-abrir="missoes">${ico("alvo")} ${esc(t("missoesTit"))}</button><button class="btn sec" type="button" data-abrir="ajuda">${esc(t("ajuda"))}</button></div>
     <button class="btn" type="button" data-fechar>${esc(t("voltar"))}</button>`);
 }
 function escolherHab(id) {
@@ -1555,7 +1635,7 @@ function escolherHab(id) {
   S.habSel = null;
   const h = HAB[id];
   if (h.aoEscolher) h.aoEscolher();
-  faixa(h.ico, h[lang][0], h[lang][1], "ouro");
+  faixa(ico(HAB_ICO[id]), h[lang][0], h[lang][1], "ouro");
   confete();
   vibrar();
   salvar();
@@ -1567,8 +1647,8 @@ function mostrarPersonagens() {
   janela = "pers";
   const cartao = (k) => {
     const P = PERSONAGENS[k], tx = P[lang];
-    return `<button type="button" class="pers${k === escolhaPers ? " sel" : ""}" data-pers="${k}" aria-pressed="${k === escolhaPers}"><span class="avatar" style="--cor:${P.cor}" aria-hidden="true">${P.ico}</span>
-      <span class="pers-txt"><b>${esc(tx.nome)}</b><small>${esc(tx.papel)}</small><span class="pers-bio">${esc(tx.bio)}</span><span class="pers-tracos">${tx.tracos.map(esc).join("<br>")}</span></span></button>`;
+    return `<button type="button" class="pers${k === escolhaPers ? " sel" : ""}" style="--cor:${P.cor}" data-pers="${k}" aria-pressed="${k === escolhaPers}">${avatarHTML(k)}
+      <span class="pers-txt"><b>${esc(tx.nome)}</b><small>${esc(tx.papel)}</small><span class="pers-bio">${esc(tx.bio)}</span><span class="pers-tracos">${tx.tracos.map((x) => esc(semEmoji(x))).join("<br>")}</span></span></button>`;
   };
   abrirModal(`
     <h2>${esc(t("pers").escolher)}</h2>
@@ -1588,12 +1668,12 @@ function mostrarAcao(id, a) {
   const motivo = pub ? t("fichaAtivo") : b ? b.txt : c > S.orc ? t("bloqOrc") : p > S.prest ? t("bloqPrest")(p) : "";
   const temConv = ACOES[a].conv && !pub, convOk = ano() >= convLib();
   abrirModal(`
-    <div class="ficha-topo"><span class="ficha-ico" aria-hidden="true">${ACOES[a].ico}</span><div><h2>${esc(nome)}</h2><p class="meta">${esc(DEP[id].nome)} · ${esc(t("funcoes")[ACOES[a].nivel])} → ${esc(alvo)}</p></div></div>
+    <div class="ficha-topo"><span class="ficha-ico" aria-hidden="true" style="--nv: ${ACOES[a].nivel === "X" ? "var(--ouro)" : `var(--nv-${ACOES[a].nivel.toLowerCase()})`}">${ico(a)}</span><div><h2>${esc(nome)}</h2><p class="meta">${esc(DEP[id].nome)} · ${esc(t("funcoes")[ACOES[a].nivel])} → ${esc(alvo)}</p></div></div>
     <p><span class="nat n${at}">${esc(t("niveisAt")[at])}</span></p>
     <div class="ficha-custos" title="${esc(t("fichaManutNota"))}">
-      <div><small>${esc(t("fichaCompra"))}</small><b>💰 ${fmtM(c)}</b></div>
-      <div><small>${esc(t("fichaPrest"))}</small><b>🎖️ ${p}</b></div>
-      <div><small>${esc(t("fichaManut"))}</small><b>💰 ${fmtM(m)}${esc(t("porAnoCurto"))}</b></div>
+      <div><small>${esc(t("fichaCompra"))}</small><b>${ico("moeda")} ${fmtM(c)}</b></div>
+      <div><small>${esc(t("fichaPrest"))}</small><b>${ico("medalha")} ${p}</b></div>
+      <div><small>${esc(t("fichaManut"))}</small><b>${ico("moeda")} ${fmtM(m)}${esc(t("porAnoCurto"))}</b></div>
     </div>
     <p class="meta">${esc(t("fichaManutNota"))}</p>
     ${motivo && !cv ? `<p class="fila">${esc(motivo)}</p>` : ""}
@@ -1750,7 +1830,7 @@ function renderRodape() {
   const m = S.mis.ativas.length ? missao(S.mis.ativas[0]) : null, b = $("#btn-missoes");
   if (m) {
     const p = Math.min(m.prog(), m.meta);
-    b.innerHTML = `<span class="m-tit">🎯 ${esc(m[lang][0])}</span><span class="m-n">${esc(progTxt(m))}</span><i class="m-barra"><i style="width:${Math.round(100 * p / m.meta)}%"></i></i>`;
+    b.innerHTML = `<span class="m-tit">${ico("alvo")}<span>${esc(m[lang][0])}</span></span><span class="m-n">${esc(progTxt(m))}</span><i class="m-barra"><i style="width:${Math.round(100 * p / m.meta)}%"></i></i>`;
   } else b.innerHTML = `<span class="m-tit">${esc(t("semMissao"))}</span>`;
   b.setAttribute("aria-label", `${t("missoesTit")}: ${m ? `${m[lang][0]} ${progTxt(m)}` : t("semMissao")}`);
   const txt = $("#dica-txt");
@@ -1833,9 +1913,18 @@ const creditosHTML = (comTitulo) => `<div class="creditos">${comTitulo ? `<h2>${
 
 /* ---------- janelas ---------- */
 let janela = null;   // qual janela está aberta (para trocar de idioma sem perder o lugar)
-function abrirModal(html) { $("#janela").innerHTML = html; $("#modal").hidden = false; $("#janela").scrollTop = 0; const b = $("#janela .btn, #janela [data-opcao]:not([disabled])"); if (b) b.focus(); }
+function abrirModal(html, classe = "") { $("#janela").className = classe ? `janela ${classe}` : "janela"; $("#janela").innerHTML = html; $("#modal").hidden = false; $("#janela").scrollTop = 0; const b = $("#janela .btn, #janela [data-opcao]:not([disabled])"); if (b) b.focus(); }
 function fecharModal() { $("#modal").hidden = true; janela = null; }
 
+/* Cenas em nanquim dos fatos do ano e de alguns imprevistos (arte/cena-*.svg) */
+const CENA_ANO = { 2015: "cena-hospital-dia", 2018: "cena-ley", 2019: "cena-ley", 2023: "cena-acelerador", 2024: "cena-hospital-dia" };
+const CENA_ALEAT = { itaipu: "cena-itaipu", yacyreta: "cena-itaipu", oiea: "cena-acelerador" };
+const ALT_CENA = {
+  "cena-hospital-dia": ["Un Hospital Día iluminado en el interior", "Um Hospital Día iluminado no interior"],
+  "cena-ley": ["Una ley sobre la mesa, con un sello de ñandutí", "Uma lei sobre a mesa, com um selo de ñandutí"],
+  "cena-acelerador": ["Un acelerador lineal en funcionamiento", "Um acelerador linear em funcionamento"],
+  "cena-itaipu": ["Una represa hidroeléctrica al atardecer", "Uma represa hidrelétrica ao entardecer"],
+};
 function mostrarEvento() {
   janela = "evento";
   const [tit, txt, efeito, fonte] = EVENTOS[ano()][lang];
@@ -1848,7 +1937,9 @@ function mostrarEvento() {
     const [it, ix, ie, ifo] = ev[lang];
     imp = `<div class="imprevisto"><p class="ano">⚡ ${esc(t("imprevisto"))}</p><h3>${esc(sub(it))}</h3><p>${esc(sub(ix))}</p><p class="efeito">${esc(sub(ie))}</p><p class="fonte">${ifo ? fonteHTML(sub(ifo)) : esc(t("escenario"))}</p></div>`;
   }
+  const cena = CENA_ANO[ano()] || (ev && CENA_ALEAT[ev.id]);
   abrirModal(`
+    ${cena ? `<img class="cena" src="arte/${cena}.svg" alt="${esc(ALT_CENA[cena][lang === "es" ? 0 : 1])}"><div class="selo-ano" aria-hidden="true">${ano()}</div>` : ""}
     <p class="ano">${esc(t("anoDe")(ano(), S.anoIdx + 1))}</p>
     <h2>${esc(tit)}</h2><p>${esc(txt)}</p>
     <p class="efeito">${esc(efeito)}</p>
@@ -1859,7 +1950,7 @@ function mostrarEvento() {
     ${S.fechadasAno.length ? `<p class="fila">${esc(t("evFechou")(S.fechadasAno.join(", ")))}</p>` : ""}
     ${ao.congresso ? `<p class="meta">${esc(t("congressoMais"))}</p>` : ""}
     <p><b>${esc(t("evOrc")(Math.floor(S.orc)))}</b> · 🎖️ ${S.prest}</p>
-    <button class="btn" type="button" data-fechar>${esc(S.demanda ? t("proxDemanda") : t("evBtn"))}</button>`);
+    <button class="btn" type="button" data-fechar>${esc(S.demanda ? t("proxDemanda") : t("evBtn"))}</button>`, "papel");
 }
 
 function opcaoCusto(o, dep) {
@@ -1906,8 +1997,8 @@ function escolherOpcao(i) {
   fecharModal();
   salvar();
   render();
-  if (dep) destacar(dep, o.conv ? "🤝" : o.compra ? ACOES[o.compra].ico : "📣");
-  if (S.evAleat && S.evAleat.dep && S.evAleat.dep !== dep) destacar(S.evAleat.dep, "⚡");
+  if (dep) destacar(dep, o.conv ? "convenio" : o.compra || "demanda");
+  if (S.evAleat && S.evAleat.dep && S.evAleat.dep !== dep) destacar(S.evAleat.dep, "raio");
   if (dep && equil(dep) > eq0) festejarNivel(dep, equil(dep));
 }
 
@@ -2077,8 +2168,8 @@ document.addEventListener("click", (ev) => {
     fecharModal();
     if (S && !S.fim) {
       salvar(); render();
-      if (eraEvento && S.evAleat && S.evAleat.dep) destacar(S.evAleat.dep, "⚡");
-      if (eraEvento && S.cons && S.cons.dep) destacar(S.cons.dep, "🔁");
+      if (eraEvento && S.evAleat && S.evAleat.dep) destacar(S.evAleat.dep, "raio");
+      if (eraEvento && S.cons && S.cons.dep) destacar(S.cons.dep, "repete");
     }
     return;
   }

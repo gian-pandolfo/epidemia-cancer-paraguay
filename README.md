@@ -10,6 +10,8 @@ El mapa y los contadores del país muestran incidencia, prevalencia, muertes y c
 
 Para que den ganas de volver a jugar: **misiones** con premio (por ejemplo, test de VPH donde el cuello uterino es la 1.ª causa de muerte en las mujeres), un **desafío relámpago** por año (verdadero o falso, con fuente), **logros** que quedan guardados en el celular, estrellas por año, cargo final y récord. El juego también reacciona a las decisiones: muestra las vidas salvadas, los casos evitados por la prevención y las personas que murieron sin diagnóstico (modelo del juego, comparado con no hacer nada).
 
+**Arte (beta6):** «luz contra la niebla». El mapa empieza a oscuras, cubierto por la niebla del subregistro, con una sola gran luz: el INCAN, en Capiatá. Cada servicio que el jugador abre enciende una luz; diagnosticar disipa la niebla. Ilustraciones vectoriales hechas para el juego (cena principal, retratos en silueta, escenas en tinta de los hechos del año e íconos de trazo), con la renda ñandutí como emblema.
+
 **Jugar:** https://gian-pandolfo.github.io/epidemia-cancer-paraguay/
 
 ## Créditos
@@ -17,6 +19,7 @@ Para que den ganas de volver a jugar: **misiones** con premio (por ejemplo, test
 - **Desarrollo:** Gianmarlon Pandolfo, estudiante de Medicina (UNINTER Tres Fronteras).
 - **Trabajo base:** Silva GIS, Pandolfo GA, et al. *Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control*. Revisión sistemática, 2026.
 - **Coautoría:** Claude Opus 5.5 (Anthropic), en el diseño del juego, la programación y la verificación de las fuentes.
+- **Arte:** ilustraciones vectoriales hechas para el juego. Tipografías Big Shoulders Display y Atkinson Hyperlegible (licencia SIL OFL, vía Google Fonts).
 
 ## Qué es real y qué es simulación
 
@@ -36,6 +39,8 @@ Mapa: límites de [geoBoundaries](https://www.geoboundaries.org) (CC BY 4.0; Run
 - `jogo.js`: reglas, textos (español y portugués) y fuentes.
 - `dados.js`: mapa y datos de los departamentos. Lo genera un script del proyecto a partir de la página del mapa del congreso; no editar a mano.
 - `links.js`: enlaces de las fuentes (página original y copia del Internet Archive).
+- `icones.js`: íconos de trazo de la interfaz (acciones, marcador, árbol de habilidades).
+- `arte/`: ilustraciones en SVG (cena principal, emblema, retratos y escenas). Las genera un script del proyecto; no editar a mano.
 - `ranking.html`: ranking en vivo para la tablet del stand (se actualiza cada 5 s, con el QR del juego).
 - `config.js`: dirección del ranking (`rankingUrl`) y del juego.
 - `apps-script/`: código de la planilla de Google que guarda el ranking y cómo instalarlo.

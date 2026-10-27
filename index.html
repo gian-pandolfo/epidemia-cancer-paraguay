@@ -6,47 +6,31 @@
 <title>Epidemia: Paraguay contra el cáncer</title>
 <meta name="description" content="Juego educativo sobre la epidemiología del cáncer en Paraguay, 2015–2024, con datos reales del Atlas de Mortalidad por Cáncer.">
 <meta name="theme-color" content="#0d1514">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f07a5c'/%3E%3Cpath d='M20 44 32 14l12 30M24 35h16' stroke='%231b0d08' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230F1620'/%3E%3Cpath d='M32 8v48M8 32h48M15 15l34 34M49 15L15 49' stroke='%23F6C66A' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%23F0A43A' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23FFE2A0'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Big+Shoulders+Display:wght@700;800;900&display=swap">
 <style>
 /* Jogo para celular (em pé): placar no topo, mapa, painel do departamento e botão de fechar o ano fixo embaixo.
    Mesmas cores e fontes da página do mapa do congresso. */
 :root {
-  --bg: #f3f6f5; --surface: #ffffff; --surface-2: #e8efed; --ink: #10201e; --muted: #4c605d; --line: #d2dedb;
-  --accent: #cf4f35; --accent-ink: #ffffff; --accent-soft: rgba(207, 79, 53, .13);
-  --cob0: #e7ecea; --cob1: #8fd1c8; --cob2: #3aa99f; --cob3: #1d6b66;
-  --reg1: #fde3c8; --reg2: #f6b27a; --reg3: #e2733c; --reg4: #a8401c;
-  --cur1: #dcf1e5; --cur2: #96d3b1; --cur3: #46a774; --cur4: #1d6a45;
-  --ouro: #a86a12; --ouro-bg: #fff3d6;
-  --nv-p: #2f8f5b; --nv-d: #3c6da3; --nv-t: #9a4fb5;
-  --map-stroke: #ffffff; --map-label: #10201e; --map-halo: rgba(255, 255, 255, .9);
-  --warn: #9a3412; --warn-soft: #fbece4; --ok: #1f7a4d;
-  --f-display: "Bricolage Grotesque", "Segoe UI", Roboto, Arial, sans-serif;
+  --bg: #0F1620; --surface: #17212C; --surface-2: #1F2C3A; --ink: #ECE6DA; --muted: #93A6BA; --line: #33475B;
+  --accent: #F0A43A; --accent-ink: #0F1620; --accent-soft: rgba(240, 164, 58, .16);
+  --cob0: #1D2834; --cob1: #4A3B30; --cob2: #946028; --cob3: #D9902F;
+  --reg1: #3A2A2E; --reg2: #6B3A2C; --reg3: #A8502E; --reg4: #E07A45;
+  --cur1: #1E3326; --cur2: #2F5A3A; --cur3: #5E9A55; --cur4: #93C572;
+  --ouro: #D9B25F; --ouro-bg: #2E2717;
+  --nv-p: #93C572; --nv-d: #79B0DE; --nv-t: #E08BC0;
+  --map-stroke: #0F1620; --map-label: #ECE6DA; --map-halo: rgba(15, 22, 32, .88);
+  --warn: #F2A17A; --warn-soft: rgba(232, 112, 47, .15); --ok: #93C572; --brasa: #E8702F;
+  --papel: #EFE4CF; --tinta: #221D18; --tinta2: #5A4E42; --terra-txt: #8A3A1E;
+  --f-display: "Big Shoulders Display", "Arial Narrow", "Segoe UI", Roboto, Arial, sans-serif;
   --f-body: "Atkinson Hyperlegible", "Segoe UI", Roboto, Arial, sans-serif;
-  --r: 14px; --fora: #cfd8d6;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0d1514; --surface: #141f1d; --surface-2: #1c2927; --ink: #e3eeeb; --muted: #9cb1ad; --line: #2a403c;
-    --accent: #f07a5c; --accent-ink: #1b0d08; --accent-soft: rgba(240, 122, 92, .18);
-    --cob0: #26332f; --cob1: #2a6b63; --cob2: #43a698; --cob3: #92dcd0;
-    --reg1: #3b2a20; --reg2: #7a4426; --reg3: #c2602f; --reg4: #f39a63; --cur1: #1b3127; --cur2: #2a6a4a; --cur3: #45a574; --cur4: #93dcb5; --ouro: #f2c14e; --ouro-bg: #3a2f12;
-    --nv-p: #5cc48a; --nv-d: #6f9bd2; --nv-t: #c48ee0;
-    --fora: #050a09; --map-stroke: #0d1514; --map-label: #eef6f4; --map-halo: rgba(0, 0, 0, .75);
-    --warn: #f3a37f; --warn-soft: rgba(243, 163, 127, .12); --ok: #6fd3a0;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0d1514; --surface: #141f1d; --surface-2: #1c2927; --ink: #e3eeeb; --muted: #9cb1ad; --line: #2a403c;
-  --accent: #f07a5c; --accent-ink: #1b0d08; --accent-soft: rgba(240, 122, 92, .18);
-  --cob0: #26332f; --cob1: #2a6b63; --cob2: #43a698; --cob3: #92dcd0;
-  --reg1: #3b2a20; --reg2: #7a4426; --reg3: #c2602f; --reg4: #f39a63; --cur1: #1b3127; --cur2: #2a6a4a; --cur3: #45a574; --cur4: #93dcb5; --ouro: #f2c14e; --ouro-bg: #3a2f12;
-  --nv-p: #5cc48a; --nv-d: #6f9bd2; --nv-t: #c48ee0;
-  --fora: #050a09; --map-stroke: #0d1514; --map-label: #eef6f4; --map-halo: rgba(0, 0, 0, .75);
-  --warn: #f3a37f; --warn-soft: rgba(243, 163, 127, .12); --ok: #6fd3a0;
+  --r: 0; --fora: #070B10;
+  --chanfro-p: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+  --chanfro: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+  --chanfro-g: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+  --octo: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -351,6 +335,136 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .barra .btn { padding: 9px 12px; font-size: .92rem; }
 }
 @media (prefers-reduced-motion: reduce) { .dep { transition: none; } .dep.pulso { animation: none; } #g-fx text { display: none; } }
+/* beta6: arte "luz contra a névoa" (clima do Frostpunk, contemporâneo e sem apocalipse). Só tema escuro.
+   Placas com cantos cortados, letras industriais (Big Shoulders), ícones de traço, retratos em silhueta, mapa com luz e névoa. */
+h1, h2, h3 { letter-spacing: .01em; }
+.i { width: 1.15em; height: 1.15em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; vertical-align: -.2em; }
+button svg, button img, .chip svg { pointer-events: none; }
+/* tela inicial: cena principal e título */
+.capa { display: block; width: calc(100% + 24px); max-width: none; height: 210px; margin: 0 -12px; object-fit: cover; object-position: 74% 62%; }
+.inicio h1 { font-weight: 900; text-transform: uppercase; line-height: .9; color: #F3E9D6; }
+.inicio .sub { color: var(--ink); }
+/* placar */
+.hud { border-bottom: 1px solid var(--line); }
+.hud .marca { font: 900 1.25rem/1 var(--f-display); text-transform: uppercase; letter-spacing: .03em; }
+.chip { border-radius: 0; clip-path: var(--chanfro-p); gap: 5px; }
+.chip b { font: 800 1.12rem/1 var(--f-display); letter-spacing: .02em; }
+.chip .i { color: var(--ouro); }
+#h-ano .i { color: var(--accent); }
+.btn-ico { border-radius: 0; clip-path: var(--chanfro-p); }
+#btn-ajuda.retrato { clip-path: none; border-radius: 50%; padding: 0; width: 38px; min-width: 38px; height: 38px; overflow: hidden; border: 2px solid var(--cor, var(--accent)); background: var(--surface-2); }
+#btn-ajuda.retrato img { display: block; width: 160%; max-width: none; margin: -34% 0 0 -30%; }
+#btn-ajuda.retrato.alerta-asc::after { display: none; }
+#btn-ajuda.retrato.alerta-asc { animation: anel 1s ease-in-out infinite; }
+@keyframes anel { 50% { box-shadow: 0 0 0 4px var(--accent); } }
+/* botões */
+.btn { border-radius: 0; clip-path: var(--chanfro); font-family: var(--f-display); font-weight: 900; font-size: 1.25rem; text-transform: uppercase; letter-spacing: .05em; }
+.btn:focus-visible { outline-color: var(--ink); outline-offset: -5px; }
+.btn.sec { background: var(--surface-2); color: var(--ink); }
+.btns .btn { min-width: 0; }
+/* camadas do mapa e números ao vivo */
+.seg, .seg button, .seg.mini, .seg.mini button { border-radius: 0; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.legenda, .legenda i { border-radius: 0; }
+.legenda .leg-nevoa { grid-column: 1 / -1; }
+.legenda .leg-nevoa i { background: linear-gradient(90deg, rgba(174, 189, 205, .55), rgba(174, 189, 205, .1)); }
+.vivo button { border-radius: 0; }
+.vivo button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); }
+.vivo button[aria-pressed="true"] span, .vivo button[aria-pressed="true"] b { color: var(--accent-ink); }
+/* mapa: luz, névoa e marcas */
+.dep.sel { stroke: var(--accent); }
+.alerta .losango { fill: var(--brasa); stroke: var(--map-stroke); stroke-width: 5; }
+.alerta text { fill: var(--accent-ink); }
+.alerta .pino { fill: #E08BC0; stroke: #E08BC0; stroke-width: 6; stroke-linejoin: round; }
+.alerta .anel { fill: none; stroke: var(--ouro); stroke-width: 7; }
+#g-luz, #g-nevoa { pointer-events: none; }
+#g-fx .fx-ico { animation: sobe 1.5s ease-out forwards; }
+#g-fx .fx-ico path { fill: none; stroke: var(--accent); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+/* painel do departamento e ações */
+.painel-info { border-radius: 0; clip-path: var(--chanfro); }
+.dep-tit { font: 800 1.15rem var(--f-display); text-transform: uppercase; letter-spacing: .03em; }
+.fila { border-radius: 0; }
+.nivel h3 { font: 800 .84rem/1.1 var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: var(--nv); }
+.nivel h3 .barras i { border-radius: 0; width: 12px; }
+.acao { border-radius: 0; box-shadow: inset 3px 0 0 var(--nv); }
+.acao .ico { color: var(--nv); line-height: 0; }
+.acao .ico .i { width: 1.3rem; height: 1.3rem; }
+.acao .custo { display: inline-flex; align-items: center; gap: 2px; color: var(--ouro); white-space: nowrap; line-height: 1.1; }
+.acao .custo .i { width: .78rem; height: .78rem; stroke-width: 2.3; }
+.acao.feita { box-shadow: inset 3px 0 0 var(--nv), inset 0 0 0 1px var(--nv); background: color-mix(in srgb, var(--nv) 16%, var(--surface)); }
+.acao.feita .custo { color: var(--nv); }
+.conv { border-radius: 0; }
+/* barra de baixo */
+.barra { border-top: 2px solid var(--accent); }
+.missao-mini, .missao-mini .m-barra, .missao-mini .m-barra i { border-radius: 0; }
+.missao-mini .m-tit { display: inline-flex; align-items: center; gap: 4px; }
+.missao-mini .m-tit .i { color: var(--ouro); }
+/* janelas */
+.overlay { background: rgba(5, 9, 14, .74); }
+.janela { border-radius: 0; clip-path: var(--chanfro-g); border: 1px solid var(--line); }
+.janela .ano { font: 800 .92rem var(--f-display); letter-spacing: .14em; }
+.janela h2 { font-weight: 900; font-size: 1.65rem; line-height: .98; text-transform: uppercase; }
+.efeito { border-radius: 0; clip-path: var(--chanfro-p); }
+.imprevisto, .licao, .opcoes button, .met, .selo, .missao, .ficha-custos div, .quiz-res, .hab-desc, .prog, .prog i, .form-rank input[type="text"] { border-radius: 0; }
+.cartao { border-radius: 0; clip-path: var(--chanfro); }
+.opcoes button { box-shadow: inset 3px 0 0 var(--accent); }
+.toast { border-radius: 0; clip-path: var(--chanfro-p); background: var(--papel); color: var(--tinta); }
+.faixa { border-radius: 0; clip-path: var(--chanfro); }
+.faixa .ico .i { width: 1.9rem; height: 1.9rem; color: var(--ouro); }
+.ficha-ico { color: var(--nv, var(--accent)); line-height: 0; }
+.ficha-ico .i { width: 2.4rem; height: 2.4rem; }
+.ficha-custos b { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.ficha-custos .i { color: var(--ouro); }
+/* fato do ano: carta de papel com cena em nanquim */
+.janela.papel { background: var(--papel); color: var(--tinta); border-color: #CDBF9F; }
+.janela.papel .cena { display: block; width: calc(100% + 36px); max-width: none; height: auto; margin: -18px -18px 0; }
+.janela.papel .selo-ano { position: relative; width: 66px; height: 66px; margin: -46px 0 -4px 4px; border-radius: 50%; background: var(--bg); box-shadow: 0 0 0 3px var(--accent), 0 0 0 7px var(--papel); display: grid; place-items: center; font: 900 1.3rem var(--f-display); color: var(--accent); }
+.janela.papel .ano { color: var(--terra-txt); }
+.janela.papel .efeito { background: var(--surface); color: var(--ink); }
+.janela.papel .fonte, .janela.papel .meta { color: var(--tinta2); }
+.janela.papel .lk { color: var(--terra-txt); }
+.janela.papel .imprevisto { border-color: rgba(34, 29, 24, .35); }
+.janela.papel .fila { background: rgba(232, 112, 47, .16); color: #7A2E0E; }
+.janela.papel .btn.sec { background: var(--surface); color: var(--ink); }
+/* personagens: retratos em silhueta */
+.avatar { overflow: hidden; background: var(--surface-2); box-shadow: 0 0 0 2px var(--cor, var(--accent)); font-size: 0; }
+.avatar img { display: block; width: 160%; max-width: none; margin: -34% 0 0 -30%; }
+.perfil .avatar { width: 76px; height: 76px; }
+.pers-txt b { font: 900 1.3rem/1 var(--f-display); text-transform: uppercase; letter-spacing: .02em; }
+.pers-txt small { color: var(--cor, var(--accent)); }
+.pers { border-radius: 0; clip-path: var(--chanfro); }
+.pers.sel { border-color: var(--accent); }
+.retrato-mini { display: inline-block; width: 1.6em; height: 1.6em; border-radius: 50%; overflow: hidden; vertical-align: -.45em; box-shadow: 0 0 0 2px var(--cor, var(--accent)); background: var(--surface-2); }
+.retrato-mini img { display: block; width: 160%; max-width: none; margin: -34% 0 0 -30%; }
+/* árvore de habilidades: nós octogonais */
+.ramo-tit { font: 800 .82rem var(--f-display); letter-spacing: .1em; text-transform: uppercase; color: var(--cor, var(--accent)); }
+.hab { border: 0; border-radius: 0; background: transparent; padding: 4px 2px; min-height: 0; }
+.hab .hab-ico { position: relative; display: grid; place-items: center; width: 46px; height: 46px; background: var(--line); clip-path: var(--octo); color: var(--muted); }
+.hab .hab-ico::before { content: ""; position: absolute; inset: 2px; background: var(--surface-2); clip-path: var(--octo); }
+.hab .hab-ico .i { position: relative; width: 22px; height: 22px; }
+.hab.escolhida { background: transparent; box-shadow: none; }
+.hab.escolhida .hab-ico { background: var(--ouro); color: var(--ouro); }
+.hab.escolhida .hab-ico::before { background: #3A3220; }
+.hab.escolhida small { color: var(--ouro); font-weight: 700; }
+.hab.opcao { box-shadow: none; animation: opcaoLuz 1.2s ease-in-out infinite; }
+.hab.opcao .hab-ico { background: var(--accent); color: var(--accent); }
+.hab.opcao .hab-ico::before { background: #2A2418; }
+@keyframes opcaoLuz { 50% { filter: drop-shadow(0 0 7px rgba(240, 164, 58, .85)); } }
+.hab.sel { outline: none; }
+.hab.sel .hab-ico { background: #FFE2A0; }
+.hab.sel small { color: #FFD27A; font-weight: 700; }
+.hab-desc b { display: inline-flex; align-items: center; gap: 6px; font: 900 1.1rem var(--f-display); text-transform: uppercase; letter-spacing: .03em; color: #FFD27A; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.nivel[data-n="X"] { --nv: var(--ouro); }
+.missao-mini .m-tit span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* celulares estreitos (360 px): o botão "Luz" já nomeia a camada; ações um pouco mais baixas para caber sem rolar */
+@media (max-width: 370px) {
+  .legenda.q4 .leg-tit { display: none; }
+  .nivel h3 { font-size: .78rem; }
+  .acao { min-height: 38px; padding: 4px 5px; }
+  .painel-acoes { gap: 4px; }
+}
+@media (prefers-reduced-motion: reduce) { #g-fx .fx-ico { display: none; } .hab.opcao, #btn-ajuda.retrato.alerta-asc { animation: none; } }
 </style>
 </head>
 <body>
@@ -398,9 +512,10 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 <div id="faixa" class="faixa" role="status" aria-live="polite" hidden></div>
 </div>
 
-<script src="config.js"></script>
-<script src="dados.js"></script>
-<script src="links.js"></script>
-<script src="jogo.js"></script>
+<script src="config.js?v=6"></script>
+<script src="dados.js?v=6"></script>
+<script src="links.js?v=6"></script>
+<script src="icones.js?v=6"></script>
+<script src="jogo.js?v=6"></script>
 </body>
 </html>
