@@ -208,7 +208,7 @@ const T = {
     bloqRef2: "🔒 2.ª", bloqRef2Txt: "La atención terciaria necesita atención secundaria en el departamento o en un vecino (derivación).",
     bloqPrest: (p) => `Necesitas 🎖️ ${p} de prestigio.`, bloqOrc: "Presupuesto insuficiente.", bloqConvAno: (a) => `🤝 Convenios desde ${a}`,
     semPrest: "Prestigio insuficiente",
-    economia: (r) => `${r < 0 ? "⚠️ " : ""}💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/año`,
+    economia: (r) => `${r < 0 ? "⚠️ " : ""}💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/año`,
     fechouTxt: (ico, n, d) => `Sin dinero: se cerró ${ico} ${n} en ${d} (−🎖️ 2)`,
     resPrestAno: (a, b) => `Prestigio: 🎖️ ${a} → ${b}`, resPrest: (c) => `Prestigio al final: 🎖️ <b>${c}</b>`,
     resFechou: (l) => `Cierres por falta de dinero: ${l}`, resHab: (l) => `Habilidades elegidas: ${l}`,
@@ -224,7 +224,7 @@ const T = {
     quizCerto: (o) => `¡Correcto! +⭐ ${BONUS_QUIZ} · +💰 ${o} · +🎖️ 1`, quizErrado: "No era así.", quizSeguir: "Seguir",
     racha: (n) => `Racha de ${n} aciertos 🔥`, rachaPremio: "+🎖️ 2 por la racha",
     nivelSobe: (n) => `¡Equilibrio ${n}/3!`, novoRecorde: "¡Nuevo récord!", recordeTxt: "Superaste tu mejor puntaje en este celular.",
-    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ ${p}`, rodapeTit: "Presupuesto anual menos mantenimiento · vidas salvadas (modelo) · saldo de puntos del año (si queda negativo, el año suma 0)", contaPiso: "= 0 (el año no baja de 0)",
+    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ ${p}`, rodapeTit: "Presupuesto anual menos mantenimiento · vidas salvadas (modelo) · saldo de puntos del año (si queda negativo, el año suma 0)", contaPiso: "= 0 (el año no baja de 0)",
     consTit: "Consecuencia de tus decisiones",
     metVidas: "vidas salvadas", vidasPerd: "vidas perdidas", metEvit: "casos evitados por la prevención", metSemDx: "murieron sin diagnóstico",
     metModelo: "Modelo del juego, comparado con no hacer nada.",
@@ -427,7 +427,7 @@ const T = {
     bloqRef2: "🔒 2ª", bloqRef2Txt: "A atenção terciária precisa de atenção secundária no departamento ou num vizinho (encaminhamento).",
     bloqPrest: (p) => `Você precisa de 🎖️ ${p} de prestígio.`, bloqOrc: "Orçamento insuficiente.", bloqConvAno: (a) => `🤝 Convênios a partir de ${a}`,
     semPrest: "Prestígio insuficiente",
-    economia: (r) => `${r < 0 ? "⚠️ " : ""}💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/ano`,
+    economia: (r) => `${r < 0 ? "⚠️ " : ""}💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/ano`,
     fechouTxt: (ico, n, d) => `Sem dinheiro: fechou ${ico} ${n} em ${d} (−🎖️ 2)`,
     resPrestAno: (a, b) => `Prestígio: 🎖️ ${a} → ${b}`, resPrest: (c) => `Prestígio no fim: 🎖️ <b>${c}</b>`,
     resFechou: (l) => `Fechamentos por falta de dinheiro: ${l}`, resHab: (l) => `Habilidades escolhidas: ${l}`,
@@ -443,7 +443,7 @@ const T = {
     quizCerto: (o) => `Correto! +⭐ ${BONUS_QUIZ} · +💰 ${o} · +🎖️ 1`, quizErrado: "Não era assim.", quizSeguir: "Continuar",
     racha: (n) => `Sequência de ${n} acertos 🔥`, rachaPremio: "+🎖️ 2 pela sequência",
     nivelSobe: (n) => `Equilíbrio ${n}/3!`, novoRecorde: "Novo recorde!", recordeTxt: "Você superou sua melhor pontuação neste celular.",
-    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ ${p}`, rodapeTit: "Orçamento anual menos manutenção · vidas salvas (modelo) · saldo de pontos do ano (se ficar negativo, o ano soma 0)", contaPiso: "= 0 (o ano não fica abaixo de 0)",
+    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ ${p}`, rodapeTit: "Orçamento anual menos manutenção · vidas salvas (modelo) · saldo de pontos do ano (se ficar negativo, o ano soma 0)", contaPiso: "= 0 (o ano não fica abaixo de 0)",
     consTit: "Consequência das suas decisões",
     metVidas: "vidas salvas", vidasPerd: "vidas perdidas", metEvit: "casos evitados pela prevenção", metSemDx: "morreram sem diagnóstico",
     metModelo: "Modelo do jogo, comparado com não fazer nada.",
@@ -2068,7 +2068,8 @@ function proximaFaixa() {
   el.hidden = false;
   void el.offsetWidth;
   el.classList.add("on");
-  setTimeout(() => { el.classList.remove("on"); setTimeout(() => { el.hidden = true; proximaFaixa(); }, 400); }, 2600);
+  const ms = filaFaixas.length ? 1600 : 2600;   // com outras na fila, cada faixa passa mais rápido (várias conquistas de uma vez)
+  setTimeout(() => { el.classList.remove("on"); setTimeout(() => { el.hidden = true; proximaFaixa(); }, 400); }, ms);
 }
 
 /* Confete: na moldura de celular (tela larga) os elementos fixos se posicionam pela moldura */
