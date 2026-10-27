@@ -1708,7 +1708,7 @@ function mostrarFim() {
   const x = {
     equil3: eq.length, popEq: fmtInt(100 * eq.reduce((s, d) => s + d.pop, 0) / popTot),
     revelados: fmtInt(Math.max(0, Math.min(100, 100 * achado / faltava))),
-    gP: S.gasto.P, gD: S.gasto.D, gT: S.gasto.T, gX: S.gasto.X,
+    gP: fmtM(S.gasto.P), gD: fmtM(S.gasto.D), gT: fmtM(S.gasto.T), gX: fmtM(S.gasto.X),
   };
   const linhas = [...t("resLinhas")(x), t("resMis")(S.mis.feitas.length, S.mis.fila.length), t("resQuiz")(S.quiz.acertos, S.quiz.feitos), t("resPrest")(S.prest), t("resHab")(S.hab.map((id) => HAB[id][lang][0]).join(", ") || "—"),
     t("resComp")(S.comp.filter((c) => c.estado === "cumprido").length, S.comp.length), t("resTot")(fmtInt(S.tot.casos), fmtInt(S.tot.mortes), fmtInt(S.tot.curas))];
