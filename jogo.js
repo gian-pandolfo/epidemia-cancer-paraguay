@@ -61,12 +61,13 @@ const T = {
       "Donde la estadística es baja, falta diagnóstico, no cáncer: diagnosticar revela casos ocultos y la tasa registrada sube. ¡Es buena señal!",
     ],
     aviso: "Simulación educativa (beta). Los datos de partida y el hecho histórico de cada año son reales, con fuente. Los efectos de las acciones, los personajes, los números en tiempo real, los imprevistos, las demandas y los puntos son del modelo del juego.",
-    creditosTit: "Créditos",
+    creditosTit: "Créditos", dicaFin: "💡 Poco dinero: toca 💰 arriba para conseguir más (impuesto al tabaco, préstamo…) o 🎖️ para pedir una ampliación al Congreso.",
     creditos: [
       "<b>Desarrollo:</b> Gianmarlon Pandolfo, estudiante de Medicina (UNINTER Tres Fronteras).",
       "<b>Trabajo base:</b> Silva GIS, Pandolfo GA, et al. <i>Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control</i>. Revisión sistemática, 2026.",
       "<b>Coautoría:</b> Claude Opus 5.5 (Anthropic), en el diseño del juego, la programación y la verificación de las fuentes.",
       "<b>Arte:</b> ilustraciones vectoriales hechas para el juego (estilo «luz contra la niebla»). Tipografías Big Shoulders Display y Atkinson Hyperlegible (licencia OFL).",
+      "<b>Música:</b> composición original, tocada por el propio celular (guitarra de cuerdas dobles, como el ronroco, en re menor). Sin archivos de audio ni obras de terceros. Botón 🔊/🔇 arriba.",
     ],
     comecar: "Empezar", continuar: "Continuar partida", nova: "Nueva partida",
     ajuda: "Cómo se juega", fechar: "Cerrar",
@@ -280,12 +281,13 @@ const T = {
       "Onde a estatística é baixa, falta diagnóstico, não câncer: diagnosticar revela casos ocultos e a taxa registrada sobe. É bom sinal!",
     ],
     aviso: "Simulação educativa (beta). Os dados de partida e o fato histórico de cada ano são reais, com fonte. Os efeitos das ações, os personagens, os números em tempo real, os imprevistos, as demandas e os pontos são do modelo do jogo.",
-    creditosTit: "Créditos",
+    creditosTit: "Créditos", dicaFin: "💡 Pouco dinheiro: toque 💰 no alto para conseguir mais (imposto sobre o tabaco, empréstimo…) ou 🎖️ para pedir uma ampliação ao Congresso.",
     creditos: [
       "<b>Desenvolvimento:</b> Gianmarlon Pandolfo, estudante de Medicina (UNINTER Tres Fronteras).",
       "<b>Trabalho base:</b> Silva GIS, Pandolfo GA, et al. <i>Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control</i>. Revisão sistemática, 2026.",
       "<b>Coautoria:</b> Claude Opus 5.5 (Anthropic), no desenho do jogo, na programação e na conferência das fontes.",
       "<b>Arte:</b> ilustrações vetoriais feitas para o jogo (estilo «luz contra a névoa»). Tipografias Big Shoulders Display e Atkinson Hyperlegible (licença OFL).",
+      "<b>Música:</b> composição original, tocada pelo próprio celular (violão de cordas duplas, como o ronroco, em ré menor). Sem arquivos de áudio nem obras de terceiros. Botão 🔊/🔇 no alto.",
     ],
     comecar: "Começar", continuar: "Continuar partida", nova: "Nova partida",
     ajuda: "Como se joga", fechar: "Fechar",
@@ -2321,6 +2323,7 @@ function mostrarEvento() {
     ${ao.proveedor ? `<p class="fila">${esc(t("evProveedor"))}</p>` : ""}
     ${ao.ensayo ? `<p class="efeito">${esc(t("evEnsayo")[ao.ensayo])}</p>` : ""}
     <p><b>${esc(t("evOrc")(fmtM(S.orc)))}</b> · 🎖️ ${S.prest}</p>
+    ${S.orc < 4 ? `<p class="meta">${esc(t("dicaFin"))}</p>` : ""}
     <button class="btn" type="button" data-fechar>${esc(S.demanda ? t("proxDemanda") : t("evBtn"))}</button>`, "papel");
 }
 
