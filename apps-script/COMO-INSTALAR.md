@@ -10,7 +10,7 @@ Feito uma vez, no computador, com a conta Google que vai guardar os dados do ran
 6. Botão azul **Implantar → Nova implantação**. Na engrenagem "Selecione o tipo", escolha **App da Web**:
    - Descrição: `ranking`
    - Executar como: **Eu**
-   - Quem pode acessar: **Qualquer pessoa**
+   - Quem pode acessar: **Qualquer pessoa**. Não escolha "Qualquer pessoa com Conta do Google": com ela, os alunos teriam de entrar no Google para ver o ranking e mandar a pontuação.
    - Clique em **Implantar**.
 7. **Autorizar acesso** → escolha a conta. O Google avisa que "não verificou este app": é normal, o app é seu. Clique em **Avançado → Acessar Ranking Epidemia (não seguro) → Permitir**. O script só enxerga esta planilha: a tela de permissão deve falar só de planilhas. **Se pedir Gmail, Drive ou contatos, pare** e avise o Claude.
 8. Copie o **URL do app da Web** (termina em `/exec`) e coloque em `config.js`, no campo `rankingUrl`.
