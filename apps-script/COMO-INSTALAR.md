@@ -1,9 +1,9 @@
 # Como ligar o ranking (planilha do Google)
 
-Feito uma vez, no computador, com a conta Google que vai guardar os dados do ranking.
+Feito uma vez, no computador, com a conta Google que vai guardar os dados do ranking: a **conta pessoal do Gi**, nunca a conta da Casa Baunilha (os dados dos alunos não se misturam com os da empresa).
 
 1. Abra **https://sheets.new** (cria uma planilha nova).
-2. Dê o nome `2026.10.26 - Ranking - Jogo Epidemia - Congresso 2026`.
+2. Dê o nome `2026.10.27 - Ranking - Jogo Epidemia - Congresso 2026`.
 3. Menu **Extensões → Apps Script**. Abre uma aba com o arquivo `Código.gs`.
 4. Apague o que estiver no editor e cole todo o conteúdo de [`Codigo.gs`](Codigo.gs) (no GitHub, botão "Copy raw file").
 5. Clique no disquete (**Salvar**). Se pedir um nome para o projeto: `Ranking Epidemia`.
@@ -12,7 +12,7 @@ Feito uma vez, no computador, com a conta Google que vai guardar os dados do ran
    - Executar como: **Eu**
    - Quem pode acessar: **Qualquer pessoa**
    - Clique em **Implantar**.
-7. **Autorizar acesso** → escolha a conta. O Google avisa que "não verificou este app": é normal, o app é seu. Clique em **Avançado → Acessar Ranking Epidemia (não seguro) → Permitir**. O script só enxerga esta planilha.
+7. **Autorizar acesso** → escolha a conta. O Google avisa que "não verificou este app": é normal, o app é seu. Clique em **Avançado → Acessar Ranking Epidemia (não seguro) → Permitir**. O script só enxerga esta planilha: a tela de permissão deve falar só de planilhas. **Se pedir Gmail, Drive ou contatos, pare** e avise o Claude.
 8. Copie o **URL do app da Web** (termina em `/exec`) e coloque em `config.js`, no campo `rankingUrl`.
 
 ## Cuidados (LGPD)
