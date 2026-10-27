@@ -69,7 +69,7 @@ main { max-width: 640px; margin: 0 auto; }
 .inicio .sub { margin: 0; color: var(--muted); }
 .passos { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
 /* Regras na tela inicial: fechadas; um toque abre */
-.regras summary { cursor: pointer; font: 800 1.05rem var(--f-display); list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 28px; }
+.regras summary { cursor: pointer; font: 800 1.05rem var(--f-display); list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; }
 .regras summary::-webkit-details-marker { display: none; }
 .regras summary::after { content: "+"; font: 800 1.4rem/1 var(--f-body); color: var(--accent); }
 .regras[open] summary::after { content: "−"; }
@@ -190,7 +190,9 @@ main { max-width: 640px; margin: 0 auto; }
 .linhas { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
 .placar { font: 800 clamp(2.6rem, 12vw, 3.6rem) var(--f-display); line-height: 1; font-variant-numeric: tabular-nums; }
 .fontes { margin: 0; padding-left: 18px; font-size: .78rem; color: var(--muted); display: grid; gap: 4px; }
-.toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: .9rem; max-width: 92vw; text-align: center; }
+.toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: .9rem; max-width: 92vw; text-align: center; pointer-events: none; }
+/* com uma janela aberta, o aviso sobe para baixo do topo: nunca fica em cima dos botões da janela (27/10/2026) */
+#modal:not([hidden]) + .toast { bottom: auto; top: calc(62px + env(safe-area-inset-top, 0px)); }
 /* v3: missão no rodapé, faixa de prêmio, confete, +pontos, estrelas, missões, conquistas e desafio relâmpago */
 .missao-mini { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 6px; width: 100%; padding: 4px 8px 5px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); text-align: left; cursor: pointer; }
 .missao-mini .m-tit { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; font-size: .74rem; color: var(--ink); }
@@ -304,7 +306,8 @@ main { max-width: 640px; margin: 0 auto; }
 .termos ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 4px; }
 .janela.dados .btn { width: 100%; justify-content: center; }
 .form-rank .consent { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; font-size: .84rem; color: var(--muted); }
-.form-rank .consent input { width: 22px; height: 22px; flex: none; margin-top: 2px; accent-color: var(--accent); }
+.form-rank .consent input { width: 26px; height: 26px; flex: none; margin-top: 0; accent-color: var(--accent); }
+.form-rank .consent { min-height: 44px; align-items: center; }
 .msg-rank { margin: 0; font-weight: 700; }
 .msg-rank.ok { color: var(--ok); }
 .msg-rank.erro { color: var(--warn); }

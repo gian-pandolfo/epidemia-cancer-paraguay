@@ -223,7 +223,7 @@ const T = {
     quizCerto: (o) => `¡Correcto! +⭐ ${BONUS_QUIZ} · +💰 ${o} · +🎖️ 1`, quizErrado: "No era así.", quizSeguir: "Seguir",
     racha: (n) => `Racha de ${n} aciertos 🔥`, rachaPremio: "+🎖️ 2 por la racha",
     nivelSobe: (n) => `¡Equilibrio ${n}/3!`, novoRecorde: "¡Nuevo récord!", recordeTxt: "Superaste tu mejor puntaje en este celular.",
-    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Presupuesto anual menos mantenimiento · vidas salvadas (modelo) · puntos que suma este año",
+    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ ${p}`, rodapeTit: "Presupuesto anual menos mantenimiento · vidas salvadas (modelo) · saldo de puntos del año (si queda negativo, el año suma 0)", contaPiso: "= 0 (el año no baja de 0)",
     consTit: "Consecuencia de tus decisiones",
     metVidas: "vidas salvadas", vidasPerd: "vidas perdidas", metEvit: "casos evitados por la prevención", metSemDx: "murieron sin diagnóstico",
     metModelo: "Modelo del juego, comparado con no hacer nada.",
@@ -441,7 +441,7 @@ const T = {
     quizCerto: (o) => `Correto! +⭐ ${BONUS_QUIZ} · +💰 ${o} · +🎖️ 1`, quizErrado: "Não era assim.", quizSeguir: "Continuar",
     racha: (n) => `Sequência de ${n} acertos 🔥`, rachaPremio: "+🎖️ 2 pela sequência",
     nivelSobe: (n) => `Equilíbrio ${n}/3!`, novoRecorde: "Novo recorde!", recordeTxt: "Você superou sua melhor pontuação neste celular.",
-    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Orçamento anual menos manutenção · vidas salvas (modelo) · pontos que soma neste ano",
+    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ ${p}`, rodapeTit: "Orçamento anual menos manutenção · vidas salvas (modelo) · saldo de pontos do ano (se ficar negativo, o ano soma 0)", contaPiso: "= 0 (o ano não fica abaixo de 0)",
     consTit: "Consequência das suas decisões",
     metVidas: "vidas salvas", vidasPerd: "vidas perdidas", metEvit: "casos evitados pela prevenção", metSemDx: "morreram sem diagnóstico",
     metModelo: "Modelo do jogo, comparado com não fazer nada.",
@@ -1244,10 +1244,12 @@ function partesAno(estr, inds) {
   }
   return p;
 }
-function totalAno(p, mult, dem) {
+/* Saldo do ano antes do piso: pode ser negativo (mostrado no rodapé e no resumo, para o jogador ver cada compra contar) */
+function saldoAno(p, mult, dem) {
   const b = p.estr + p.vidas + p.evit + p.semdx;
-  return Math.min(3000, Math.max(0, Math.round((b > 0 ? b * mult : b) + dem)));
+  return (b > 0 ? b * mult : b) + dem;
 }
+const totalAno = (p, mult, dem) => Math.min(3000, Math.max(0, Math.round(saldoAno(p, mult, dem))));
 /* Pontos que o ano vai dar com o que já está feito (a mesma conta do fim do ano, sem o desafio relâmpago) */
 function previsaoAno() {
   const resto = (12 - S.mes) / 12, inds = {};
@@ -1255,7 +1257,7 @@ function previsaoAno() {
     const st = S.deps[d.id], a = anoDep(d.id);
     inds[d.id] = { vidas: st.ind.vidas + a.vidas * resto, evit: st.ind.evit + a.evit * resto, semdx: st.ind.semdx + a.semdx * resto };
   }
-  return totalAno(partesAno(S.ptsAno + pontosAno() * resto, inds), S.multAno, S.demPts || 0);
+  return Math.min(3000, Math.round(saldoAno(partesAno(S.ptsAno + pontosAno() * resto, inds), S.multAno, S.demPts || 0)));
 }
 
 /* ---------- formatação ---------- */
@@ -1394,7 +1396,8 @@ function fecharAno() {
   const dem = S.demPts || 0;
   const pts = totalAno(partes, S.multAno, dem) + (S.quizOk ? BONUS_QUIZ : 0);   // teto do ano no ranking + acerto do desafio
   S.pontos += pts;
-  const parc = { estr: Math.round(partes.estr), vidas: Math.round(partes.vidas), evit: Math.round(partes.evit), semdx: Math.round(partes.semdx), mult: S.multAno, dem };
+  const parc = { estr: Math.round(partes.estr), vidas: Math.round(partes.vidas), evit: Math.round(partes.evit), semdx: Math.round(partes.semdx), mult: S.multAno, dem,
+    piso: saldoAno(partes, S.multAno, dem) < 0 };
   ganharPrest(novosEq);
   ganharPrest(-Math.round(filas.length * (num("filaMeia") ? 0.5 : 1)));   // fila tira prestígio
   const n3 = DEPS.filter((d) => equil(d.id) >= 1).length;
@@ -1978,7 +1981,8 @@ function revelados() {
   const achado = DEPS.reduce((s, d) => s + (vis(d.id) - S.deps[d.id].vis0) * d.pop, 0);
   return Math.max(0, Math.min(100, 100 * achado / faltava));
 }
-const vidasTotal = () => S.tot.vidas + DEPS.reduce((s, d) => s + S.deps[d.id].ind.vidas, 0);
+/* No resumo o ano já entrou em S.tot: somar o contador do ano de novo contaria em dobro */
+const vidasTotal = () => S.tot.vidas + (S.fase === "resumo" ? 0 : DEPS.reduce((s, d) => s + S.deps[d.id].ind.vidas, 0));
 const estrelas = (p) => (p >= 30) + (p >= 50) + (p >= 75);   // população em equilíbrio: 30%, 50% e 75%
 const estrelasHTML = (n) => `<span class="estrelas" role="img" aria-label="${esc(t("estrelasAria")(n))}">${[0, 1, 2].map((i) => `<span class="${i < n ? "on" : ""}" style="animation-delay:${0.3 + i * 0.2}s">★</span>`).join("")}</span>`;
 const progTxt = (m) => { const p = Math.min(m.prog(), m.meta); return (m.fmt || ((a, b) => `${a}/${b}`))(p, m.meta); };
@@ -2127,7 +2131,8 @@ function renderRodape() {
   } else b.innerHTML = `<span class="m-tit">${esc(t("semMissao"))}</span>`;
   b.setAttribute("aria-label", `${t("missoesTit")}: ${m ? `${m[lang][0]} ${progTxt(m)}` : t("semMissao")}`);
   const txt = $("#dica-txt");
-  txt.textContent = t("rodapeV4")(t("economia")(rendaAno() - manutAno()), fmtInt(Math.max(0, vidasTotal())), fmtInt(previsaoAno()));
+  const prev = previsaoAno();   // saldo do ano até agora: negativo quando os óbitos sem diagnóstico pesam mais
+  txt.textContent = t("rodapeV4")(t("economia")(rendaAno() - manutAno()), fmtInt(Math.max(0, vidasTotal())), `${prev < 0 ? "−" : "+"}${fmtInt(Math.abs(prev))}`);
   txt.title = t("rodapeTit");
 }
 
@@ -2380,7 +2385,7 @@ function escolherOpcao(i) {
 function contaAno(r) {
   const p = r.parc, s = (x) => `${x < 0 ? "−" : "+"}${fmtInt(Math.abs(x))}`;
   return [`🏗️ ${s(p.estr)}`, `❤️ ${s(p.vidas)}`, `🍎 ${s(p.evit)}`, `🕯️ ${s(p.semdx)}`, p.mult > 1 ? `⭐×${fmt1(p.mult)}` : "",
-    p.dem ? `📣 ${s(p.dem)}` : "", r.quiz ? `⚡ +${BONUS_QUIZ}` : ""].filter(Boolean).join(" · ");
+    p.dem ? `📣 ${s(p.dem)}` : "", p.piso ? t("contaPiso") : "", r.quiz ? `⚡ +${BONUS_QUIZ}` : ""].filter(Boolean).join(" · ");
 }
 
 function mostrarResumo(r) {
@@ -2592,7 +2597,7 @@ document.addEventListener("click", (ev) => {
     lang = lang === "es" ? "pt" : "es"; guardar("epidemia-py-lang", lang);
     document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
     if (!$("#modal").hidden) ({ evento: mostrarEvento, demanda: mostrarDemanda, quiz: mostrarQuiz, missoes: mostrarMissoes, arvore: mostrarArvore, pers: mostrarPersonagens, financas: mostrarFinancas, prestigio: mostrarPrestigio, acao: () => mostrarAcao(S.fichaAtual.id, S.fichaAtual.a),
-      resumo: () => mostrarResumo(S.log[S.log.length - 1]), dados: () => mostrarDados(valoresDados()), semDados: mostrarSemDados }[janela] || mostrarAjuda)();
+      resumo: () => mostrarResumo(S.log[S.log.length - 1]), dados: () => mostrarDados(valoresDados()), semDados: mostrarSemDados, compartir: compartilhar }[janela] || mostrarAjuda)();
     if (!S) telaInicio();
     else if (S.fim) mostrarFim();
     else render();
@@ -2609,6 +2614,7 @@ document.addEventListener("change", (ev) => { if (ev.target.id === "dep-tit" && 
 const urlJogo = () => CFG.jogoUrl || location.href.split("#")[0];   // sempre o link público, também na cópia de revisão
 function compartilhar() {
   const url = urlJogo();
+  janela = "compartir";   // trocar o idioma redesenha esta janela, não abre a ajuda
   abrirModal(`<h2>${esc(t("compTit"))}</h2><p class="meta">${esc(t("compSub"))}</p>
     <img class="qr-jogo" src="qr-jogo.svg" alt="${esc(t("qrAlt"))}" width="240" height="240">
     <p class="link-jogo"><a href="${esc(url)}" target="_blank" rel="noopener">${esc(url.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a></p>
