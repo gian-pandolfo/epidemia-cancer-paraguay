@@ -455,6 +455,33 @@ button svg, button img, .chip svg { pointer-events: none; }
 .hab.sel small { color: #FFD27A; font-weight: 700; }
 .hab-desc b { display: inline-flex; align-items: center; gap: 6px; font: 900 1.1rem var(--f-display); text-transform: uppercase; letter-spacing: .03em; color: #FFD27A; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* missões: a seguida tem contorno dourado no mapa; cada uma traz um recorte de jornal com o ranking real dos departamentos */
+.alvo-dep { fill: none; stroke: var(--ouro); stroke-width: 9; stroke-dasharray: 22 14; stroke-linejoin: round; pointer-events: none; animation: alvoPulsa 1.6s ease-in-out infinite; }
+@keyframes alvoPulsa { 50% { stroke-opacity: .4; } }
+.missao b { display: inline-flex; align-items: center; gap: 6px; }
+.missao b .i { color: var(--ouro); }
+.missao.seguida { border-color: var(--ouro); box-shadow: inset 0 0 0 1px var(--ouro); }
+.mis-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn.mini { min-height: 40px; padding: 6px 14px; font-size: 1rem; display: inline-flex; align-items: center; gap: 6px; }
+.noticia summary { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; cursor: pointer; list-style: none; font: 800 .98rem var(--f-display); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.noticia summary::-webkit-details-marker { display: none; }
+.noticia[open] summary { margin-bottom: 6px; }
+.recorte { display: grid; gap: 6px; padding: 12px 14px; background: var(--papel); color: var(--tinta); clip-path: var(--chanfro); }
+.recorte p { margin: 0; font-size: .88rem; }
+.recorte .rec-kicker { font: 800 .76rem var(--f-display); letter-spacing: .14em; text-transform: uppercase; color: var(--terra-txt); }
+.recorte h4 { margin: 0; font: 900 1.3rem/1 var(--f-display); text-transform: uppercase; color: var(--tinta); text-wrap: balance; }
+.recorte .rec-tit { font-size: .76rem; font-weight: 700; color: var(--tinta2); }
+.recorte .rec-nota { font-size: .76rem; color: var(--tinta2); }
+.recorte .fonte { color: var(--tinta2); }
+.recorte .lk { color: var(--terra-txt); }
+.rec-rank { margin: 0; padding: 0; list-style: none; display: grid; }
+.rec-rank button { width: 100%; display: grid; grid-template-columns: 1.4em minmax(0, 1fr) auto auto; gap: 8px; align-items: center; min-height: 38px; padding: 4px 6px;
+  border: 0; border-bottom: 1px solid rgba(34, 29, 24, .18); background: transparent; color: var(--tinta); font-size: .92rem; text-align: left; cursor: pointer; }
+.rec-rank button:hover, .rec-rank button:focus-visible { background: rgba(240, 164, 58, .22); }
+.rec-rank .n { font-weight: 800; color: var(--terra-txt); }
+.rec-rank .ok { font-size: .78rem; font-weight: 800; color: #2E6B2A; }
+.rec-rank .v { font-weight: 800; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .alvo-dep { animation: none; } }
 .nivel[data-n="X"] { --nv: var(--ouro); }
 .missao-mini .m-tit span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* celulares estreitos (360 px): o botão "Luz" já nomeia a camada; ações um pouco mais baixas para caber sem rolar */

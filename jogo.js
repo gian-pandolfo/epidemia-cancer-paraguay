@@ -70,6 +70,9 @@ const T = {
     ajuda: "Cómo se juega", fechar: "Cerrar",
     anoDe: (a, i) => `${a} · año ${i} de 10`,
     modoCob: "Luz", modoReg: "Tasas",
+    verMapa: "Ver en el mapa", noMapa: "En el mapa", lerNoticia: "Leer la noticia", recKicker: "Datos reales · para investigar",
+    recPoucos: "* Pocas muertes en 5 años: la tasa es inestable.", recFeito: "hecho", hab: "hab.", muertes: "muertes",
+    misSeguir: "Toca un departamento de la noticia para verlo en el mapa.",
     legCob: "Luz = equilibrio", legReg: "Tasa estandarizada /100 mil", legNevoa: "Niebla = casos ocultos",
     capaAlt: "Anochecer en Paraguay: un hospital encendido ilumina la red de salud; a la derecha, la niebla del subregistro.",
     curtas: { vacuna: "Vacuna VPH", tabaco: "Antitabaco", habitos: "Hábitos", vph: "Test VPH", mamo: "Mamógrafo", registro: "Registro",
@@ -248,6 +251,9 @@ const T = {
     ajuda: "Como se joga", fechar: "Fechar",
     anoDe: (a, i) => `${a} · ano ${i} de 10`,
     modoCob: "Luz", modoReg: "Taxas",
+    verMapa: "Ver no mapa", noMapa: "No mapa", lerNoticia: "Ler a notícia", recKicker: "Dados reais · para investigar",
+    recPoucos: "* Poucos óbitos em 5 anos: a taxa é instável.", recFeito: "feito", hab: "hab.", muertes: "óbitos",
+    misSeguir: "Toque num departamento da notícia para vê-lo no mapa.",
     legCob: "Luz = equilíbrio", legReg: "Taxa padronizada /100 mil", legNevoa: "Névoa = casos ocultos",
     capaAlt: "Entardecer no Paraguai: um hospital aceso ilumina a rede de saúde; à direita, a névoa do sub-registro.",
     curtas: { vacuna: "Vacina HPV", tabaco: "Antitabaco", habitos: "Hábitos", vph: "Teste HPV", mamo: "Mamógrafo", registro: "Registro",
@@ -699,11 +705,11 @@ const MISSOES = [
     es: ["Equilibrio en Central", "Central ya tiene tratamiento (INCAN). Súmale prevención y diagnóstico."],
     pt: ["Equilíbrio em Central", "Central já tem tratamento (INCAN). Some prevenção e diagnóstico."] },
   { id: "colo", meta: 3, alvo: () => COLO.filter((id) => !temSlot(S.deps[id], "vph")), prog: () => contar(COLO, (id) => temSlot(S.deps[id], "vph")), premio: { orc: 3, prest: 2 }, fonte: "Atlas 2015–2019",
-    es: ["La 1.ª causa evitable", "Test de VPH en 3 de los 8 departamentos donde el cuello uterino es la 1.ª causa de muerte por cáncer en las mujeres (🎯 en el mapa)."],
-    pt: ["A 1ª causa evitável", "Teste de HPV em 3 dos 8 departamentos onde o colo do útero é a 1ª causa de morte por câncer nas mulheres (🎯 no mapa)."] },
+    es: ["La 1.ª causa evitable", "Test de VPH en 3 de los 8 departamentos donde el cuello uterino es la 1.ª causa de muerte por cáncer en las mujeres."],
+    pt: ["A 1ª causa evitável", "Teste de HPV em 3 dos 8 departamentos onde o colo do útero é a 1ª causa de morte por câncer nas mulheres."] },
   { id: "pulmao", meta: 4, alvo: () => PULMAO.filter((id) => !temSlot(S.deps[id], "tabaco")), prog: () => contar(PULMAO, (id) => temSlot(S.deps[id], "tabaco")), premio: { orc: 2, prest: 2 }, fonte: "Atlas 2015–2019",
-    es: ["Pulmón: 1.ª causa en los hombres", "Campaña antitabaco en 4 de los 11 departamentos donde el pulmón es la 1.ª causa de muerte por cáncer en los hombres (🎯 en el mapa)."],
-    pt: ["Pulmão: 1ª causa nos homens", "Campanha antitabaco em 4 dos 11 departamentos onde o pulmão é a 1ª causa de morte por câncer nos homens (🎯 no mapa)."] },
+    es: ["Pulmón: 1.ª causa en los hombres", "Campaña antitabaco en 4 de los 11 departamentos donde el pulmón es la 1.ª causa de muerte por cáncer en los hombres."],
+    pt: ["Pulmão: 1ª causa nos homens", "Campanha antitabaco em 4 dos 11 departamentos onde o pulmão é a 1ª causa de morte por câncer nos homens."] },
   { id: "radio", meta: 1, alvo: () => ["alto-parana", "itapua"], prog: () => (["alto-parana", "itapua"].some((id) => temSlot(S.deps[id], "radio")) ? 1 : 0), premio: { prest: 3, mult: 1.2 }, fonte: "La Nación, 23/07/2024",
     es: ["Radioterapia fuera de Capiatá", "Acelerador (público o por convenio) en Alto Paraná o Itapúa, donde el Ministerio anunció aceleradores en 2024."],
     pt: ["Radioterapia fora de Capiatá", "Acelerador (público ou por convênio) em Alto Paraná ou Itapúa, onde o Ministério anunciou aceleradores em 2024."] },
@@ -726,6 +732,49 @@ const MISSOES = [
     es: ["Tres de cada cuatro", "75% de la población viviendo en departamentos en equilibrio."],
     pt: ["Três em cada quatro", "75% da população vivendo em departamentos em equilíbrio."] },
 ];
+
+/* ---------- notícia de cada missão: recorte de jornal com fatos e ranking reais, para o jogador investigar.
+   rank() devolve os departamentos em ordem; feito(id) marca onde a missão já foi cumprida ---------- */
+const rankSitio = (ids, k) => [...ids].sort((a, b) => DEP[b].sitio[k] - DEP[a].sitio[k]).map((id) => ({ id, valor: fmt1(DEP[id].sitio[k]) }));
+const rankPop = (ids) => ids.map((id) => ({ id, valor: `${fmtInt(DEP[id].pop)} ${t("hab")}` }));
+const menoresTee = (n) => [...DEPS].sort((a, b) => a.tee - b.tee).slice(0, n).map((d) => ({ id: d.id, valor: fmt1(d.tee) }));
+const NOTICIAS = {
+  central: { fonte: "Censo 2022 (INE); MSPBS, INCAN 2024", rank: () => rankPop(["central"]),
+    es: ["Central trata el cáncer de todo el país, pero le faltan prevención y diagnóstico", "Es el departamento más poblado y ahí está el INCAN, en Capiatá: la única radioterapia pública del país.", "Población (Censo 2022)"],
+    pt: ["Central trata o câncer do país inteiro, mas faltam prevenção e diagnóstico", "É o departamento mais populoso e ali está o INCAN, em Capiatá: a única radioterapia pública do país.", "População (Censo 2022)"] },
+  colo: { fonte: "Atlas 2015–2019", rank: () => rankSitio(COLO, "colo"), feito: (id) => temSlot(S.deps[id], "vph"),
+    es: ["Cuello uterino: la 1.ª causa de muerte por cáncer de las mujeres en 8 departamentos", "Es un cáncer evitable: la vacuna y el test de VPH lo previenen o lo detectan a tiempo. Estos son los departamentos donde más mata.", "Tasa estandarizada de cuello uterino por 100 mil mujeres, 2015–2019"],
+    pt: ["Colo do útero: a 1ª causa de morte por câncer das mulheres em 8 departamentos", "É um câncer evitável: a vacina e o teste de HPV o previnem ou o detectam a tempo. Estes são os departamentos onde ele mais mata.", "Taxa padronizada de colo do útero por 100 mil mulheres, 2015–2019"] },
+  pulmao: { fonte: "Atlas 2015–2019; ENFR 2022", rank: () => rankSitio(PULMAO, "pulmao_h"), feito: (id) => temSlot(S.deps[id], "tabaco"),
+    es: ["Pulmón: la 1.ª causa de muerte por cáncer de los hombres en 11 departamentos", "12,5% de los adultos fuma cigarrillo y 17% usa tabaco en alguna forma. Estos son los departamentos donde el pulmón más mata a los hombres.", "Tasa estandarizada de pulmón por 100 mil hombres, 2015–2019"],
+    pt: ["Pulmão: a 1ª causa de morte por câncer dos homens em 11 departamentos", "12,5% dos adultos fumam cigarro e 17% usam tabaco de alguma forma. Estes são os departamentos onde o pulmão mais mata os homens.", "Taxa padronizada de pulmão por 100 mil homens, 2015–2019"] },
+  radio: { fonte: "MSPBS, INCAN 2024; La Nación, 23/07/2024", rank: () => rankPop(["alto-parana", "itapua"]), feito: (id) => temSlot(S.deps[id], "radio"),
+    es: ["Pacientes del interior viajan a Capiatá para la radioterapia", "La radioterapia pública está solo en el INCAN, en Capiatá. En 2024 el Ministerio anunció aceleradores para Alto Paraná e Itapúa.", "Población (Censo 2022)"],
+    pt: ["Pacientes do interior viajam a Capiatá para a radioterapia", "A radioterapia pública está só no INCAN, em Capiatá. Em 2024 o Ministério anunciou aceleradores para Alto Paraná e Itapúa.", "População (Censo 2022)"] },
+  chaco: { fonte: "Atlas 2015–2019", rank: () => CHACO.map((id) => ({ id, valor: `${fmtInt(DEP[id].obitos)} ${t("muertes")}` })), feito: (id) => equil(id) >= 1,
+    es: ["El Chaco también cuenta", "Los tres departamentos del Chaco registraron {n} muertes por cáncer en 5 años. Con pocos casos, la tasa es inestable: cada diagnóstico cuenta.", "Muertes por cáncer registradas, 2015–2019 (Atlas, Tabla 1)"],
+    pt: ["O Chaco também conta", "Os três departamentos do Chaco registraram {n} óbitos por câncer em 5 anos. Com poucos casos, a taxa é instável: cada diagnóstico conta.", "Óbitos por câncer registrados, 2015–2019 (Atlas, Tabla 1)"] },
+  pesquisa: { fonte: "DGVS/MSPBS, 05/02/2024; Atlas 2015–2019", rank: () => menoresTee(5), feito: (id) => temPesq(S.deps[id]),
+    es: ["Sin registro de cáncer fuera de la capital", "El único registro de cáncer de base poblacional, creado en 2020, cubre solo Asunción y Central. Donde la tasa es más baja puede faltar diagnóstico y registro.", "Las 5 tasas estandarizadas más bajas, 2015–2019 (por 100 mil)"],
+    pt: ["Sem registro de câncer fora da capital", "O único registro de câncer de base populacional, criado em 2020, cobre só Asunción e Central. Onde a taxa é mais baixa pode faltar diagnóstico e registro.", "As 5 taxas padronizadas mais baixas, 2015–2019 (por 100 mil)"] },
+  ocultos: { fonte: "Atlas 2015–2019", rank: () => menoresTee(5),
+    es: ["Tasa baja no es riesgo bajo", "En 2017, cerca de 1 de cada 4 muertes no entraba en las estadísticas. Donde la tasa es más baja, diagnosticar puede sacar a la luz casos ocultos.", "Las 5 tasas estandarizadas más bajas, 2015–2019 (por 100 mil)"],
+    pt: ["Taxa baixa não é risco baixo", "Em 2017, cerca de 1 em cada 4 mortes não entrava nas estatísticas. Onde a taxa é mais baixa, diagnosticar pode trazer à luz casos ocultos.", "As 5 taxas padronizadas mais baixas, 2015–2019 (por 100 mil)"] },
+};
+function noticiaHTML(id) {
+  const n = NOTICIAS[id];
+  if (!n) return "";
+  const [manchete, lide, rankTit] = n[lang], linhas = n.rank();
+  const lideTxt = lide.replace("{n}", fmtInt(CHACO.reduce((s, x) => s + DEP[x].obitos, 0)));
+  const poucos = linhas.some((r) => DEP[r.id].poucos);
+  const li = linhas.map((r, i) => `<li><button type="button" data-ir-dep="${r.id}"><span class="n">${i + 1}</span><span>${esc(DEP[r.id].nome)}${DEP[r.id].poucos ? " *" : ""}</span>`
+    + `${n.feito && n.feito(r.id) ? `<span class="ok">✓ ${esc(t("recFeito"))}</span>` : "<span></span>"}<span class="v">${esc(r.valor)}</span></button></li>`).join("");
+  return `<details class="noticia"><summary>${ico("jornal")} ${esc(t("lerNoticia"))}</summary><article class="recorte">
+    <p class="rec-kicker">${esc(t("recKicker"))}</p><h4>${esc(manchete)}</h4><p>${esc(lideTxt)}</p>
+    <p class="rec-tit">${esc(rankTit)}</p><ol class="rec-rank">${li}</ol>
+    ${poucos ? `<p class="rec-nota">${esc(t("recPoucos"))}</p>` : ""}<p class="rec-nota">${esc(t("misSeguir"))}</p>
+    <p class="fonte">${esc(t("fonte"))}: ${fonteHTML(n.fonte)}</p></article></details>`;
+}
 
 /* ---------- conquistas: ficam guardadas neste celular (nenhum dado pessoal) ---------- */
 const META_VIDAS = 5000;
@@ -1229,7 +1278,7 @@ function montarMapa() {
   $("#mapa-wrap").innerHTML = `<svg id="mapa" viewBox="${MAPA.viewBox}" role="group" aria-label="Paraguay"><defs>`
     + `<radialGradient id="m-luz"><stop offset="0" stop-color="#FFD27A" stop-opacity=".8"/><stop offset=".35" stop-color="#F6B04C" stop-opacity=".38"/><stop offset="1" stop-color="#F0A43A" stop-opacity="0"/></radialGradient>`
     + `<radialGradient id="m-nevoa"><stop offset="0" stop-color="#AEBDCD" stop-opacity=".5"/><stop offset=".6" stop-color="#9FB0C2" stop-opacity=".24"/><stop offset="1" stop-color="#9FB0C2" stop-opacity="0"/></radialGradient></defs>`
-    + `<g id="g-deps">${MAPA.deps}</g><g id="g-nevoa"></g><g id="g-luz"></g><g id="g-lbl">${MAPA.lbl}</g><g id="g-alerta" class="alerta"></g><g id="g-fx"></g></svg>`;
+    + `<g id="g-deps">${MAPA.deps}</g><g id="g-nevoa"></g><g id="g-luz"></g><g id="g-alvo"></g><g id="g-lbl">${MAPA.lbl}</g><g id="g-alerta" class="alerta"></g><g id="g-fx"></g></svg>`;
   const mk = document.querySelector("#mapa .dep-marker");
   if (mk) mk.setAttribute("r", "36");
   document.querySelectorAll("#mapa .dep").forEach((el) => {
@@ -1318,16 +1367,18 @@ function pintarMapa() {
   const modoLuz = S.modo === "cob";   // a camada de luz também mostra a névoa dos casos ocultos
   $("#g-luz").innerHTML = modoLuz ? luzesHTML() : "";
   $("#g-nevoa").innerHTML = modoLuz ? nevoaHTML() : "";
-  // losango "!" onde há fila; bandeira onde há promessa em aberto; alvo das missões
+  // contorno dourado: os departamentos da missão seguida
+  $("#g-alvo").innerHTML = alvosMissao().map((id) => {
+    const p = document.querySelector(`#mapa path.dep[data-dep="${id}"]`), mk = document.querySelector(`#mapa .dep-marker[data-dep="${id}"]`);
+    return p ? `<path class="alvo-dep" d="${p.getAttribute("d")}"/>` : mk ? `<circle class="alvo-dep" cx="${mk.getAttribute("cx")}" cy="${mk.getAttribute("cy")}" r="52"/>` : "";
+  }).join("");
+  // losango "!" onde há fila; bandeira onde há promessa em aberto
   $("#g-alerta").innerHTML = DEPS.filter((d) => temFila(d.id)).map((d) => {
     const [x, y0] = posLbl(d.id), y = y0 - 70;
     return `<path class="losango" d="M${x},${y - 34} l34,34 -34,34 -34,-34z"/><text x="${x}" y="${y + 16}">!</text>`;
   }).join("") + S.comp.filter((c) => c.estado === "aberto").map((c) => {
     const [x, y] = posLbl(c.dep);
     return `<path class="pino" d="M${x + 70},${y - 10} v-74 h46 l-12,16 12,16 h-46"/>`;
-  }).join("") + alvosMissao().map((id) => {
-    const [x, y] = posLbl(id);
-    return `<circle class="anel" cx="${x - 95}" cy="${y - 45}" r="32"/><circle class="anel" cx="${x - 95}" cy="${y - 45}" r="13"/>`;
   }).join("");
   $("#legenda").innerHTML = legendaHTML();
   $("#legenda").classList.toggle("q4", S.modo === "cob");   // 0 1 2 3 cabem numa linha só
@@ -1700,7 +1751,18 @@ const vidasTotal = () => S.tot.vidas + DEPS.reduce((s, d) => s + S.deps[d.id].in
 const estrelas = (p) => (p >= 30) + (p >= 50) + (p >= 75);   // população em equilíbrio: 30%, 50% e 75%
 const estrelasHTML = (n) => `<span class="estrelas" role="img" aria-label="${esc(t("estrelasAria")(n))}">${[0, 1, 2].map((i) => `<span class="${i < n ? "on" : ""}" style="animation-delay:${0.3 + i * 0.2}s">★</span>`).join("")}</span>`;
 const progTxt = (m) => { const p = Math.min(m.prog(), m.meta); return (m.fmt || ((a, b) => `${a}/${b}`))(p, m.meta); };
-const alvosMissao = () => { const m = S.mis.ativas.length ? missao(S.mis.ativas[0]) : null; return m && m.alvo ? m.alvo() : []; };
+/* A missão seguida (escolhida em "Ver no mapa"; senão, a primeira) fica no rodapé e marca seus departamentos no mapa */
+const missaoSeguida = () => { const id = S.mis.ativas.includes(S.misSeguida) ? S.misSeguida : S.mis.ativas[0]; return id ? missao(id) : null; };
+const alvosMissao = () => { const m = missaoSeguida(); return m && m.alvo ? m.alvo() : []; };
+function seguirMissao(id) {
+  S.misSeguida = id;
+  const alvos = alvosMissao();
+  if (alvos.length && !alvos.includes(S.sel)) S.sel = alvos[0];
+  fecharModal();
+  salvar();
+  render();
+  alvos.slice(0, 3).forEach((x) => destacar(x));
+}
 const vibrar = () => { try { if (navigator.vibrate) navigator.vibrate(40); } catch (e) { /* sem vibração */ } };
 
 /* Confere missões, conquistas e recorde; devolve true se algo mudou o orçamento */
@@ -1827,7 +1889,7 @@ function contarAte(el, alvo, fmt, ms = 900) {
 
 /* Missão em destaque no rodapé + confiança, vidas salvas e pontos do ano */
 function renderRodape() {
-  const m = S.mis.ativas.length ? missao(S.mis.ativas[0]) : null, b = $("#btn-missoes");
+  const m = missaoSeguida(), b = $("#btn-missoes");
   if (m) {
     const p = Math.min(m.prog(), m.meta);
     b.innerHTML = `<span class="m-tit">${ico("alvo")}<span>${esc(m[lang][0])}</span></span><span class="m-n">${esc(progTxt(m))}</span><i class="m-barra"><i style="width:${Math.round(100 * p / m.meta)}%"></i></i>`;
@@ -2031,15 +2093,19 @@ function mostrarResumo(r) {
 
 function mostrarMissoes() {
   janela = "missoes";
+  const seguida = missaoSeguida();
   const cartao = (id) => {
-    const m = missao(id), p = Math.min(m.prog(), m.meta);
-    return `<div class="missao"><b>🎯 ${esc(m[lang][0])}</b><p>${esc(m[lang][1])}</p><div class="prog"><i style="width:${Math.round(100 * p / m.meta)}%"></i></div>
-      <p class="meta">${esc(progTxt(m))} · ${esc(t("recompensa"))}: ${esc(t("premio")(m.premio))}${m.fonte ? ` · ${esc(t("fonte"))}: ${fonteHTML(m.fonte)}` : ""}</p></div>`;
+    const m = missao(id), p = Math.min(m.prog(), m.meta), eSeguida = seguida && seguida.id === id;
+    const temAlvo = m.alvo && m.alvo().length;
+    return `<div class="missao${eSeguida ? " seguida" : ""}"><b>${ico("alvo")} ${esc(m[lang][0])}</b><p>${esc(m[lang][1])}</p><div class="prog"><i style="width:${Math.round(100 * p / m.meta)}%"></i></div>
+      <p class="meta">${esc(progTxt(m))} · ${esc(t("recompensa"))}: ${esc(t("premio")(m.premio))}${m.fonte ? ` · ${esc(t("fonte"))}: ${fonteHTML(m.fonte)}` : ""}</p>
+      ${temAlvo ? `<div class="mis-acoes"><button class="btn mini${eSeguida ? "" : " sec"}" type="button" data-seguir="${id}" aria-pressed="${!!eSeguida}">${ico(eSeguida ? "luz" : "alvo")} ${esc(eSeguida ? t("noMapa") : t("verMapa"))}</button></div>` : ""}
+      ${noticiaHTML(id)}</div>`;
   };
   const feitas = S.mis.feitas.map((f) => `<li>✓ ${esc(missao(f.id)[lang][0])} (${f.ano})</li>`).join("");
   const nL = LOGROS.filter((l) => logros[l.id]).length;
   abrirModal(`
-    <h2>🎯 ${esc(t("missoesTit"))}</h2>
+    <h2>${esc(t("missoesTit"))}</h2>
     ${S.mis.ativas.map(cartao).join("") || `<p>${esc(t("semMissao"))}</p>`}
     ${feitas ? `<h3>${esc(t("feitasTit"))}</h3><ul class="linhas feitas">${feitas}</ul>` : ""}
     <h3>🏅 ${esc(t("logrosTit"))} · ${esc(t("logrosConta")(nL, LOGROS.length))}</h3>
@@ -2147,6 +2213,10 @@ document.addEventListener("click", (ev) => {
   }
   const pc = alvo.closest("[data-pers]");
   if (pc) { escolhaPers = pc.dataset.pers; mostrarPersonagens(); return; }
+  const sg = alvo.closest("[data-seguir]");
+  if (sg && S && !S.fim) { seguirMissao(sg.dataset.seguir); return; }
+  const irDep = alvo.closest("[data-ir-dep]");
+  if (irDep && S && !S.fim) { fecharModal(); S.sel = irDep.dataset.irDep; salvar(); render(); destacar(S.sel); return; }
   const hok = alvo.closest("[data-hab-ok]");
   if (hok && S) { escolherHab(hok.dataset.habOk); return; }
   const hb = alvo.closest("[data-hab]");
