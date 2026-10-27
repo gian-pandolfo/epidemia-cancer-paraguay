@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<!-- Cópia de TESTE da beta8 (27/10/2026): só para o Gi testar no celular; sai depois do teste -->
+<meta name="robots" content="noindex, nofollow">
+<!-- Proteção (27/10/2026): o navegador só roda os scripts deste site e só conversa com o ranking -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PRUEBA · Ranking · Epidemia: Paraguay contra el cáncer</title>
+<meta name="description" content="Ranking en vivo del juego Epidemia: Paraguay contra el cáncer.">
+<meta name="theme-color" content="#0F1620">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230F1620'/%3E%3Cpath d='M32 8v48M8 32h48M15 15l34 34M49 15L15 49' stroke='%23F6C66A' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%23F0A43A' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23FFE2A0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Big+Shoulders+Display:wght@700;800;900&display=swap">
+<style>
+/* Ranking para o tablet do estande: tabela à esquerda, QR do jogo à direita. Atualiza sozinho a cada 5 s. */
+:root {
+  --bg: #0F1620; --surface: #17212C; --surface-2: #1F2C3A; --ink: #ECE6DA; --muted: #93A6BA; --line: #33475B;
+  --accent: #F0A43A; --accent-ink: #0F1620; --accent-soft: rgba(240, 164, 58, .18);
+  --ouro: #D9B25F; --prata: #C9D3D6; --bronze: #C98A5A; --ok: #93C572; --warn: #F2A17A;
+  --f-display: "Big Shoulders Display", "Arial Narrow", "Segoe UI", Roboto, Arial, sans-serif;
+  --chanfro: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  --chanfro-p: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", Roboto, Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.4 var(--f-body);
+  padding: calc(14px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) calc(14px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 14px;
+}
+h1, h2 { font-family: var(--f-display); margin: 0; }
+button { font: inherit; color: inherit; }
+.topo { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.topo h1 { font-size: clamp(1.6rem, 3.4vw, 2.6rem); font-weight: 800; line-height: 1; margin-right: auto; }
+.topo h1 small { display: block; font: 600 clamp(.95rem, 1.6vw, 1.2rem) var(--f-display); color: var(--muted); margin-top: 6px; }
+.btn-ico { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; min-width: 46px; height: 46px; padding: 0 14px; font-weight: 700; cursor: pointer; }
+.palco { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr); gap: 16px; min-height: 0; }
+.cartao { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px; min-height: 0; }
+.lista { position: relative; overflow: hidden; display: grid; align-content: start; gap: 8px; }
+.linha { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 7px 14px; border-radius: 14px; background: var(--surface-2); }
+.linha .pos { font: 800 1.6rem var(--f-display); text-align: center; font-variant-numeric: tabular-nums; }
+.linha .quem b { display: block; font-size: 1.12rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.linha .quem span { display: block; color: var(--muted); font-size: .82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.linha .pts { font: 800 1.5rem var(--f-display); font-variant-numeric: tabular-nums; }
+.linha.p1 { box-shadow: inset 4px 0 0 var(--ouro); } .linha.p1 .pos { color: var(--ouro); }
+.linha.p2 { box-shadow: inset 4px 0 0 var(--prata); } .linha.p2 .pos { color: var(--prata); }
+.linha.p3 { box-shadow: inset 4px 0 0 var(--bronze); } .linha.p3 .pos { color: var(--bronze); }
+.linha.nova { animation: chegou 2.4s ease-out; }
+@keyframes chegou { 0%, 40% { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); } }
+.vazio { color: var(--muted); font-size: 1.2rem; padding: 20px 6px; }
+.lado { display: grid; gap: 14px; align-content: start; }
+.qr-caixa { display: grid; gap: 10px; justify-items: center; text-align: center; }
+.qr-caixa h2 { font-size: clamp(1.3rem, 2.4vw, 1.8rem); font-weight: 800; }
+.qr { width: min(100%, 300px, 34vh); aspect-ratio: 1; background: #fff; border-radius: 14px; padding: 10px; }
+.qr svg { width: 100%; height: 100%; display: block; }
+.url { margin: 0; font-size: .85rem; color: var(--muted); word-break: break-all; }
+.estat { display: grid; gap: 4px; }
+.estat b { font: 800 2rem var(--f-display); font-variant-numeric: tabular-nums; }
+.estat span { color: var(--muted); font-size: .9rem; }
+.rodape { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; color: var(--muted); font-size: .82rem; }
+.estado.erro { color: var(--warn); font-weight: 700; }
+@media (orientation: portrait), (max-width: 760px) {
+  body { display: block; }
+  .palco { grid-template-columns: 1fr; margin-top: 14px; }
+  .lista { overflow: visible; }
+  .rodape { margin-top: 14px; }
+}
+/* beta6: arte "luz contra a névoa", a mesma do jogo */
+.topo { border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
+.topo .emb { width: 54px; height: 54px; flex: none; }
+.topo h1 { font-weight: 900; text-transform: uppercase; letter-spacing: .02em; }
+.topo h1 small { font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+.btn-ico { border-radius: 0; clip-path: var(--chanfro-p); }
+.cartao { border-radius: 0; clip-path: var(--chanfro); }
+.linha { border-radius: 0; clip-path: var(--chanfro-p); }
+.linha .pos, .linha .pts, .estat b { font-weight: 900; }
+.qr-caixa h2 { font-weight: 900; text-transform: uppercase; letter-spacing: .04em; color: var(--accent); }
+.qr { border-radius: 0; }
+@media (prefers-reduced-motion: reduce) { .linha.nova { animation: none; } }
+.qr img { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<header class="topo">
+  <img class="emb" src="arte/emblema.svg" alt="">
+  <h1><span id="t-titulo">Ranking</span><small id="t-sub">Epidemia: Paraguay contra el cáncer</small></h1>
+  <button class="btn-ico" id="btn-tela" type="button" aria-label="Pantalla completa" hidden>⛶</button>
+  <button class="btn-ico" id="btn-idioma" type="button">PT</button>
+</header>
+
+<main class="palco">
+  <section class="cartao lista" id="lista" aria-live="polite"></section>
+  <aside class="lado">
+    <div class="cartao qr-caixa">
+      <h2 id="t-escaneie">Escanea y juega</h2>
+      <div class="qr" id="qr"><img src="qr-jogo.svg" alt="QR" width="240" height="240"></div>
+      <p class="url" id="url"></p>
+    </div>
+    <div class="cartao estat"><b id="partidas">—</b><span id="t-partidas">partidas jugadas</span></div>
+  </aside>
+</main>
+
+<footer class="rodape">
+  <span id="t-lgpd">Nombre, facultad y curso se muestran solo durante el congreso y se borran el 31/10/2026.</span>
+  <span class="estado" id="estado"></span>
+</footer>
+
+<script src="config.js?v=8"></script>
+<script src="ranking.js?v=8"></script>
+</body>
+</html>
