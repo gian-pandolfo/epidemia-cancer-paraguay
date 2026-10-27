@@ -2421,7 +2421,7 @@ function compartilhar() {
     <p class="link-jogo"><a href="${esc(url)}" target="_blank" rel="noopener">${esc(url.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a></p>
     <div class="btns">${navigator.share ? `<button class="btn" id="btn-comp-enviar" type="button">${esc(t("compEnviar"))}</button>` : ""}<button class="btn sec" id="btn-comp-copiar" type="button">${esc(t("compCopiar"))}</button></div>
     <p class="msg-rank" id="comp-msg" role="status"></p>
-    <div class="btns"><button class="btn sec" id="btn-comp-fechar" type="button">${esc(t("voltar"))}</button></div>`, "compartir");
+    <div class="btns"><a class="btn sec" href="ranking.html">${esc(t("rankVer"))}</a><button class="btn sec" id="btn-comp-fechar" type="button">${esc(t("voltar"))}</button></div>`, "compartir");
 }
 async function enviarLink() {
   try { await navigator.share({ title: t("h1"), text: t("shareTxt"), url: urlJogo() }); } catch (e) { /* o jogador cancelou */ }
