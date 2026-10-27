@@ -455,6 +455,27 @@ button svg, button img, .chip svg { pointer-events: none; }
 .hab.sel small { color: #FFD27A; font-weight: 700; }
 .hab-desc b { display: inline-flex; align-items: center; gap: 6px; font: 900 1.1rem var(--f-display); text-transform: uppercase; letter-spacing: .03em; color: #FFD27A; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Sem seleção de texto ao tocar: no Android, tocar num número abria a busca do Google ("Toque para pesquisar") e quebrava a imersão */
+html { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+input, textarea { -webkit-user-select: text; user-select: text; }
+/* placar: dinheiro abre as finanças; prestígio abre os favores */
+button.chip { cursor: pointer; font: inherit; color: inherit; }
+.chip .mais { font: 900 .95rem/1 var(--f-display); color: var(--accent); margin-left: -1px; }
+.opc { display: grid; gap: 6px; padding: 10px 12px; border: 1px solid var(--line); background: var(--surface-2); }
+.opc b { display: inline-flex; align-items: center; gap: 6px; font: 800 1.08rem/1.1 var(--f-display); text-transform: uppercase; letter-spacing: .03em; }
+.opc b .i { color: var(--ouro); flex: none; }
+.opc p { margin: 0; font-size: .86rem; }
+.opc .efeito { padding: 6px 10px; font-size: .84rem; }
+.opc .btn.mini { justify-self: start; }
+.opc.feito { border-color: var(--ok); }
+.opc .feito-txt { color: var(--ok); font-weight: 700; }
+/* placar com o dinheiro em decimal (15,0): mais justo até 400 px, para caber numa linha */
+@media (max-width: 400px) {
+  .hud { gap: 4px; }
+  .chip { padding: 4px 6px; gap: 3px; }
+  .chip b { font-size: 1.04rem; }
+  .chip .mais { margin-left: -2px; }
+}
 /* missões: a seguida tem contorno dourado no mapa; cada uma traz um recorte de jornal com o ranking real dos departamentos */
 .alvo-dep { fill: none; stroke: var(--ouro); stroke-width: 9; stroke-dasharray: 22 14; stroke-linejoin: round; pointer-events: none; animation: alvoPulsa 1.6s ease-in-out infinite; }
 @keyframes alvoPulsa { 50% { stroke-opacity: .4; } }
@@ -499,8 +520,8 @@ button svg, button img, .chip svg { pointer-events: none; }
 <header class="hud">
   <div class="marca"><span id="h-titulo">Epidemia</span><small id="h-sub">Paraguay contra el cáncer</small></div>
   <span class="chip" id="h-ano" hidden></span>
-  <span class="chip dinheiro" id="h-dinheiro" hidden></span>
-  <span class="chip prest" id="h-prest" hidden></span>
+  <button type="button" class="chip dinheiro" id="h-dinheiro" hidden></button>
+  <button type="button" class="chip prest" id="h-prest" hidden></button>
   <span class="chip" id="h-pontos" hidden></span>
   <button class="btn-ico" id="btn-ajuda" type="button" aria-label="Ayuda">?</button>
   <button class="btn-ico" id="btn-idioma" type="button">PT</button>

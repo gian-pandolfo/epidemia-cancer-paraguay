@@ -50,6 +50,7 @@ const T = {
       "Elige tu personaje: Bob, Don Patrón o la Dra. Beatriz. Cada uno tiene ventajas propias y un árbol de habilidades: al subir de cargo con tus ⭐ eliges una nueva.",
       "Lee con calma, decide y toca «Cerrar el año» para avanzar. En enero llega el 💰 del año y se paga el mantenimiento de todo lo que implementaste; sin dinero, lo más caro se cierra.",
       "Implementar también cuesta 🎖️ prestigio, que ganas con metas, misiones y respuestas a la sociedad. Toca una acción para ver costos y requisitos antes de invertir.",
+      "Toca 💰 en el marcador para ver tus <b>finanzas</b> y conseguir dinero (impuesto al tabaco, préstamo, ensayo clínico…). Toca 🎖️ para usar tu <b>prestigio</b> en favores: ampliación del Congreso, brigadas, terreno de la Gobernación o notificación obligatoria.",
       "Tres funciones: <b>Prevención</b>, <b>Diagnóstico</b> y <b>Tratamiento</b>. El <b>equilibrio</b> de un departamento es la más baja de las tres: solo las tres juntas curan más y multiplican los puntos. Diagnóstico sin tratamiento forma fila. En el mapa, el equilibrio es la <b>luz</b> y la <b>niebla</b> son los casos ocultos: diagnosticar la disipa.",
       "Cada acción tiene su nivel de atención: <b>1.ª primaria</b> (puerta de entrada), <b>2.ª secundaria</b> (hospital regional, por derivación) y <b>3.ª terciaria</b> (alta complejidad). La 2.ª necesita 1.ª en el departamento; la 3.ª, 2.ª cerca.",
       "🤝 Convenios: sin compra ni prestigio, pero se pagan todos los años.",
@@ -73,6 +74,13 @@ const T = {
     verMapa: "Ver en el mapa", noMapa: "En el mapa", lerNoticia: "Leer la noticia", recKicker: "Datos reales · para investigar",
     recPoucos: "* Pocas muertes en 5 años: la tasa es inestable.", recFeito: "hecho", hab: "hab.", muertes: "muertes",
     misSeguir: "Toca un departamento de la noticia para verlo en el mapa.",
+    finTit: "Finanzas", finIntro: (r, m) => `En enero entran 💰 ${r} y se pagan 💰 ${m} de mantenimiento y convenios. Estas decisiones traen dinero, pero cada una tiene un costo.`,
+    prestTit: "Prestigio", prestIntro: "El prestigio es tu capital político: lo ganas atendiendo demandas, cumpliendo misiones y promesas, acertando desafíos y llevando departamentos al equilibrio. Lo gastas para aprobar estructuras grandes y para pedir favores. Con 🎖️ 20 o más, el Congreso suma +💰 3 cada enero.",
+    faltaPrest: (n) => `Faltan 🎖️ ${n}.`, faltaPesq: "Necesitas un centro de investigación.", favorJaTem: (a, d) => `${d} ya tiene ${a}. Elige otro departamento en el mapa.`,
+    ensCurso: (a) => (a ? `En curso: el resultado sale en enero de ${a}.` : "En curso: el resultado saldrá después de tu gestión."),
+    ensOk: "Funcionó: +3% de cura en todo el país.", ensFalhou: "No funcionó: −🎖️ 3.",
+    evProveedor: "Pagaste la deuda con los proveedores, con recargo: −💰 5 y −🎖️ 1 (faltaron insumos).",
+    evEnsayo: { ok: "Ensayo clínico: el tratamiento funcionó. +3% de cura en todo el país (modelo del juego).", falhou: "Ensayo clínico: el tratamiento no funcionó. −🎖️ 3." },
     legCob: "Luz = equilibrio", legReg: "Tasa estandarizada /100 mil", legNevoa: "Niebla = casos ocultos",
     capaAlt: "Anochecer en Paraguay: un hospital encendido ilumina la red de salud; a la derecha, la niebla del subregistro.",
     curtas: { vacuna: "Vacuna VPH", tabaco: "Antitabaco", habitos: "Hábitos", vph: "Test VPH", mamo: "Mamógrafo", registro: "Registro",
@@ -231,6 +239,7 @@ const T = {
       "Escolha seu personagem: Bob, Don Patrón ou a Dra. Beatriz. Cada um tem vantagens próprias e uma árvore de habilidades: ao subir de cargo com suas ⭐ você escolhe uma nova.",
       "Leia com calma, decida e toque em «Fechar o ano» para avançar. Em janeiro chega o 💰 do ano e se paga a manutenção de tudo o que você implantou; sem dinheiro, o mais caro fecha.",
       "Implantar também custa 🎖️ prestígio, que você ganha com metas, missões e respostas à sociedade. Toque numa ação para ver custos e requisitos antes de investir.",
+      "Toque em 💰 no placar para ver suas <b>finanças</b> e conseguir dinheiro (imposto sobre o tabaco, empréstimo, ensaio clínico…). Toque em 🎖️ para usar seu <b>prestígio</b> em favores: ampliação do Congresso, brigadas, terreno do governo departamental ou notificação obrigatória.",
       "Três funções: <b>Prevenção</b>, <b>Diagnóstico</b> e <b>Tratamento</b>. O <b>equilíbrio</b> de um departamento é a mais baixa das três: só as três juntas curam mais e multiplicam os pontos. Diagnóstico sem tratamento forma fila. No mapa, o equilíbrio é a <b>luz</b> e a <b>névoa</b> são os casos ocultos: diagnosticar a dissipa.",
       "Cada ação tem seu nível de atenção: <b>1ª primária</b> (porta de entrada), <b>2ª secundária</b> (hospital regional, por encaminhamento) e <b>3ª terciária</b> (alta complexidade). A 2ª precisa de 1ª no departamento; a 3ª, de 2ª perto.",
       "🤝 Convênios: sem compra nem prestígio, mas se pagam todo ano.",
@@ -254,6 +263,13 @@ const T = {
     verMapa: "Ver no mapa", noMapa: "No mapa", lerNoticia: "Ler a notícia", recKicker: "Dados reais · para investigar",
     recPoucos: "* Poucos óbitos em 5 anos: a taxa é instável.", recFeito: "feito", hab: "hab.", muertes: "óbitos",
     misSeguir: "Toque num departamento da notícia para vê-lo no mapa.",
+    finTit: "Finanças", finIntro: (r, m) => `Em janeiro entram 💰 ${r} e se pagam 💰 ${m} de manutenção e convênios. Estas decisões trazem dinheiro, mas cada uma tem um custo.`,
+    prestTit: "Prestígio", prestIntro: "O prestígio é o seu capital político: você o ganha atendendo demandas, cumprindo missões e promessas, acertando desafios e levando departamentos ao equilíbrio. Ele serve para aprovar estruturas grandes e para pedir favores. Com 🎖️ 20 ou mais, o Congresso soma +💰 3 todo janeiro.",
+    faltaPrest: (n) => `Faltam 🎖️ ${n}.`, faltaPesq: "Você precisa de um centro de pesquisa.", favorJaTem: (a, d) => `${d} já tem ${a}. Escolha outro departamento no mapa.`,
+    ensCurso: (a) => (a ? `Em andamento: o resultado sai em janeiro de ${a}.` : "Em andamento: o resultado sairá depois da sua gestão."),
+    ensOk: "Funcionou: +3% de cura no país inteiro.", ensFalhou: "Não funcionou: −🎖️ 3.",
+    evProveedor: "Você pagou a dívida com os fornecedores, com acréscimo: −💰 5 e −🎖️ 1 (faltaram insumos).",
+    evEnsayo: { ok: "Ensaio clínico: o tratamento funcionou. +3% de cura no país inteiro (modelo do jogo).", falhou: "Ensaio clínico: o tratamento não funcionou. −🎖️ 3." },
     legCob: "Luz = equilíbrio", legReg: "Taxa padronizada /100 mil", legNevoa: "Névoa = casos ocultos",
     capaAlt: "Entardecer no Paraguai: um hospital aceso ilumina a rede de saúde; à direita, a névoa do sub-registro.",
     curtas: { vacuna: "Vacina HPV", tabaco: "Antitabaco", habitos: "Hábitos", vph: "Teste HPV", mamo: "Mamógrafo", registro: "Registro",
@@ -739,25 +755,25 @@ const rankSitio = (ids, k) => [...ids].sort((a, b) => DEP[b].sitio[k] - DEP[a].s
 const rankPop = (ids) => ids.map((id) => ({ id, valor: `${fmtInt(DEP[id].pop)} ${t("hab")}` }));
 const menoresTee = (n) => [...DEPS].sort((a, b) => a.tee - b.tee).slice(0, n).map((d) => ({ id: d.id, valor: fmt1(d.tee) }));
 const NOTICIAS = {
-  central: { fonte: "Censo 2022 (INE); MSPBS, INCAN 2024", rank: () => rankPop(["central"]),
+  central: { data: "Capiatá · 2024", fonte: "Censo 2022 (INE); MSPBS, INCAN 2024", rank: () => rankPop(["central"]),
     es: ["Central trata el cáncer de todo el país, pero le faltan prevención y diagnóstico", "Es el departamento más poblado y ahí está el INCAN, en Capiatá: la única radioterapia pública del país.", "Población (Censo 2022)"],
     pt: ["Central trata o câncer do país inteiro, mas faltam prevenção e diagnóstico", "É o departamento mais populoso e ali está o INCAN, em Capiatá: a única radioterapia pública do país.", "População (Censo 2022)"] },
-  colo: { fonte: "Atlas 2015–2019", rank: () => rankSitio(COLO, "colo"), feito: (id) => temSlot(S.deps[id], "vph"),
+  colo: { data: "Asunción · 12/03/2025", fonte: "Atlas 2015–2019; MSPBS, 12/03/2025", rank: () => rankSitio(COLO, "colo"), feito: (id) => temSlot(S.deps[id], "vph"),
     es: ["Cuello uterino: la 1.ª causa de muerte por cáncer de las mujeres en 8 departamentos", "Es un cáncer evitable: la vacuna y el test de VPH lo previenen o lo detectan a tiempo. Estos son los departamentos donde más mata.", "Tasa estandarizada de cuello uterino por 100 mil mujeres, 2015–2019"],
     pt: ["Colo do útero: a 1ª causa de morte por câncer das mulheres em 8 departamentos", "É um câncer evitável: a vacina e o teste de HPV o previnem ou o detectam a tempo. Estes são os departamentos onde ele mais mata.", "Taxa padronizada de colo do útero por 100 mil mulheres, 2015–2019"] },
-  pulmao: { fonte: "Atlas 2015–2019; ENFR 2022", rank: () => rankSitio(PULMAO, "pulmao_h"), feito: (id) => temSlot(S.deps[id], "tabaco"),
-    es: ["Pulmón: la 1.ª causa de muerte por cáncer de los hombres en 11 departamentos", "12,5% de los adultos fuma cigarrillo y 17% usa tabaco en alguna forma. Estos son los departamentos donde el pulmón más mata a los hombres.", "Tasa estandarizada de pulmón por 100 mil hombres, 2015–2019"],
-    pt: ["Pulmão: a 1ª causa de morte por câncer dos homens em 11 departamentos", "12,5% dos adultos fumam cigarro e 17% usam tabaco de alguma forma. Estes são os departamentos onde o pulmão mais mata os homens.", "Taxa padronizada de pulmão por 100 mil homens, 2015–2019"] },
-  radio: { fonte: "MSPBS, INCAN 2024; La Nación, 23/07/2024", rank: () => rankPop(["alto-parana", "itapua"]), feito: (id) => temSlot(S.deps[id], "radio"),
+  pulmao: { data: "Asunción · 13/02/2022", fonte: "Atlas 2015–2019; ENFR 2022; ABC Color, 13/02/2022", rank: () => rankSitio(PULMAO, "pulmao_h"), feito: (id) => temSlot(S.deps[id], "tabaco"),
+    es: ["Pulmón: la 1.ª causa de muerte por cáncer de los hombres en 11 departamentos", "12,5% de los adultos fuma cigarrillo y 17% usa tabaco en alguna forma, y el impuesto al tabaco era el más bajo de la región. Estos son los departamentos donde el pulmón más mata a los hombres.", "Tasa estandarizada de pulmón por 100 mil hombres, 2015–2019"],
+    pt: ["Pulmão: a 1ª causa de morte por câncer dos homens em 11 departamentos", "12,5% dos adultos fumam cigarro e 17% usam tabaco de alguma forma, e o imposto sobre o tabaco era o mais baixo da região. Estes são os departamentos onde o pulmão mais mata os homens.", "Taxa padronizada de pulmão por 100 mil homens, 2015–2019"] },
+  radio: { data: "Asunción · 23/07/2024", fonte: "MSPBS, INCAN 2024; La Nación, 23/07/2024", rank: () => rankPop(["alto-parana", "itapua"]), feito: (id) => temSlot(S.deps[id], "radio"),
     es: ["Pacientes del interior viajan a Capiatá para la radioterapia", "La radioterapia pública está solo en el INCAN, en Capiatá. En 2024 el Ministerio anunció aceleradores para Alto Paraná e Itapúa.", "Población (Censo 2022)"],
     pt: ["Pacientes do interior viajam a Capiatá para a radioterapia", "A radioterapia pública está só no INCAN, em Capiatá. Em 2024 o Ministério anunciou aceleradores para Alto Paraná e Itapúa.", "População (Censo 2022)"] },
-  chaco: { fonte: "Atlas 2015–2019", rank: () => CHACO.map((id) => ({ id, valor: `${fmtInt(DEP[id].obitos)} ${t("muertes")}` })), feito: (id) => equil(id) >= 1,
+  chaco: { data: "Asunción · 2022", fonte: "Atlas 2015–2019", rank: () => CHACO.map((id) => ({ id, valor: `${fmtInt(DEP[id].obitos)} ${t("muertes")}` })), feito: (id) => equil(id) >= 1,
     es: ["El Chaco también cuenta", "Los tres departamentos del Chaco registraron {n} muertes por cáncer en 5 años. Con pocos casos, la tasa es inestable: cada diagnóstico cuenta.", "Muertes por cáncer registradas, 2015–2019 (Atlas, Tabla 1)"],
     pt: ["O Chaco também conta", "Os três departamentos do Chaco registraram {n} óbitos por câncer em 5 anos. Com poucos casos, a taxa é instável: cada diagnóstico conta.", "Óbitos por câncer registrados, 2015–2019 (Atlas, Tabla 1)"] },
-  pesquisa: { fonte: "DGVS/MSPBS, 05/02/2024; Atlas 2015–2019", rank: () => menoresTee(5), feito: (id) => temPesq(S.deps[id]),
+  pesquisa: { data: "Asunción · 05/02/2024", fonte: "DGVS/MSPBS, 05/02/2024; Atlas 2015–2019", rank: () => menoresTee(5), feito: (id) => temPesq(S.deps[id]),
     es: ["Sin registro de cáncer fuera de la capital", "El único registro de cáncer de base poblacional, creado en 2020, cubre solo Asunción y Central. Donde la tasa es más baja puede faltar diagnóstico y registro.", "Las 5 tasas estandarizadas más bajas, 2015–2019 (por 100 mil)"],
     pt: ["Sem registro de câncer fora da capital", "O único registro de câncer de base populacional, criado em 2020, cobre só Asunción e Central. Onde a taxa é mais baixa pode faltar diagnóstico e registro.", "As 5 taxas padronizadas mais baixas, 2015–2019 (por 100 mil)"] },
-  ocultos: { fonte: "Atlas 2015–2019", rank: () => menoresTee(5),
+  ocultos: { data: "Asunción · 2022", fonte: "Atlas 2015–2019", rank: () => menoresTee(5),
     es: ["Tasa baja no es riesgo bajo", "En 2017, cerca de 1 de cada 4 muertes no entraba en las estadísticas. Donde la tasa es más baja, diagnosticar puede sacar a la luz casos ocultos.", "Las 5 tasas estandarizadas más bajas, 2015–2019 (por 100 mil)"],
     pt: ["Taxa baixa não é risco baixo", "Em 2017, cerca de 1 em cada 4 mortes não entrava nas estatísticas. Onde a taxa é mais baixa, diagnosticar pode trazer à luz casos ocultos.", "As 5 taxas padronizadas mais baixas, 2015–2019 (por 100 mil)"] },
 };
@@ -770,10 +786,90 @@ function noticiaHTML(id) {
   const li = linhas.map((r, i) => `<li><button type="button" data-ir-dep="${r.id}"><span class="n">${i + 1}</span><span>${esc(DEP[r.id].nome)}${DEP[r.id].poucos ? " *" : ""}</span>`
     + `${n.feito && n.feito(r.id) ? `<span class="ok">✓ ${esc(t("recFeito"))}</span>` : "<span></span>"}<span class="v">${esc(r.valor)}</span></button></li>`).join("");
   return `<details class="noticia"><summary>${ico("jornal")} ${esc(t("lerNoticia"))}</summary><article class="recorte">
-    <p class="rec-kicker">${esc(t("recKicker"))}</p><h4>${esc(manchete)}</h4><p>${esc(lideTxt)}</p>
+    <p class="rec-kicker">${esc(n.data)} · ${esc(t("recKicker"))}</p><h4>${esc(manchete)}</h4><p>${esc(lideTxt)}</p>
     <p class="rec-tit">${esc(rankTit)}</p><ol class="rec-rank">${li}</ol>
     ${poucos ? `<p class="rec-nota">${esc(t("recPoucos"))}</p>` : ""}<p class="rec-nota">${esc(t("misSeguir"))}</p>
     <p class="fonte">${esc(t("fonte"))}: ${fonteHTML(n.fonte)}</p></article></details>`;
+}
+
+/* ---------- finanças (tocar 💰) e favores de prestígio (tocar 🎖️): cada decisão traz dinheiro ou ajuda com um custo.
+   Fato real com fonte quando há; sem fonte = cenário do jogo. Textos: [título, explicação, efeito, botão, quando já feito] ---------- */
+const POL = () => (S.pol ||= {});
+const ACAO_BRIGADA = { bob: "registro", patron: "paliativos", beatriz: "vph" };
+const FIN = {
+  tabaco: { ico: "tabaco", fonte: "ABC Color, 13/02/2022", prest: 4, estado: () => POL().tabaco !== undefined, fazer: () => { POL().tabaco = S.anoIdx; },
+    es: ["Subir el impuesto al tabaco", "El impuesto selectivo al tabaco de Paraguay (20% en 2022) era el más bajo de la región, y los organismos de salud recomiendan subirlo para que se fume menos. Enfrentar a la industria cuesta prestigio.", "+💰 2 por año desde el próximo enero y un poco menos de cáncer en todo el país · 🎖️ 4 ahora", "Aprobar", "Vigente: +💰 2 por año."],
+    pt: ["Aumentar o imposto sobre o tabaco", "O imposto seletivo sobre o tabaco do Paraguai (20% em 2022) era o mais baixo da região, e os organismos de saúde recomendam aumentá-lo para que se fume menos. Enfrentar a indústria custa prestígio.", "+💰 2 por ano a partir do próximo janeiro e um pouco menos de câncer no país inteiro · 🎖️ 4 agora", "Aprovar", "Em vigor: +💰 2 por ano."] },
+  prestamo: { ico: "moeda", fonte: "La Nación, 13/04/2023", estado: () => !!POL().prestamo, fazer: () => { S.orc += 12; POL().prestamo = { desde: S.anoIdx + 1, ate: S.anoIdx + 7 }; },
+    es: ["Préstamo de un banco multilateral", "Paraguay financia parte de su red de salud con préstamos: en 2023, Diputados aprobó un préstamo del BID de hasta US$ 45 millones para la red de Concepción, San Pedro, Caazapá y Alto Paraná.", "+💰 12 ahora · −💰 2 por año durante los 7 años siguientes", "Tomar el préstamo", "Tomado: se paga 💰 2 por año."],
+    pt: ["Empréstimo de um banco multilateral", "O Paraguai financia parte da sua rede de saúde com empréstimos: em 2023, a Câmara aprovou um empréstimo do BID de até US$ 45 milhões para a rede de Concepción, San Pedro, Caazapá e Alto Paraná.", "+💰 12 agora · −💰 2 por ano nos 7 anos seguintes", "Pegar o empréstimo", "Pego: paga-se 💰 2 por ano."] },
+  proveedor: { ico: "repete", estado: () => POL().proveedor === S.anoIdx, fazer: () => { S.orc += 4; POL().proveedor = S.anoIdx; },
+    es: ["Atrasar el pago a los proveedores", "Pagar después libera dinero hoy, pero la cuenta vuelve con recargo y faltan insumos en los servicios.", "+💰 4 ahora · en enero: −💰 5 y −🎖️ 1", "Atrasar", "Atrasado este año: en enero se paga con recargo."],
+    pt: ["Atrasar o pagamento aos fornecedores", "Pagar depois libera dinheiro hoje, mas a conta volta com acréscimo e faltam insumos nos serviços.", "+💰 4 agora · em janeiro: −💰 5 e −🎖️ 1", "Atrasar", "Atrasado neste ano: em janeiro paga-se com acréscimo."] },
+  ensayo: { ico: "frasco", estado: () => !!POL().ensayo, bloq: () => (DEPS.some((d) => temPesq(S.deps[d.id])) ? null : t("faltaPesq")),
+    fazer: () => { S.orc += 3; POL().ensayo = { ini: S.anoIdx, res: null }; POL().cura = -0.01; },
+    feitoTxt: () => { const e = POL().ensayo; return e.res === "ok" ? t("ensOk") : e.res === "falhou" ? t("ensFalhou") : t("ensCurso")(ANOS[e.ini + 3]); },
+    es: ["Ensayo clínico patrocinado", "Una farmacéutica paga por probar un tratamiento nuevo en tus centros de investigación. Mientras dura, se cura un poco menos; al final, puede funcionar o no.", "+💰 3 por año durante 3 años · −1% de cura mientras dura · al final: si funciona, +3% de cura en el país; si no, −🎖️ 3", "Firmar", ""],
+    pt: ["Ensaio clínico patrocinado", "Uma farmacêutica paga para testar um tratamento novo nos seus centros de pesquisa. Enquanto dura, cura-se um pouco menos; no fim, pode funcionar ou não.", "+💰 3 por ano durante 3 anos · −1% de cura enquanto dura · no fim: se funcionar, +3% de cura no país; se não, −🎖️ 3", "Assinar", ""] },
+  tabacalera: { ico: "diamante", fonte: "Ley N° 2969/2006", prest: 6, estado: () => !!POL().tabacalera,
+    fazer: () => { S.orc += 8; POL().tabacalera = true; S.aleatUsados.push("ops", "oiea", "global", "inversion"); S.usadas.push("ops"); },
+    es: ["Patrocinio de una tabacalera", "Una tabacalera ofrece financiar tu programa. Paraguay ratificó el Convenio Marco de la OMS para el Control del Tabaco: aceptar dinero de la industria te aleja de la cooperación internacional.", "+💰 8 ahora · −🎖️ 6 · no vuelven la OPS/OMS, el OIEA, la inversión extranjera ni los premios internacionales", "Aceptar", "Aceptado: la cooperación internacional se alejó."],
+    pt: ["Patrocínio de uma tabacaleira", "Uma tabacaleira oferece financiar o seu programa. O Paraguai ratificou a Convenção-Quadro da OMS para o Controle do Tabaco: aceitar dinheiro da indústria afasta você da cooperação internacional.", "+💰 8 agora · −🎖️ 6 · não voltam a OPAS/OMS, a AIEA, o investimento estrangeiro nem os prêmios internacionais", "Aceitar", "Aceito: a cooperação internacional se afastou."] },
+};
+const FAVOR = {
+  ampl: { ico: "predio", fonte: "ABC Color, 03/05/2023", prest: 3, estado: () => POL().ampl === S.anoIdx, fazer: () => { S.orc += 5; POL().ampl = S.anoIdx; },
+    es: ["Pedir una ampliación presupuestaria al Congreso", "Con apoyo político, el Congreso aprueba más dinero para la salud. Ejemplo real: en 2023, Diputados aprobó una ampliación de G. 95.373 millones para medicamentos del INCAN.", "+💰 5 · 🎖️ 3 · una vez por año", "Pedir", "Ya pediste este año."],
+    pt: ["Pedir uma ampliação orçamentária ao Congresso", "Com apoio político, o Congresso aprova mais dinheiro para a saúde. Exemplo real: em 2023, a Câmara aprovou uma ampliação de G. 95.373 milhões para remédios do INCAN.", "+💰 5 · 🎖️ 3 · uma vez por ano", "Pedir", "Você já pediu neste ano."] },
+  brig: { ico: () => ACAO_BRIGADA[S.pers], prest: 4, estado: () => POL().brig === S.anoIdx,
+    bloq: () => { const a = ACAO_BRIGADA[S.pers]; return temSlot(S.deps[S.sel], a) ? t("favorJaTem")(t("curtas")[a], DEP[S.sel].nome) : null; },
+    fazer: () => { const a = ACAO_BRIGADA[S.pers]; darGratis(S.sel, a); POL().brig = S.anoIdx; destacar(S.sel, a); },
+    porPers: {
+      bob: { es: ["Llamar a la comunidad open source", "Programadores voluntarios instalan un registro digital de cáncer en {dep}.", "Registro gratis en {dep} · 🎖️ 4 · una vez por año", "Llamar", "Ya llamaste este año."],
+             pt: ["Chamar a comunidade open source", "Programadores voluntários instalam um registro digital de câncer em {dep}.", "Registro grátis em {dep} · 🎖️ 4 · uma vez por ano", "Chamar", "Você já chamou neste ano."] },
+      patron: { es: ["Llamar a las instituciones religiosas", "Instituciones religiosas donan un servicio de cuidados paliativos en {dep}.", "Paliativos gratis en {dep} · 🎖️ 4 · una vez por año", "Llamar", "Ya llamaste este año."],
+                pt: ["Chamar as instituições religiosas", "Instituições religiosas doam um serviço de cuidados paliativos em {dep}.", "Paliativos grátis em {dep} · 🎖️ 4 · uma vez por ano", "Chamar", "Você já chamou neste ano."] },
+      beatriz: { es: ["Llamar a tus colegas médicos", "Sociedades médicas organizan una jornada de test de VPH en {dep}.", "Test de VPH gratis en {dep} · 🎖️ 4 · una vez por año", "Llamar", "Ya llamaste este año."],
+                 pt: ["Chamar seus colegas médicos", "Sociedades médicas organizam uma jornada de teste de HPV em {dep}.", "Teste de HPV grátis em {dep} · 🎖️ 4 · uma vez por ano", "Chamar", "Você já chamou neste ano."] },
+    } },
+  terr: { ico: "guindaste", prest: 2, estado: () => !!POL().terreno && POL().terreno.ano === S.anoIdx, fazer: () => { POL().terreno = { dep: S.sel, ano: S.anoIdx }; },
+    feitoTxt: () => (lang === "es" ? `Este año, ${DEP[POL().terreno.dep].nome} tiene 💰 2 de descuento.` : `Neste ano, ${DEP[POL().terreno.dep].nome} tem 💰 2 de desconto.`),
+    es: ["Pedir terreno y personal a la Gobernación", "La Gobernación de {dep} cede terreno y personal para tus obras.", "Este año, todo en {dep} cuesta 💰 2 menos · 🎖️ 2 · una vez por año", "Pedir", ""],
+    pt: ["Pedir terreno e pessoal ao governo departamental", "O governo departamental de {dep} cede terreno e pessoal para as suas obras.", "Neste ano, tudo em {dep} custa 💰 2 a menos · 🎖️ 2 · uma vez por ano", "Pedir", ""] },
+  notif: { ico: "protocolo", fonte: "Res. S.G. N° 752 (MSPBS, 2024)", prest: 8, estado: () => !!POL().notif,
+    fazer: () => { POL().notif = true; for (const id in S.deps) S.deps[id].visEv += 0.05; },
+    es: ["Notificación obligatoria del cáncer en todo el país", "Todo cáncer confirmado pasa a ser notificado, en todos los departamentos. En la vida real, el Ministerio lo anunció en noviembre de 2024.", "+5% de casos visibles en todo el país, para siempre · 🎖️ 8 · una sola vez", "Decretar", "Vigente en todo el país."],
+    pt: ["Notificação obrigatória do câncer no país inteiro", "Todo câncer confirmado passa a ser notificado, em todos os departamentos. Na vida real, o Ministério a anunciou em novembro de 2024.", "+5% de casos visíveis no país inteiro, para sempre · 🎖️ 8 · uma única vez", "Decretar", "Em vigor no país inteiro."] },
+};
+function opcaoHTML(tipo, id, o) {
+  const tx = (o.porPers ? o.porPers[S.pers] : o)[lang].map((x) => x.replaceAll("{dep}", DEP[S.sel].nome));
+  const [tit, txt, ef, btn, feito] = tx, est = o.estado();
+  const falta = est ? null : o.prest && S.prest < o.prest ? t("faltaPrest")(o.prest - S.prest) : o.bloq ? o.bloq() : null;
+  return `<div class="opc${est ? " feito" : ""}"><b>${ico(typeof o.ico === "function" ? o.ico() : o.ico)} ${esc(tit)}</b><p>${esc(txt)}</p><p class="efeito">${esc(ef)}</p>
+    <p class="fonte">${o.fonte ? `${esc(t("fonte"))}: ${fonteHTML(o.fonte)}` : esc(t("escenario"))}</p>
+    ${est ? `<p class="feito-txt">✓ ${esc(o.feitoTxt ? o.feitoTxt() : feito)}</p>`
+      : `<button class="btn mini" type="button" data-${tipo}="${id}"${falta ? " disabled" : ""}>${esc(btn)}</button>${falta ? `<p class="meta">${esc(falta)}</p>` : ""}`}</div>`;
+}
+function mostrarFinancas() {
+  janela = "financas";
+  abrirModal(`<h2>${esc(t("finTit"))}</h2><p>${esc(t("finIntro")(fmtM(rendaAno()), fmtM(manutAno())))}</p>
+    ${Object.keys(FIN).map((id) => opcaoHTML("fin", id, FIN[id])).join("")}
+    <button class="btn" type="button" data-fechar>${esc(t("voltar"))}</button>`);
+}
+function mostrarPrestigio() {
+  janela = "prestigio";
+  abrirModal(`<h2>${esc(t("prestTit"))} · ${ico("medalha")} ${S.prest}</h2><p>${esc(t("prestIntro"))}</p>
+    ${Object.keys(FAVOR).map((id) => opcaoHTML("favor", id, FAVOR[id])).join("")}
+    <button class="btn" type="button" data-fechar>${esc(t("voltar"))}</button>`);
+}
+function executarOpcao(tipo, id) {
+  const o = (tipo === "fin" ? FIN : FAVOR)[id];
+  if (!o || o.estado() || (o.prest && S.prest < o.prest) || (o.bloq && o.bloq())) return;
+  if (o.prest) ganharPrest(-o.prest);
+  o.fazer();
+  vibrar();
+  salvar();
+  render();
+  (tipo === "fin" ? mostrarFinancas : mostrarPrestigio)();
 }
 
 /* ---------- conquistas: ficam guardadas neste celular (nenhum dado pessoal) ---------- */
@@ -912,6 +1008,10 @@ const FONTES = [
   ["MSPBS: dosis única de la vacuna VPH (2024); registro único (2024); Hospital Día de Concepción (21/11/2024); acelerador del INCAN (2024); test de VPH (12/03/2025).", ["mspbs_dosis_unica", "mspbs_registro_unico", "mspbs_concepcion", "mspbs_incan_acelerador", "mspbs_vph_2025"]],
   ["DGVS/MSPBS, 05/02/2024.", ["dgvs_2024"]],
   ["ABC Color, 10/05/2024.", ["abc_encarnacion"]],
+  ["ABC Color, 13/02/2022: el impuesto selectivo al tabaco sigue siendo el más bajo de la región.", ["abc_tabaco_2022"]],
+  ["ABC Color, 03/05/2023: Diputados aprueban ampliación presupuestaria para el INCAN.", ["abc_incan_2023"]],
+  ["La Nación, 13/04/2023: préstamo del BID de hasta US$ 45 millones para la red de salud de 4 departamentos.", ["lanacion_bid_2023"]],
+  ["Ley N° 2969/2006: aprueba el Convenio Marco de la OMS para el Control del Tabaco.", ["ley_2969"]],
   ["La Nación, 25/04/2023; 23/07/2024; 09/03/2026.", ["lanacion_2023", "lanacion_2024", "lanacion_2026"]],
   ["DNCP. Subasta LPN 83-18: servicios de tratamientos radiantes para el IPS, 06/12/2018.", ["dncp_ips"]],
   ["Mapa: geoBoundaries (CC BY 4.0).", ["geoboundaries"]],
@@ -927,11 +1027,14 @@ const FONTE_CHAVES = {
   "Leite et al., 2025": ["leite_2025"], "Torres-Roman et al., BMC Public Health 2022": ["torres_2022"],
   "DNCP, licitación de radioterapia del IPS": ["dncp_ips"], "DNCP, licitação de radioterapia do IPS": ["dncp_ips"],
   "OMS, Cancer Country Profile Paraguay 2020": ["oms_perfil_2020"], "DGVS/MSPBS, 05/02/2024": ["dgvs_2024"],
+  "ABC Color, 13/02/2022": ["abc_tabaco_2022"], "ABC Color, 03/05/2023": ["abc_incan_2023"], "La Nación, 13/04/2023": ["lanacion_bid_2023"],
+  "Ley N° 2969/2006": ["ley_2969"], "Censo 2022 (INE)": ["ine_censo"], "Res. S.G. N° 752 (MSPBS, 2024)": ["mspbs_registro_unico"],
   "OPS/OMS, 12/02/2024": ["ops_vph_2024"], "OPAS/OMS, 12/02/2024": ["ops_vph_2024"], "IARC, GLOBOCAN 2022": ["globocan_2022"],
   "WHA73.2, 2020": ["oms_colo_2020"], "Alma-Ata, OMS/UNICEF, 1978": ["alma_ata"], "OPS, 14/07/2026": ["ops_riiss_2026"], "OPAS, 14/07/2026": ["ops_riiss_2026"],
 };
 const CHAVES_FONTE = Object.keys(FONTE_CHAVES).sort((a, b) => b.length - a.length);
-const urlFonte = (k) => (typeof LINKS_FONTES !== "undefined" && LINKS_FONTES[k] ? LINKS_FONTES[k].arquivo || LINKS_FONTES[k].url : null);
+// ↗ abre o recorte do jogo (sem anúncios, com o link do site real); sem recorte, a cópia do Internet Archive; senão, a original
+const urlFonte = (k) => (typeof LINKS_FONTES !== "undefined" && LINKS_FONTES[k] ? LINKS_FONTES[k].recorte || LINKS_FONTES[k].arquivo || LINKS_FONTES[k].url : null);
 const linkFonte = (k, n = "") => { const u = urlFonte(k); return u ? ` <a class="lk" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(LINKS_FONTES[k].url)}">${n}↗</a>` : ""; };
 /* Cada trecho da fonte ganha o link do seu documento, ao lado */
 function fonteHTML(texto) {
@@ -1004,12 +1107,14 @@ function desconto(a, id) {
   let x = S.regiao && S.regiao.dep === id ? S.regiao.valor : 0;
   for (const c of S.cupons) if (c.dep === id && c.a === a) x += c.valor;
   if (ACOES[a].nivel === "T" && S.descTrat && S.anoIdx < S.descTrat.ate) x += S.descTrat.valor;
+  const tr = S.pol && S.pol.terreno;   // favor: terreno e pessoal do governo departamental
+  if (tr && tr.dep === id && tr.ano === S.anoIdx) x += 2;
   return x;
 }
 const dec = (x) => Math.round(x * 10) / 10;
 const custo = (a, id) => Math.max(0, dec(ACOES[a].custo * fator("custo", [a, "n" + ACOES[a].at, "todos"])) + (S.mod[a] || 0) - desconto(a, id));
 const prestCusto = (a) => Math.max(0, ACOES[a].prest + soma("prest", a) + soma("prest", "n" + ACOES[a].at));
-const manutAcao = (a) => ACOES[a].manut * fator("manut", [a, "n" + ACOES[a].at, "todos"]);
+const manutAcao = (a) => dec(ACOES[a].manut * fator("manut", [a, "n" + ACOES[a].at, "todos"]));
 const anuidadeConv = (a) => Math.max(0.5, dec(ACOES[a].conv * fator("conv", [a, "todos"])));
 const desfazivel = (d, a) => d.feitas[a] === S.anoIdx && ((d.pago[a] || 0) + (d.prestPago[a] || 0)) > 0;
 /* Só se desfaz o que foi pago neste ano (o que veio de graça, de uma demanda ou de renovação não) */
@@ -1032,7 +1137,7 @@ const ocultoConhecido = (id) => { const d = S.deps[id]; return nivel(d, "D") >= 
 /* Chance de cura entre os diagnosticados: diagnóstico e tratamento juntos curam mais (é o que o equilíbrio mede) */
 function chanceCura(id) {
   const d = S.deps[id], D = nivel(d, "D"), Tn = nivel(d, "T");
-  let pc = 0.15 + 0.05 * D + 0.06 * Tn + 0.06 * Math.min(D, Tn) + num("cura");
+  let pc = 0.15 + 0.05 * D + 0.06 * Tn + 0.06 * Math.min(D, Tn) + num("cura") + ((S.pol && S.pol.cura) || 0);   // ensaio clínico: −1% enquanto dura
   if (temFila(id)) pc *= 0.5;
   return Math.min(0.75, pc);
 }
@@ -1112,6 +1217,14 @@ function iniciarAno() {
   S.orc += receita;
   S.avisoOrc = { receita, manut: 0, congresso: 0 };
   if (S.anoIdx > 0 && S.prest >= 20) { S.orc += 3; S.avisoOrc.congresso = 3; }   // prestígio alto: o Congresso aprova mais verba
+  const P = S.pol || {};
+  if (P.proveedor !== undefined && S.anoIdx === P.proveedor + 1) { ganharPrest(-1); S.avisoOrc.proveedor = 5; }   // faltaram insumos
+  if (P.ensayo && P.ensayo.res === null && S.anoIdx >= P.ensayo.ini + 3) {   // fim do ensaio: funciona ou não
+    const ok = Math.random() < 0.55;
+    P.ensayo.res = ok ? "ok" : "falhou"; P.cura = ok ? 0.03 : 0;
+    if (!ok) ganharPrest(-3);
+    S.avisoOrc.ensayo = P.ensayo.res;
+  }
   const nPesq = DEPS.filter((d) => temPesq(S.deps[d.id])).length;
   if (S.anoIdx > 0 && nPesq && num("prestPesq")) ganharPrest(nPesq * num("prestPesq"));
   EVENTOS[ano()].aplicar();
@@ -1160,7 +1273,7 @@ function fecharAno() {
     if (!st.eqInicio && equil(d.id) >= 1) novosEq++;
     st.visAnterior = vis(d.id);
     for (const k in ind) ind[k] += st.ind[k];
-    st.carga *= 1 + 0.012 - 0.006 * nivel(st, "P");   // envelhecimento sobe a carga; prevenção freia (ilustrativo)
+    st.carga *= 1 + 0.012 - 0.006 * nivel(st, "P") - (S.pol && S.pol.tabaco !== undefined ? 0.002 : 0);   // envelhecimento sobe a carga; prevenção e imposto sobre o tabaco freiam (ilustrativo)
     st.cargaBase *= 1.012;   // comparação: o mesmo envelhecimento, sem prevenção
   }
   for (const k in ind) { ind[k] = Math.round(ind[k]); S.tot[k] += ind[k]; }
@@ -1486,8 +1599,9 @@ function renderVivo() {
   const sr = SR_PLACAR[lang];   // o ícone é só desenho: o nome vai escondido para o leitor de tela
   $("#h-ano").innerHTML = `${ico("ano")}<span class="sr">${sr[0]} </span><b>${ano()}</b>`;
   $("#h-ano").title = t("anoDe")(ano(), S.anoIdx + 1);
-  $("#h-dinheiro").innerHTML = `${ico("moeda")}<span class="sr">${sr[1]} </span><b>${Math.floor(S.orc)}</b>`;
-  $("#h-prest").innerHTML = `${ico("medalha")}<span class="sr">${sr[2]} </span><b>${S.prest}</b>`;
+  $("#h-dinheiro").innerHTML = `${ico("moeda")}<span class="sr">${sr[1]} </span><b>${fmtM(S.orc)}</b><span class="mais" aria-hidden="true">+</span>`;
+  $("#h-prest").innerHTML = `${ico("medalha")}<span class="sr">${sr[2]} </span><b>${S.prest}</b><span class="mais" aria-hidden="true">›</span>`;
+  $("#h-dinheiro").title = t("finTit"); $("#h-prest").title = t("prestTit");
   $("#btn-ajuda").classList.toggle("alerta-asc", pendentes() > 0);
   $("#h-pontos").innerHTML = `${ico("estrela")}<span class="sr">${sr[3]} </span><b>${fmtInt(S.pontos + S.ptsAno)}</b>`;
   const tot = { inc: 0, prev: 0, mort: 0, cura: 0 };   // por ano, com o que funciona agora: muda na hora a cada decisão
@@ -1500,7 +1614,7 @@ function renderVivo() {
 
 function render() {
   if (!S || S.fim) return renderHud();
-  S.orc = Math.round(S.orc * 100) / 100;   // sem resto de conta com decimais
+  S.orc = dec(S.orc);   // dinheiro em múltiplos de 0,1, igual ao que aparece na tela
   verificar();
   $("#tela-inicio").hidden = true; $("#tela-fim").hidden = true; $("#tela-jogo").hidden = false; $("#barra").hidden = false;
   document.querySelectorAll("#modos button").forEach((b) => { b.textContent = b.dataset.modo === "cob" ? t("modoCob") : t("modoReg"); });
@@ -1586,7 +1700,7 @@ const fator = (k, chaves) => efeitos().reduce((f, e) => chaves.reduce((g, c) => 
 const soma = (k, c) => efeitos().reduce((s, e) => s + ((e[k] && e[k][c]) || 0), 0);                                       // somas por chave
 const num = (k) => efeitos().reduce((s, e) => s + (typeof e[k] === "number" ? e[k] : 0), 0);                              // somas simples
 const mul = (k) => efeitos().reduce((f, e) => f * (typeof e[k] === "number" ? e[k] : 1), 1);                              // multiplicadores simples
-const fmtM = (x) => (Math.abs(x - Math.round(x)) < 0.05 ? fmtInt(x) : fmt1(x));
+const fmtM = (x) => fmt1(Math.round(x * 10) / 10);   // dinheiro: sempre com vírgula e 1 casa decimal (15,0 · 13,5)
 let escolhaPers = ["bob", "patron", "beatriz"].includes(ler("epidemia-py-pers")) ? ler("epidemia-py-pers") : "beatriz";
 function ganharPrest(n) {
   if (n > 0) n = Math.round(n * mul("ganhoPrest"));
@@ -1620,8 +1734,12 @@ function bloqueio(id, a) {
 
 /* ---------- economia do ano: em janeiro entra a receita e se paga a manutenção e os convênios; sem dinheiro, fecha o mais caro ---------- */
 function rendaAno() {
-  const nPesq = DEPS.filter((d) => temPesq(S.deps[d.id])).length;
-  return ORC_BASE + S.orcExtra + nPesq * num("rendaPesq") + 12 * num("renda");
+  const nPesq = DEPS.filter((d) => temPesq(S.deps[d.id])).length, P = S.pol || {}, i = S.anoIdx;
+  return ORC_BASE + S.orcExtra + nPesq * num("rendaPesq") + 12 * num("renda")
+    + (P.tabaco !== undefined && i > P.tabaco ? 2 : 0)                                   // imposto sobre o tabaco
+    + (P.ensayo && i > P.ensayo.ini && i <= P.ensayo.ini + 2 ? 3 : 0)                     // ensaio clínico patrocinado
+    - (P.prestamo && i >= P.prestamo.desde && i <= P.prestamo.ate ? 2 : 0)               // parcelas do empréstimo
+    - (P.proveedor !== undefined && i === P.proveedor + 1 ? 5 : 0);                       // fornecedores atrasados, com acréscimo
 }
 function estruturas() {
   const l = [];
@@ -1636,14 +1754,14 @@ function estruturas() {
 }
 const manutAno = () => estruturas().reduce((s, e) => s + e.ano, 0);
 function cobrarManutencao() {
-  const total = manutAno();
-  S.orc -= total;
+  const total = dec(manutAno());
+  S.orc = dec(S.orc - total);
   while (S.orc < 0) {
     const e = estruturas().sort((x, y) => y.ano - x.ano)[0];
     if (!e) { S.orc = 0; break; }
     const st = S.deps[e.dep];
     if (e.conv) delete st.conv[e.a]; else { delete st.feitas[e.a]; delete st.pago[e.a]; delete st.prestPago[e.a]; }
-    S.orc += e.ano;
+    S.orc = dec(S.orc + e.ano);
     ganharPrest(-2);
     S.fechadasAno.push(`${ACOES[e.a].ico} ${t("curtas")[e.a]} (${DEP[e.dep].nome})`);
   }
@@ -2011,7 +2129,9 @@ function mostrarEvento() {
     ${ao.receita ? `<p class="meta">${esc(t("evEconomia")(fmtM(ao.receita), fmtM(ao.manut || 0)))}</p>` : ""}
     ${S.fechadasAno.length ? `<p class="fila">${esc(t("evFechou")(S.fechadasAno.join(", ")))}</p>` : ""}
     ${ao.congresso ? `<p class="meta">${esc(t("congressoMais"))}</p>` : ""}
-    <p><b>${esc(t("evOrc")(Math.floor(S.orc)))}</b> · 🎖️ ${S.prest}</p>
+    ${ao.proveedor ? `<p class="fila">${esc(t("evProveedor"))}</p>` : ""}
+    ${ao.ensayo ? `<p class="efeito">${esc(t("evEnsayo")[ao.ensayo])}</p>` : ""}
+    <p><b>${esc(t("evOrc")(fmtM(S.orc)))}</b> · 🎖️ ${S.prest}</p>
     <button class="btn" type="button" data-fechar>${esc(S.demanda ? t("proxDemanda") : t("evBtn"))}</button>`, "papel");
 }
 
@@ -2036,7 +2156,7 @@ function mostrarDemanda() {
     <p>${esc(sub(dm[lang]))}</p>
     <div class="opcoes">${ops}</div>
     ${dm.fonte ? `<p class="fonte">${esc(t("inspirado"))}: ${fonteHTML(dm.fonte)}</p>` : ""}
-    <p class="meta">🎖️ ${S.prest} · 💰 ${Math.floor(S.orc)}</p>`);
+    <p class="meta">🎖️ ${S.prest} · 💰 ${fmtM(S.orc)}</p>`);
 }
 
 /* Resposta à demanda: o que se compra ou contrata aqui não se desfaz depois (a confiança já foi ganha) */
@@ -2213,6 +2333,12 @@ document.addEventListener("click", (ev) => {
   }
   const pc = alvo.closest("[data-pers]");
   if (pc) { escolhaPers = pc.dataset.pers; mostrarPersonagens(); return; }
+  const fin = alvo.closest("[data-fin]");
+  if (fin && S && !S.fim) { executarOpcao("fin", fin.dataset.fin); return; }
+  const fav = alvo.closest("[data-favor]");
+  if (fav && S && !S.fim) { executarOpcao("favor", fav.dataset.favor); return; }
+  if (alvo.closest("#h-dinheiro") && S && !S.fim) { mostrarFinancas(); return; }
+  if (alvo.closest("#h-prest") && S && !S.fim) { mostrarPrestigio(); return; }
   const sg = alvo.closest("[data-seguir]");
   if (sg && S && !S.fim) { seguirMissao(sg.dataset.seguir); return; }
   const irDep = alvo.closest("[data-ir-dep]");
@@ -2255,7 +2381,7 @@ document.addEventListener("click", (ev) => {
   if (alvo.id === "btn-idioma") {
     lang = lang === "es" ? "pt" : "es"; guardar("epidemia-py-lang", lang);
     document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
-    if (!$("#modal").hidden) ({ evento: mostrarEvento, demanda: mostrarDemanda, quiz: mostrarQuiz, missoes: mostrarMissoes, arvore: mostrarArvore, pers: mostrarPersonagens, acao: () => mostrarAcao(S.fichaAtual.id, S.fichaAtual.a),
+    if (!$("#modal").hidden) ({ evento: mostrarEvento, demanda: mostrarDemanda, quiz: mostrarQuiz, missoes: mostrarMissoes, arvore: mostrarArvore, pers: mostrarPersonagens, financas: mostrarFinancas, prestigio: mostrarPrestigio, acao: () => mostrarAcao(S.fichaAtual.id, S.fichaAtual.a),
       resumo: () => mostrarResumo(S.log[S.log.length - 1]) }[janela] || mostrarAjuda)();
     if (!S) telaInicio();
     else if (S.fim) {
