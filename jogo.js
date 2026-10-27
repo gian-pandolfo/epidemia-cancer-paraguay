@@ -57,7 +57,7 @@ const T = {
       "Arriba a la derecha: incidencia, prevalencia, muertes y curas del país por año; cambian en el acto con cada decisión. Tócalas para ver el mapa de cada una.",
       "Cada año trae un hecho real, a veces un imprevisto (royalties, epidemias, donaciones, recortes del Congreso) y una demanda de la sociedad. Cumplir la demanda da ⭐ y 🎖️; rechazarla cuesta 🎖️ 1; prometer y no cumplir cuesta más.",
       "🎯 Misiones, ⚡ desafíos relámpago y 🏅 logros dan premios. ❤️ Vidas salvadas, 🍎 casos evitados y 🕯️ muertes sin diagnóstico muestran el efecto de tus decisiones (modelo del juego, comparado con no hacer nada).",
-      "Los ⭐ puntos salen sobre todo del resultado: cada vida salvada vale 1, cada caso evitado ½ y cada muerte sin diagnóstico quita ½. La estructura construida suma poco.",
+      "Los ⭐ puntos salen sobre todo del resultado: cada vida salvada vale 1 y cada caso evitado ½. Meta del país: menos de 400 muertes sin diagnóstico al año; cada una por encima quita ½ y cada una por debajo suma ½. La estructura construida suma poco.",
       "Donde la estadística es baja, falta diagnóstico, no cáncer: diagnosticar revela casos ocultos y la tasa registrada sube. ¡Es buena señal!",
     ],
     aviso: "Simulación educativa (beta). Los datos de partida y el hecho histórico de cada año son reales, con fuente. Los efectos de las acciones, los personajes, los números en tiempo real, los imprevistos, las demandas y los puntos son del modelo del juego.",
@@ -252,9 +252,9 @@ const T = {
     promOk: (n, d, p, pr) => `Compromiso cumplido: ${n} en ${d} (+⭐ ${p} · +🎖️ ${pr})`,
     promFalhou: (n, d, p, pr) => `Compromiso incumplido: ${n} en ${d} (−⭐ ${p} · −🎖️ ${pr})`,
     demAgora: (p, pr) => `+⭐ ${p}${pr ? ` · +🎖️ ${pr}` : ""}`,
-    demSe: (p, pr, pf, prf) => `si cumples: +⭐ ${p} · +🎖️ ${pr} · si no: −⭐ ${pf} · −🎖️ ${prf}`,
+    demSe: (p, pr, pf, prf) => `si cumples: +⭐ ${p} · +🎖️ ${pr}\nsi no cumples: −⭐ ${pf} · −🎖️ ${prf}`,
     demRegra: "Cumplir da puntos y prestigio; rechazar cuesta poco. Prometer y no cumplir cuesta más: cuanto mayor la promesa, mayor el premio y la pena.",
-    contaTit: "Puntos del año: 🏗️ ¼ de la estructura, ❤️ 1 por vida salvada, 🍎 ½ por caso evitado, 🕯️ −½ por muerte sin diagnóstico, 📣 demanda y ⚡ desafío (de 0 a 3.000 por año).",
+    contaTit: "Puntos del año: 🏗️ ¼ de la estructura, ❤️ 1 por vida salvada, 🍎 ½ por caso evitado, 🕯️ meta de menos de 400 muertes sin diagnóstico al año (−½ por cada una por encima, +½ por debajo), 📣 demanda y ⚡ desafío (de 0 a 3.000 por año).", demReq: (r) => `requisito: ${r}`,
     resPais: (c, m, k) => `País este año (modelo): ${c} casos diagnosticados, ${m} muertes y ${k} curas.`,
     resComp: (ok, tot) => `Compromisos cumplidos: <b>${ok}</b> de ${tot}`,
     resTot: (c, m, k) => `En 10 años (modelo del juego): <b>${c}</b> casos diagnosticados, <b>${m}</b> muertes y <b>${k}</b> curas.`,
@@ -275,7 +275,7 @@ const T = {
       "No alto à direita: incidência, prevalência, óbitos e curas do país por ano; mudam na hora a cada decisão. Toque nelas para ver o mapa de cada uma.",
       "Cada ano traz um fato real, às vezes um imprevisto (royalties, epidemias, doações, cortes do Congresso) e uma demanda da sociedade. Cumprir a demanda dá ⭐ e 🎖️; recusar custa 🎖️ 1; prometer e não cumprir custa mais.",
       "🎯 Missões, ⚡ desafios relâmpago e 🏅 conquistas dão prêmios. ❤️ Vidas salvas, 🍎 casos evitados e 🕯️ óbitos sem diagnóstico mostram o efeito das suas decisões (modelo do jogo, comparado com não fazer nada).",
-      "Os ⭐ pontos vêm sobretudo do resultado: cada vida salva vale 1, cada caso evitado ½ e cada óbito sem diagnóstico tira ½. A estrutura construída soma pouco.",
+      "Os ⭐ pontos vêm sobretudo do resultado: cada vida salva vale 1 e cada caso evitado ½. Meta do país: menos de 400 óbitos sem diagnóstico por ano; cada um acima tira ½ e cada um abaixo soma ½. A estrutura construída soma pouco.",
       "Onde a estatística é baixa, falta diagnóstico, não câncer: diagnosticar revela casos ocultos e a taxa registrada sobe. É bom sinal!",
     ],
     aviso: "Simulação educativa (beta). Os dados de partida e o fato histórico de cada ano são reais, com fonte. Os efeitos das ações, os personagens, os números em tempo real, os imprevistos, as demandas e os pontos são do modelo do jogo.",
@@ -470,9 +470,9 @@ const T = {
     promOk: (n, d, p, pr) => `Compromisso cumprido: ${n} em ${d} (+⭐ ${p} · +🎖️ ${pr})`,
     promFalhou: (n, d, p, pr) => `Compromisso não cumprido: ${n} em ${d} (−⭐ ${p} · −🎖️ ${pr})`,
     demAgora: (p, pr) => `+⭐ ${p}${pr ? ` · +🎖️ ${pr}` : ""}`,
-    demSe: (p, pr, pf, prf) => `se cumprir: +⭐ ${p} · +🎖️ ${pr} · se não: −⭐ ${pf} · −🎖️ ${prf}`,
+    demSe: (p, pr, pf, prf) => `se cumprir: +⭐ ${p} · +🎖️ ${pr}\nse não cumprir: −⭐ ${pf} · −🎖️ ${prf}`,
     demRegra: "Cumprir dá pontos e prestígio; recusar custa pouco. Prometer e não cumprir custa mais: quanto maior a promessa, maior o prêmio e a pena.",
-    contaTit: "Pontos do ano: 🏗️ ¼ da estrutura, ❤️ 1 por vida salva, 🍎 ½ por caso evitado, 🕯️ −½ por óbito sem diagnóstico, 📣 demanda e ⚡ desafio (de 0 a 3.000 por ano).",
+    contaTit: "Pontos do ano: 🏗️ ¼ da estrutura, ❤️ 1 por vida salva, 🍎 ½ por caso evitado, 🕯️ meta de menos de 400 óbitos sem diagnóstico por ano (−½ por cada um acima, +½ abaixo), 📣 demanda e ⚡ desafio (de 0 a 3.000 por ano).", demReq: (r) => `requisito: ${r}`,
     resPais: (c, m, k) => `País neste ano (modelo): ${c} casos diagnosticados, ${m} óbitos e ${k} curas.`,
     resComp: (ok, tot) => `Compromissos cumpridos: <b>${ok}</b> de ${tot}`,
     resTot: (c, m, k) => `Em 10 anos (modelo do jogo): <b>${c}</b> casos diagnosticados, <b>${m}</b> óbitos e <b>${k}</b> curas.`,
@@ -1234,8 +1234,11 @@ const pontosAno = () => DEPS.reduce((s, d) => s + pontosDep(d.id), 0);
    ¼ da estrutura + 1 por vida salva + ½ por caso evitado (com os bônus do departamento) − ½ por óbito sem diagnóstico.
    A missão de ⭐× multiplica o ano, a demanda soma ou tira, e o ano fica entre 0 e 3.000 (o servidor do ranking confere) */
 const PESO = { estr: 0.25, vida: 1, evit: 0.5, semdx: 0.5 };
+/* Meta do país (jogo 2 da revisão, 27/10/2026): menos de 400 óbitos sem diagnóstico por ano. Cada um acima tira ½ ⭐, cada um
+   abaixo soma ½. Antes, os ~680 do começo tiravam ~340 de todo mundo e o ano ficava no piso, engolindo compras e demandas */
+const META_SEMDX = 400;
 function partesAno(estr, inds) {
-  const p = { estr: PESO.estr * estr, vidas: 0, evit: 0, semdx: 0 };
+  const p = { estr: PESO.estr * estr, vidas: 0, evit: 0, semdx: PESO.semdx * META_SEMDX };
   for (const d of DEPS) {
     const m = modPts(d.id), x = inds[d.id];
     p.vidas += PESO.vida * x.vidas * m;
@@ -2330,8 +2333,8 @@ function efeitoOpcao(o, dep) {
   const v = valorOpcao(o, dep);
   if (recusa(o)) return o.prest ? `−🎖️ ${Math.abs(o.prest)}` : "";
   if (!o.promessa) return t("demAgora")(fmtInt(Math.round(PTS_VALOR * v)), o.prest || 0);
-  const pr = premioProm(v), pe = penaProm(v);
-  return t("demSe")(fmtInt(pr.pts), pr.prest, fmtInt(pe.pts), pe.prest);
+  const pr = premioProm(v), pe = penaProm(v), b = dep ? bloqueio(dep, o.promessa.a) : null;   // o que ainda falta para cumprir
+  return t("demSe")(fmtInt(pr.pts), pr.prest, fmtInt(pe.pts), pe.prest) + (b ? `\n⚠️ ${t("demReq")(b.curto)}` : "");
 }
 
 function mostrarDemanda() {
