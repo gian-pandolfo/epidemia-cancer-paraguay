@@ -134,7 +134,10 @@ const T = {
     beta: "Versión beta para pruebas. Cuéntanos qué te pareció.",
     rankTit: "Ranking del congreso",
     rankNome: "Nombre", rankEmail: "E-mail", rankFac: "Facultad", rankTurma: "Curso",
-    phNome: "Tu nombre", phEmail: "ejemplo@ejemplo.com", phFac: "Uninter", phTurma: "B2",   // exemplos em cinza nos campos
+    phNome: "ej. Tu nombre", phEmail: "ej. ejemplo@ejemplo.com", phFac: "ej. Uninter", phTurma: "ej. B2",   // exemplos em cinza nos campos
+    semDadosTit: "Sin ranking",
+    semDadosTxt: "Si juegas sin datos, esta partida no entra en el ranking del congreso. Para aparecer en el ranking, vuelve y completa nombre, e-mail, facultad y curso.",
+    semDadosVoltar: "Volver y completar", semDadosJogar: "Jugar sin ranking",
     rankEnviando: "Enviando tu puntuación al ranking…",
     rankJa: (p) => `¡Listo! Estás en el ranking${p ? `, en el puesto ${p}` : ""}.`,
     rankPendente: "No se pudo enviar ahora: tu puntuación se enviará sola cuando haya conexión.",
@@ -344,7 +347,10 @@ const T = {
     beta: "Versão beta para testes. Conte o que achou.",
     rankTit: "Ranking do congresso",
     rankNome: "Nome", rankEmail: "E-mail", rankFac: "Faculdade", rankTurma: "Turma",
-    phNome: "Seu nome", phEmail: "exemplo@exemplo.com", phFac: "Uninter", phTurma: "B2",
+    phNome: "ex. Seu nome", phEmail: "ex. exemplo@exemplo.com", phFac: "ex. Uninter", phTurma: "ex. B2",
+    semDadosTit: "Sem ranking",
+    semDadosTxt: "Se você jogar sem dados, esta partida não entra no ranking do congresso. Para aparecer no ranking, volte e preencha nome, e-mail, faculdade e turma.",
+    semDadosVoltar: "Voltar e preencher", semDadosJogar: "Jogar sem ranking",
     rankEnviando: "Enviando sua pontuação ao ranking…",
     rankJa: (p) => `Pronto! Você está no ranking${p ? `, na posição ${p}` : ""}.`,
     rankPendente: "Não deu para enviar agora: sua pontuação vai sozinha quando houver conexão.",
@@ -2116,6 +2122,16 @@ function mostrarDados(v = ler("epidemia-py-jogador") || {}) {
     </div>`, "dados");
 }
 /* O que já foi digitado (para trocar de idioma sem perder) */
+/* «Jugar sin datos» avisa antes que a partida fica fora do ranking (pedido do Gi, 27/10/2026); voltar guarda o que foi digitado */
+let dadosDigitados = null;
+function mostrarSemDados() {
+  janela = "semDados";
+  abrirModal(`<h2>${esc(t("semDadosTit"))}</h2><p>${esc(t("semDadosTxt"))}</p>
+    <div class="form-rank">
+      <button class="btn" type="button" id="btn-sem-voltar">${esc(t("semDadosVoltar"))}</button>
+      <button class="btn sec" type="button" id="btn-sem-ok">${esc(t("semDadosJogar"))}</button>
+    </div>`, "dados");
+}
 const valoresDados = () => ({ nome: $("#d-nome").value, email: $("#d-email").value, faculdade: $("#d-fac").value, turma: $("#d-turma").value,
   ok: $("#d-ok").checked, termosAbertos: $(".termos").open });
 
@@ -2470,7 +2486,9 @@ document.addEventListener("click", (ev) => {
   if (alvo.closest("[data-proximo]")) { proximoAno(); return; }
   if (alvo.id === "btn-nova") { if (pedeDados()) mostrarDados(); else mostrarPersonagens(); return; }
   if (alvo.id === "btn-dados-ok") { confirmarDados(); return; }
-  if (alvo.id === "btn-dados-sem") { jogadorEscolhido = null; mostrarPersonagens(); return; }
+  if (alvo.id === "btn-dados-sem") { dadosDigitados = valoresDados(); mostrarSemDados(); return; }
+  if (alvo.id === "btn-sem-voltar") { mostrarDados(dadosDigitados || ler("epidemia-py-jogador") || {}); return; }
+  if (alvo.id === "btn-sem-ok") { jogadorEscolhido = null; mostrarPersonagens(); return; }
   if (alvo.id === "btn-pers-ok") { guardar("epidemia-py-pers", escolhaPers); fecharModal(); novoJogo(escolhaPers); return; }
   if (alvo.id === "btn-continuar") { continuar(); return; }
   if (alvo.id === "btn-fechar") { fecharAno(); return; }
@@ -2484,7 +2502,7 @@ document.addEventListener("click", (ev) => {
     lang = lang === "es" ? "pt" : "es"; guardar("epidemia-py-lang", lang);
     document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
     if (!$("#modal").hidden) ({ evento: mostrarEvento, demanda: mostrarDemanda, quiz: mostrarQuiz, missoes: mostrarMissoes, arvore: mostrarArvore, pers: mostrarPersonagens, financas: mostrarFinancas, prestigio: mostrarPrestigio, acao: () => mostrarAcao(S.fichaAtual.id, S.fichaAtual.a),
-      resumo: () => mostrarResumo(S.log[S.log.length - 1]), dados: () => mostrarDados(valoresDados()) }[janela] || mostrarAjuda)();
+      resumo: () => mostrarResumo(S.log[S.log.length - 1]), dados: () => mostrarDados(valoresDados()), semDados: mostrarSemDados }[janela] || mostrarAjuda)();
     if (!S) telaInicio();
     else if (S.fim) mostrarFim();
     else render();
