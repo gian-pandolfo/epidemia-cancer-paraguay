@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<!-- Proteção (27/10/2026): o navegador só roda os scripts deste site e só conversa com o ranking -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Epidemia: Paraguay contra el cáncer</title>
 <meta name="description" content="Juego educativo sobre la epidemiología del cáncer en Paraguay, 2015–2024, con datos reales del Atlas de Mortalidad por Cáncer.">
@@ -513,6 +515,12 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
   .painel-acoes { gap: 4px; }
 }
 @media (prefers-reduced-motion: reduce) { #g-fx .fx-ico { display: none; } .hab.opcao, #btn-ajuda.retrato.alerta-asc { animation: none; } }
+/* Compartilhar: QR do jogo (desenhado por gerar_qr.py) e o link por extenso */
+.janela.compartir { text-align: center; }
+.qr-jogo { display: block; width: min(240px, 68vw); height: auto; margin: 10px auto; background: #ffffff; border-radius: 12px; padding: 6px; }
+.link-jogo { margin: 0 0 6px; }
+.link-jogo a { color: var(--accent); font-weight: 700; overflow-wrap: anywhere; }
+.janela.compartir .btns { justify-content: center; }
 </style>
 </head>
 <body>
@@ -560,10 +568,10 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
 <div id="faixa" class="faixa" role="status" aria-live="polite" hidden></div>
 </div>
 
-<script src="config.js?v=6"></script>
-<script src="dados.js?v=6"></script>
-<script src="links.js?v=6"></script>
-<script src="icones.js?v=6"></script>
-<script src="jogo.js?v=6"></script>
+<script src="config.js?v=7"></script>
+<script src="dados.js?v=7"></script>
+<script src="links.js?v=7"></script>
+<script src="icones.js?v=7"></script>
+<script src="jogo.js?v=7"></script>
 </body>
 </html>

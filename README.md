@@ -50,3 +50,19 @@ Mapa: límites de [geoBoundaries](https://www.geoboundaries.org) (CC BY 4.0; Run
 **Datos personales (LGPD/privacidad):** nombre, facultad y curso solo con autorización del jugador; se usan para el ranking del congreso y se borran el 31/10/2026.
 
 Beta para pruebas.
+
+## Segurança e teto (beta7, 27/10/2026)
+
+- **Sem servidor próprio:** o site é só arquivos (GitHub Pages). O único ponto compartilhado é o ranking (Google Apps Script + planilha).
+- **CSP** em `index.html` e `ranking.html`: o navegador só roda scripts deste site e só conecta com o Apps Script (`script.google.com` / `script.googleusercontent.com`). Por isso o script do ranking fica em `ranking.js`, e não dentro do HTML.
+- **QR sem biblioteca de fora:** `qr-jogo.svg` (e `mapa/qr-mapa.svg`) vêm desenhados de `_ferramentas/gerar_qr.py`, no vault, conferidos por leitor.
+- **`mapa/`**: mapa público do congresso (gerado por `_ferramentas/gerar_pagina.py`), com CSP por hash e `sw.js` para abrir sem internet. Não editar à mão.
+- **Teto do ranking** (`apps-script/Codigo.gs`):
+  - 60 envios por minuto (`limite`) e até 3.000 partidas (`cheio`);
+  - envio de até 2.000 bytes;
+  - lista guardada 10 s;
+  - envio repetido barrado;
+  - campos curtos e sem fórmula;
+  - pontos por ano até 3.100 (3.000 + 100 do Desafío relámpago).
+- **Testes:** a cópia de teste tira a CSP (o roteiro de teste é um script na página); a CSP verdadeira é conferida no site publicado.
+

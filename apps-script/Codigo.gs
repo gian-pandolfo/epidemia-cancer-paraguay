@@ -12,11 +12,16 @@
  */
 const ABA = "Ranking";
 const CABECALHO = ["data_hora", "nome", "faculdade", "turma", "pontos", "pontos_por_ano", "idioma", "versao", "id"];
-const MAX_POR_ANO = 3000;            // limite de um ano no jogo (folga sobre o máximo possível)
+const MAX_POR_ANO = 3100;            // teto de um ano no jogo (3.000) + 100 do acerto no Desafío relámpago (27/10/2026)
 const MAX_PONTOS = 10 * MAX_POR_ANO;
 const FIM_DADOS_PESSOAIS = new Date("2026-10-31T00:00:00-03:00");
 const FUSO = "America/Asuncion";
 const TOP = 20;
+// Proteção contra congestionamento e abuso (decisão do Gi, 27/10/2026)
+const TETO_POR_MINUTO = 60;           // envios aceitos por minuto, somando todos os jogadores; acima disso: "limite"
+const MAX_LINHAS = 3000;              // partidas guardadas no congresso; acima disso: "cheio"
+const MAX_BYTES = 2000;               // um envio legítimo tem uns 300 bytes
+const CACHE_LISTA_S = 10;             // a lista do ranking é montada no máximo a cada 10 s, por mais gente que consulte
 
 function aba_() {
   const planilha = SpreadsheetApp.getActiveSpreadsheet();
@@ -54,6 +59,7 @@ function posicao_(aba, pontos) {
 function doPost(e) {
   try {
     if (new Date() >= FIM_DADOS_PESSOAIS) return json_({ ok: false, erro: "encerrado" });
+    if (!e.postData || String(e.postData.contents).length > MAX_BYTES) return json_({ ok: false, erro: "campos" });
     const d = JSON.parse(e.postData.contents);
     const nome = texto_(d.nome, 40), faculdade = texto_(d.faculdade, 60), turma = texto_(d.turma, 20);
     if (nome.length < 2 || faculdade.length < 2 || turma.length < 1) return json_({ ok: false, erro: "campos" });
@@ -63,16 +69,21 @@ function doPost(e) {
     const soma = anos.reduce((a, b) => a + b, 0);
     const anosOk = anos.length === 10 && anos.every((p) => Number.isInteger(p) && p >= 0 && p <= MAX_POR_ANO);
     if (!anosOk || !Number.isInteger(pontos) || pontos !== soma || pontos > MAX_PONTOS) return json_({ ok: false, erro: "pontos" });
-    const id = texto_(d.id, 40);
+    const id = /^[A-Za-z0-9_-]{4,40}$/.test(String(d.id || "")) ? String(d.id) : "";   // o jogo manda letras e números
     const cache = CacheService.getScriptCache();
     const chave = "envio_" + Utilities.base64EncodeWebSafe(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, id || nome + "|" + turma));
+    const minuto = "min_" + Utilities.formatDate(new Date(), FUSO, "yyyyMMddHHmm");
     const trava = LockService.getScriptLock();
     trava.waitLock(10000);
     try {
       if (cache.get(chave)) return json_({ ok: false, erro: "repetido" });  // dentro da trava: dois reenvios juntos não gravam em dobro
+      const noMinuto = Number(cache.get(minuto) || 0);
+      if (noMinuto >= TETO_POR_MINUTO) return json_({ ok: false, erro: "limite" });   // teto de envios por minuto
       const aba = aba_();
+      if (aba.getLastRow() - 1 >= MAX_LINHAS) return json_({ ok: false, erro: "cheio" });
       aba.appendRow([new Date(), nome, faculdade, turma, pontos, anos.join(" "), texto_(d.idioma, 5), texto_(d.versao, 20), id]);
       cache.put(chave, "1", 21600);
+      cache.put(minuto, String(noMinuto + 1), 120);
       cache.remove("ranking");
       return json_({ ok: true, posicao: posicao_(aba, pontos) });
     } finally {
@@ -103,7 +114,7 @@ function doGet() {
       hora: Utilities.formatDate(new Date(l[0]), FUSO, "dd/MM HH:mm"),
     }));
   const texto = JSON.stringify({ ok: true, partidas: Math.max(n, 0), top, encerrado, atualizado: Utilities.formatDate(new Date(), FUSO, "HH:mm:ss") });
-  cache.put("ranking", texto, 5);
+  cache.put("ranking", texto, CACHE_LISTA_S);
   return ContentService.createTextOutput(texto).setMimeType(ContentService.MimeType.JSON);
 }
 

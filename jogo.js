@@ -128,6 +128,9 @@ const T = {
     ],
     fontesTit: "Fuentes",
     denovo: "Jugar de nuevo", compartir: "Compartir", copiado: "Enlace copiado",
+    compTit: "Invita a otro jugador", compSub: "Que tu compañero apunte la cámara al código, o envíale el enlace.",
+    compEnviar: "Enviar enlace", compCopiar: "Copiar enlace", compFalhou: "No se pudo copiar: mantén el dedo sobre el enlace y elige «Copiar».",
+    qrAlt: "Código QR del juego",
     beta: "Versión beta para pruebas. Cuéntanos qué te pareció.",
     rankTit: "Ranking del congreso",
     rankIntro: "Entra al ranking que se muestra en el stand. Puedes usar tu nombre o un apodo.",
@@ -138,6 +141,7 @@ const T = {
     rankCampos: "Completa nombre, facultad y curso.",
     rankSemOk: "Para entrar al ranking, marca la autorización.",
     rankErro: "No se pudo enviar. Revisa la conexión e inténtalo de nuevo.",
+    rankLimite: "Muchos envíos en este momento. Inténtalo de nuevo en 1 minuto.", rankCheio: "El ranking del congreso llegó al límite de partidas.",
     rankFechado: "El ranking del congreso abre pronto.",
     rankEncerrado: "El ranking del congreso ya terminó.",
     rankVer: "Ver ranking",
@@ -195,14 +199,14 @@ const T = {
     logrosTit: "Logros de este celular", logroOk: "¡Logro!", logrosConta: (n, m) => `${n} de ${m}`,
     inicioLogros: (n, m) => `🏅 Logros: ${n} de ${m}`, inicioRecorde: (r) => `🏆 Tu récord: ${r}`,
     quizTit: "Desafío relámpago", quizSub: "¿Verdadero o falso?", verdadeiro: "Verdadero", falso: "Falso",
-    quizCerto: (o) => `¡Correcto! +💰 ${o} · +🎖️ 1`, quizErrado: "No era así.", quizSeguir: "Seguir",
+    quizCerto: (o) => `¡Correcto! +⭐ ${BONUS_QUIZ} · +💰 ${o} · +🎖️ 1`, quizErrado: "No era así.", quizSeguir: "Seguir",
     racha: (n) => `Racha de ${n} aciertos 🔥`, rachaPremio: "+🎖️ 2 por la racha",
     nivelSobe: (n) => `¡Equilibrio ${n}/3!`, novoRecorde: "¡Nuevo récord!", recordeTxt: "Superaste tu mejor puntaje en este celular.",
     rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Presupuesto anual menos mantenimiento · vidas salvadas (modelo) · puntos que suma este año",
     consTit: "Consecuencia de tus decisiones",
     metVidas: "vidas salvadas", vidasPerd: "vidas perdidas", metEvit: "casos evitados por la prevención", metSemDx: "murieron sin diagnóstico",
     metModelo: "Modelo del juego, comparado con no hacer nada.",
-    misAno: (l) => `🎯 Misiones cumplidas: ${l}`, quizAno: (ok) => `⚡ Desafío relámpago: ${ok ? "acertaste" : "fallaste"}`,
+    misAno: (l) => `🎯 Misiones cumplidas: ${l}`, quizAno: (ok) => `⚡ Desafío relámpago: ${ok ? `acertaste (+${BONUS_QUIZ} ⭐)` : "fallaste"}`,
     cargo: (c) => `Tu cargo: ${c}`,
     resImpacto: (v, e, s) => `En 10 años (modelo): <b>${v}</b> vidas salvadas, <b>${e}</b> casos evitados por la prevención y <b>${s}</b> personas que murieron sin diagnóstico.`,
     resMis: (n, m) => `Misiones cumplidas: <b>${n}</b> de ${m}`, resQuiz: (n, m) => `Desafíos relámpago: <b>${n}</b> de ${m} correctos`,
@@ -317,6 +321,9 @@ const T = {
     ],
     fontesTit: "Fontes",
     denovo: "Jogar de novo", compartir: "Compartilhar", copiado: "Link copiado",
+    compTit: "Convide outro jogador", compSub: "Peça para o colega apontar a câmera para o código, ou mande o link.",
+    compEnviar: "Enviar link", compCopiar: "Copiar link", compFalhou: "Não deu para copiar: segure o dedo sobre o link e escolha «Copiar».",
+    qrAlt: "Código QR do jogo",
     beta: "Versão beta para testes. Conte o que achou.",
     rankTit: "Ranking do congresso",
     rankIntro: "Entre no ranking que aparece no estande. Pode usar seu nome ou um apelido.",
@@ -327,6 +334,7 @@ const T = {
     rankCampos: "Preencha nome, faculdade e turma.",
     rankSemOk: "Para entrar no ranking, marque a autorização.",
     rankErro: "Não deu para enviar. Confira a conexão e tente de novo.",
+    rankLimite: "Muitos envios agora. Tente de novo em 1 minuto.", rankCheio: "O ranking do congresso chegou ao limite de partidas.",
     rankFechado: "O ranking do congresso abre em breve.",
     rankEncerrado: "O ranking do congresso já terminou.",
     rankVer: "Ver ranking",
@@ -384,14 +392,14 @@ const T = {
     logrosTit: "Conquistas deste celular", logroOk: "Conquista!", logrosConta: (n, m) => `${n} de ${m}`,
     inicioLogros: (n, m) => `🏅 Conquistas: ${n} de ${m}`, inicioRecorde: (r) => `🏆 Seu recorde: ${r}`,
     quizTit: "Desafio relâmpago", quizSub: "Verdadeiro ou falso?", verdadeiro: "Verdadeiro", falso: "Falso",
-    quizCerto: (o) => `Correto! +💰 ${o} · +🎖️ 1`, quizErrado: "Não era assim.", quizSeguir: "Continuar",
+    quizCerto: (o) => `Correto! +⭐ ${BONUS_QUIZ} · +💰 ${o} · +🎖️ 1`, quizErrado: "Não era assim.", quizSeguir: "Continuar",
     racha: (n) => `Sequência de ${n} acertos 🔥`, rachaPremio: "+🎖️ 2 pela sequência",
     nivelSobe: (n) => `Equilíbrio ${n}/3!`, novoRecorde: "Novo recorde!", recordeTxt: "Você superou sua melhor pontuação neste celular.",
     rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Orçamento anual menos manutenção · vidas salvas (modelo) · pontos que soma neste ano",
     consTit: "Consequência das suas decisões",
     metVidas: "vidas salvas", vidasPerd: "vidas perdidas", metEvit: "casos evitados pela prevenção", metSemDx: "morreram sem diagnóstico",
     metModelo: "Modelo do jogo, comparado com não fazer nada.",
-    misAno: (l) => `🎯 Missões cumpridas: ${l}`, quizAno: (ok) => `⚡ Desafio relâmpago: ${ok ? "você acertou" : "você errou"}`,
+    misAno: (l) => `🎯 Missões cumpridas: ${l}`, quizAno: (ok) => `⚡ Desafio relâmpago: ${ok ? `você acertou (+${BONUS_QUIZ} ⭐)` : "você errou"}`,
     cargo: (c) => `Seu cargo: ${c}`,
     resImpacto: (v, e, s) => `Em 10 anos (modelo): <b>${v}</b> vidas salvas, <b>${e}</b> casos evitados pela prevenção e <b>${s}</b> pessoas que morreram sem diagnóstico.`,
     resMis: (n, m) => `Missões cumpridas: <b>${n}</b> de ${m}`, resQuiz: (n, m) => `Desafios relâmpago: <b>${n}</b> de ${m} corretos`,
@@ -893,6 +901,7 @@ const LOGROS = [
 ];
 
 /* ---------- desafio relâmpago: um por ano, no meio do ano; só fatos que o jogo já cita, com a mesma fonte ---------- */
+const BONUS_QUIZ = 100;   // pontos do ranking por acerto (decisão do Gi, 27/10/2026); fica fora do teto de 3.000 do ano
 const QUIZ = [
   { v: false, fonte: "Atlas 2015–2019",
     es: ["El pulmón es la 1.ª causa de muerte por cáncer en las mujeres paraguayas.", "En las mujeres lideran la mama y el cuello uterino; el pulmón es la 1.ª causa en los hombres."],
@@ -1260,7 +1269,7 @@ function fecharAno() {
   if (!S || S.fase !== "jogando") return;
   if (S.quizAno !== S.anoIdx) { S.quizDepois = true; abrirQuiz(); return; }   // o desafio do ano vem antes do resumo
   while (S.mes < 12) { simularMes(); S.mes++; }   // ⏩ termina o ano com o que já está feito
-  const pts = Math.min(3000, Math.round(S.ptsAno));   // teto por ano do ranking
+  const pts = Math.min(3000, Math.round(S.ptsAno)) + (S.quizOk ? BONUS_QUIZ : 0);   // teto por ano do ranking + acerto do desafio
   S.pontos += pts;
   S.ptsAno = 0;
   const subiu = [], filas = [], comp = [], ind = novoInd();
@@ -1641,7 +1650,7 @@ function telaInicio() {
     <details class="cartao regras"><summary>${esc(t("ajuda"))}</summary><ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol></details>
     <div class="pers-teaser">${Object.keys(PERSONAGENS).map(avatarHTML).join("")}<span>${esc(t("persTeaser"))}</span></div>
     <div class="btns">${temSalvo ? `<button class="btn" id="btn-continuar" type="button">${esc(t("continuar"))}</button><button class="btn sec" id="btn-nova" type="button">${esc(t("nova"))}</button>`
-      : `<button class="btn" id="btn-nova" type="button">${esc(t("comecar"))}</button>`}${ultimoFim ? `<button class="btn sec" id="btn-ultimo" type="button">${esc(t("ultimo"))}</button>` : ""}</div>
+      : `<button class="btn" id="btn-nova" type="button">${esc(t("comecar"))}</button>`}${ultimoFim ? `<button class="btn sec" id="btn-ultimo" type="button">${esc(t("ultimo"))}</button>` : ""}<button class="btn sec" id="btn-compartir-inicio" type="button">${esc(t("compartir"))}</button></div>
     ${inicioExtra()}
     <p class="aviso">${esc(t("aviso"))}</p>
     ${creditosHTML(false)}`;
@@ -2082,10 +2091,11 @@ async function enviarRanking() {
     if (d.ok || d.erro === "repetido") { S.enviado = { posicao: d.posicao || null }; salvar(); mostrarFim(); return; }
     if (d.erro === "encerrado") { btn.hidden = true; return erro("rankEncerrado"); }
     if (d.erro === "campos") throw new Error("campos");
+    if (d.erro === "limite" || d.erro === "cheio") throw new Error(d.erro);
     throw new Error(d.erro || "erro");
   } catch (e) {
     btn.disabled = false; btn.textContent = t("rankEnviar");
-    erro(e.message === "campos" ? "rankCampos" : "rankErro");
+    erro(e.message === "campos" ? "rankCampos" : e.message === "limite" ? "rankLimite" : e.message === "cheio" ? "rankCheio" : "rankErro");
   }
 }
 
@@ -2375,7 +2385,10 @@ document.addEventListener("click", (ev) => {
   if (alvo.id === "btn-continuar") { continuar(); return; }
   if (alvo.id === "btn-fechar") { fecharAno(); return; }
   if (alvo.closest("#btn-ajuda")) { if (S && !S.fim && !$("#tela-jogo").hidden) mostrarArvore(); else mostrarAjuda(); return; }
-  if (alvo.id === "btn-compartir") { compartilhar(); return; }
+  if (alvo.id === "btn-compartir" || alvo.id === "btn-compartir-inicio") { compartilhar(); return; }
+  if (alvo.id === "btn-comp-enviar") { enviarLink(); return; }
+  if (alvo.id === "btn-comp-copiar") { copiarLink(); return; }
+  if (alvo.id === "btn-comp-fechar") { fecharModal(); return; }   // só fecha: na tela de início não volta para a partida
   if (alvo.id === "btn-enviar") { enviarRanking(); return; }
   if (alvo.id === "btn-ultimo") { S = ler(CHAVE); mostrarFim(); return; }
   if (alvo.id === "btn-idioma") {
@@ -2398,12 +2411,24 @@ document.addEventListener("keydown", (ev) => {
 });
 document.addEventListener("change", (ev) => { if (ev.target.id === "dep-tit" && ev.target.value) { S.sel = ev.target.value; salvar(); render(); } });
 
-async function compartilhar() {
-  const url = CFG.jogoUrl || location.href.split("#")[0];   // sempre o link público, também na cópia de revisão
-  try {
-    if (navigator.share) await navigator.share({ title: t("h1"), text: t("shareTxt"), url });
-    else { await navigator.clipboard.writeText(url); toast(t("copiado")); }
-  } catch (e) { /* o jogador cancelou */ }
+/* Compartilhar: janela com o QR do jogo (qr-jogo.svg, desenhado por _ferramentas/gerar_qr.py e conferido por leitor),
+   o link por extenso e enviar/copiar. Um jogador mostra o QR na tela e o colega aponta a câmera. */
+const urlJogo = () => CFG.jogoUrl || location.href.split("#")[0];   // sempre o link público, também na cópia de revisão
+function compartilhar() {
+  const url = urlJogo();
+  abrirModal(`<h2>${esc(t("compTit"))}</h2><p class="meta">${esc(t("compSub"))}</p>
+    <img class="qr-jogo" src="qr-jogo.svg" alt="${esc(t("qrAlt"))}" width="240" height="240">
+    <p class="link-jogo"><a href="${esc(url)}" target="_blank" rel="noopener">${esc(url.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a></p>
+    <div class="btns">${navigator.share ? `<button class="btn" id="btn-comp-enviar" type="button">${esc(t("compEnviar"))}</button>` : ""}<button class="btn sec" id="btn-comp-copiar" type="button">${esc(t("compCopiar"))}</button></div>
+    <p class="msg-rank" id="comp-msg" role="status"></p>
+    <div class="btns"><button class="btn sec" id="btn-comp-fechar" type="button">${esc(t("voltar"))}</button></div>`, "compartir");
+}
+async function enviarLink() {
+  try { await navigator.share({ title: t("h1"), text: t("shareTxt"), url: urlJogo() }); } catch (e) { /* o jogador cancelou */ }
+}
+async function copiarLink() {
+  try { await navigator.clipboard.writeText(urlJogo()); $("#comp-msg").textContent = t("copiado"); }
+  catch (e) { $("#comp-msg").textContent = t("compFalhou"); }
 }
 
 if (rankingEncerrado()) { try { localStorage.removeItem("epidemia-py-jogador"); } catch (e) { /* sem armazenamento */ } }
