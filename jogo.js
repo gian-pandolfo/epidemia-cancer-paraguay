@@ -2539,7 +2539,7 @@ function continuar() {
 document.addEventListener("click", (ev) => {
   const alvo = ev.target;
   if (!alvo.closest) return;
-  const dep = alvo.closest("#mapa .dep");
+  const dep = alvo.closest("#mapa .dep, #mapa .lbl[data-dep]");   // o nome também escolhe: é onde o dedo vai nos departamentos pequenos
   if (dep && S && !S.fim) { S.sel = dep.dataset.dep; salvar(); render(); return; }
   const ac = alvo.closest("#painel .acao");
   if (ac && S && !S.fim) { mostrarAcao(S.sel, ac.dataset.acao); return; }
