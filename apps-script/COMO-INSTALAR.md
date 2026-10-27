@@ -1,6 +1,6 @@
 # Como ligar o ranking (planilha do Google)
 
-Feito uma vez, no computador, com a conta Google que vai guardar os dados do ranking: a **conta pessoal do Gi**, nunca a conta da Casa Baunilha (os dados dos alunos não se misturam com os da empresa).
+Feito uma vez, no computador, com a conta Google que vai guardar os dados do ranking: a **conta pessoal do Gi**, nunca a conta da Casa Baunilha (os dados dos alunos não se misturam com os da empresa). Faça tudo numa **janela anônima** (Ctrl+Shift+N) com só essa conta: o Apps Script se confunde quando há várias contas abertas no mesmo navegador.
 
 **Versão 2 (27/10/2026):** antes de começar, o jogo pede nome, e-mail, faculdade e turma e o aceite dos termos (ou deixa jogar sem dados) e avisa a planilha no começo e no fim de cada partida. Ela também aceita o envio da versão 1 do jogo, então pode ser instalada antes de o jogo novo entrar no ar.
 
@@ -14,8 +14,9 @@ Feito uma vez, no computador, com a conta Google que vai guardar os dados do ran
    - Executar como: **Eu**
    - Quem pode acessar: **Qualquer pessoa**. Não escolha "Qualquer pessoa com Conta do Google": com ela, os alunos teriam de entrar no Google para ver o ranking e mandar a pontuação.
    - Clique em **Implantar**.
-7. **Autorizar acesso** → escolha a conta. O Google avisa que "não verificou este app": é normal, o app é seu. Clique em **Avançado → Acessar Ranking Epidemia (não seguro) → Permitir**. O script só enxerga esta planilha: a tela de permissão deve falar só de planilhas. **Se pedir Gmail, Drive ou contatos, pare** e avise o Claude.
+7. **Autorizar acesso** → escolha a conta. O Google avisa que "não verificou este app": é normal, o app é seu. Clique em **Avançado → Acessar Ranking Epidemia (não seguro) → Permitir**. A tela de permissão pede só duas coisas: as planilhas em que o app está instalado (só esta, pela primeira linha do código) e mostrar conteúdo em janelas e barras laterais (o menu **Ranking do jogo** e a confirmação da limpeza). Se aparecerem caixinhas, marque todas. **Se pedir Gmail, Drive ou contatos, pare** e avise o Claude.
 8. Copie o **URL do app da Web** (termina em `/exec`) e coloque em `config.js`, no campo `rankingUrl`.
+   - Perdeu o link? **Implantar → Gerenciar implantações** → clique na implantação → copie o URL que termina em `/exec`. Não use o de «Testar implantações» (termina em `/dev` e só abre para você).
 
 ## Trocar a versão 1 pela 2 sem mudar o link
 
