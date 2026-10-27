@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<!-- Cópia de TESTE da beta8 (27/10/2026): só para o Gi testar no celular; sai depois do teste -->
+<!-- Cópia de TESTE (27/10/2026): para o Gi e os colegas testarem antes de entrar no jogo principal -->
 <meta name="robots" content="noindex, nofollow">
 <!-- Proteção (27/10/2026): o navegador só roda os scripts deste site e só conversa com o ranking -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
@@ -291,8 +291,10 @@ main { max-width: 640px; margin: 0 auto; }
 .ficha-custos b { font: 800 1rem var(--f-display); }
 .ficha-btns { display: grid; gap: 8px; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.lk { color: var(--accent); font-weight: 800; text-decoration: none; white-space: nowrap; }
-.lk:hover, .lk:focus-visible { text-decoration: underline; }
+/* link da fonte como botão pequeno (pedido do Gi, 27/10/2026: um pouco mais evidente) */
+.lk { display: inline-block; margin-left: 4px; padding: 0 8px; border: 1px solid currentColor; border-radius: 999px; color: var(--accent);
+  background: color-mix(in srgb, currentColor 14%, transparent); font-weight: 800; font-size: .92em; line-height: 1.6; text-decoration: none; white-space: nowrap; }
+.lk:hover, .lk:focus-visible { background: color-mix(in srgb, currentColor 28%, transparent); }
 /* Dados do jogador antes de começar (ranking) */
 .form-rank { display: grid; gap: 10px; }
 .form-rank label { display: grid; gap: 4px; font-weight: 700; font-size: .9rem; }
@@ -334,10 +336,25 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .barra .btn { padding: 10px 16px; min-height: 46px; font-size: 1rem; }
   .legenda { font-size: .6rem; }
 }
-@media (max-width: 370px) {
+/* celulares até 440 px: o topo continua numa linha só com o botão de som, mesmo com o placar do fim do jogo (27/10/2026).
+   ".hud" na frente porque regras do tema, mais abaixo, também mexem em chip e retrato */
+@media (max-width: 440px) {
   .hud { gap: 4px; }
-  .chip { padding: 3px 6px; font-size: .84rem; }
-  .btn-ico { min-width: 30px; height: 32px; padding: 0 6px; }
+  .hud .chip { padding: 4px 6px; gap: 3px; }
+  .hud .btn-ico { min-width: 30px; padding: 0 5px; }
+  .hud #btn-som { min-width: 28px; padding: 0 3px; }
+  .hud #h-ano svg { display: none; }   /* o ano já se lê sozinho */
+}
+@media (max-width: 400px) {
+  .hud { gap: 2px; }
+  .hud .chip { padding: 3px 4px; gap: 2px; }
+  .hud .btn-ico { min-width: 28px; padding: 0 4px; }
+  .hud #btn-som { min-width: 24px; padding: 0 2px; }
+  .hud #btn-ajuda.retrato { width: 34px; min-width: 34px; height: 34px; }
+}
+@media (max-width: 370px) {
+  .hud .chip { font-size: .84rem; }
+  .hud .btn-ico { height: 32px; }
   .painel-info { font-size: .64rem; }
   .legenda { font-size: .58rem; }
   .barra .dica { font-size: .74rem; }
@@ -538,6 +555,7 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
   <button type="button" class="chip dinheiro" id="h-dinheiro" hidden></button>
   <button type="button" class="chip prest" id="h-prest" hidden></button>
   <span class="chip" id="h-pontos" hidden></span>
+  <button class="btn-ico" id="btn-som" type="button" aria-label="Música" aria-pressed="false">🔇</button>
   <button class="btn-ico" id="btn-ajuda" type="button" aria-label="Ayuda">?</button>
   <button class="btn-ico" id="btn-idioma" type="button">PT</button>
 </header>
@@ -575,10 +593,11 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
 <div id="faixa" class="faixa" role="status" aria-live="polite" hidden></div>
 </div>
 
-<script src="config.js?v=8"></script>
-<script src="dados.js?v=8"></script>
-<script src="links.js?v=8"></script>
-<script src="icones.js?v=8"></script>
-<script src="jogo.js?v=8"></script>
+<script src="config.js?v=9"></script>
+<script src="dados.js?v=9"></script>
+<script src="links.js?v=9"></script>
+<script src="icones.js?v=9"></script>
+<script src="jogo.js?v=9"></script>
+<script src="musica.js?v=9"></script>
 </body>
 </html>
