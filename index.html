@@ -291,11 +291,16 @@ main { max-width: 640px; margin: 0 auto; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 .lk { color: var(--accent); font-weight: 800; text-decoration: none; white-space: nowrap; }
 .lk:hover, .lk:focus-visible { text-decoration: underline; }
-/* Formulário do ranking */
+/* Dados do jogador antes de começar (ranking) */
 .form-rank { display: grid; gap: 10px; }
 .form-rank label { display: grid; gap: 4px; font-weight: 700; font-size: .9rem; }
-.form-rank input[type="text"] { font: inherit; font-weight: 400; color: var(--ink); background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 10px 12px; }
-.form-rank input[type="text"]:focus { outline: none; border-color: var(--accent); }
+.form-rank input[type="text"], .form-rank input[type="email"] { font: inherit; font-weight: 400; color: var(--ink); background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.form-rank input[type="text"]:focus, .form-rank input[type="email"]:focus { outline: none; border-color: var(--accent); }
+.form-rank input::placeholder { color: #9AA5B1; font-style: italic; opacity: 1; }   /* exemplo em cinza claro: mostra o que preencher */
+.termos { font-size: .84rem; color: var(--muted); }
+.termos summary { font-weight: 700; color: var(--accent); cursor: pointer; }
+.termos ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+.janela.dados .btn { width: 100%; justify-content: center; }
 .form-rank .consent { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; font-size: .84rem; color: var(--muted); }
 .form-rank .consent input { width: 22px; height: 22px; flex: none; margin-top: 2px; accent-color: var(--accent); }
 .msg-rank { margin: 0; font-weight: 700; }
@@ -407,7 +412,7 @@ button svg, button img, .chip svg { pointer-events: none; }
 .janela .ano { font: 800 .92rem var(--f-display); letter-spacing: .14em; }
 .janela h2 { font-weight: 900; font-size: 1.65rem; line-height: .98; text-transform: uppercase; }
 .efeito { border-radius: 0; clip-path: var(--chanfro-p); }
-.imprevisto, .licao, .opcoes button, .met, .selo, .missao, .ficha-custos div, .quiz-res, .hab-desc, .prog, .prog i, .form-rank input[type="text"] { border-radius: 0; }
+.imprevisto, .licao, .opcoes button, .met, .selo, .missao, .ficha-custos div, .quiz-res, .hab-desc, .prog, .prog i, .form-rank input[type="text"], .form-rank input[type="email"] { border-radius: 0; }
 .cartao { border-radius: 0; clip-path: var(--chanfro); }
 .opcoes button { box-shadow: inset 3px 0 0 var(--accent); }
 .toast { border-radius: 0; clip-path: var(--chanfro-p); background: var(--papel); color: var(--tinta); }
@@ -568,10 +573,10 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
 <div id="faixa" class="faixa" role="status" aria-live="polite" hidden></div>
 </div>
 
-<script src="config.js?v=7"></script>
-<script src="dados.js?v=7"></script>
-<script src="links.js?v=7"></script>
-<script src="icones.js?v=7"></script>
-<script src="jogo.js?v=7"></script>
+<script src="config.js?v=8"></script>
+<script src="dados.js?v=8"></script>
+<script src="links.js?v=8"></script>
+<script src="icones.js?v=8"></script>
+<script src="jogo.js?v=8"></script>
 </body>
 </html>

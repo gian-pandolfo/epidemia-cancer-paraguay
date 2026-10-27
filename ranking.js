@@ -4,12 +4,12 @@
 const $ = (s) => document.querySelector(s);
 const TXT = {
   es: { titulo: "Ranking", sub: "Epidemia: Paraguay contra el cáncer", escaneie: "Escanea y juega", partidas: "partidas jugadas",
-    lgpd: "Nombre, facultad y curso se muestran solo durante el congreso y se borran el 31/10/2026.",
+    lgpd: "Nombre, facultad y curso se muestran solo durante el congreso, hasta el 31/10/2026. El e-mail nunca aparece.",
     vazio: "Todavía no hay partidas en el ranking. ¡Sé el primero!", semUrl: "El ranking aún no está configurado.",
     erro: "Sin conexión con el ranking. Reintentando…", atual: (h) => `Actualizado a las ${h}`, encerrado: "El ranking del congreso terminó.",
     tela: "Pantalla completa", pts: "puntos" },
   pt: { titulo: "Ranking", sub: "Epidemia: Paraguai contra o câncer", escaneie: "Escaneie e jogue", partidas: "partidas jogadas",
-    lgpd: "Nome, faculdade e turma aparecem só durante o congresso e são apagados em 31/10/2026.",
+    lgpd: "Nome, faculdade e turma aparecem só durante o congresso, até 31/10/2026. O e-mail nunca aparece.",
     vazio: "Ainda não há partidas no ranking. Seja o primeiro!", semUrl: "O ranking ainda não está configurado.",
     erro: "Sem conexão com o ranking. Tentando de novo…", atual: (h) => `Atualizado às ${h}`, encerrado: "O ranking do congresso terminou.",
     tela: "Tela cheia", pts: "pontos" },

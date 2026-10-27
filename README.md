@@ -47,7 +47,7 @@ Mapa: límites de [geoBoundaries](https://www.geoboundaries.org) (CC BY 4.0; Run
 - `config.js`: dirección del ranking (`rankingUrl`) y del juego.
 - `apps-script/`: código de la planilla de Google que guarda el ranking y cómo instalarlo.
 
-**Datos personales (LGPD/privacidad):** nombre, facultad y curso solo con autorización del jugador; se usan para el ranking del congreso y se borran el 31/10/2026.
+**Datos personales (LGPD/privacidad):** antes de jugar, nombre, e-mail, facultad y curso, solo si el jugador acepta los términos (también se puede jugar sin datos). Sirven para el ranking del congreso (sin el e-mail), para contar partidas y para contactar a quienes ganen. Los nombres salen del ranking el 31/10/2026; nombre y e-mail se borran el 30/11/2026.
 
 Beta para pruebas.
 
@@ -58,11 +58,19 @@ Beta para pruebas.
 - **QR sem biblioteca de fora:** `qr-jogo.svg` (e `mapa/qr-mapa.svg`) vêm desenhados de `_ferramentas/gerar_qr.py`, no vault, conferidos por leitor.
 - **`mapa/`**: mapa público do congresso (gerado por `_ferramentas/gerar_pagina.py`), com CSP por hash e `sw.js` para abrir sem internet. Não editar à mão.
 - **Teto do ranking** (`apps-script/Codigo.gs`):
-  - 60 envios por minuto (`limite`) e até 3.000 partidas (`cheio`);
+  - 60 avisos de começo e 60 de fim por minuto (`limite`) e até 3.000 partidas (`cheio`);
   - envio de até 2.000 bytes;
   - lista guardada 10 s;
   - envio repetido barrado;
   - campos curtos e sem fórmula;
   - pontos por ano até 3.100 (3.000 + 100 do Desafío relámpago).
 - **Testes:** a cópia de teste tira a CSP (o roteiro de teste é um script na página); a CSP verdadeira é conferida no site publicado.
+
+## Dados antes de começar (beta8, 27/10/2026)
+
+Pedido do Gi: sem login. Ao tocar em Comenzar, a janela **Antes de empezar** pede nome, e-mail, faculdade e turma e o aceite dos termos (com o texto completo em «Términos y privacidad»), ou deixa **jugar sin datos**: a partida conta, mas não entra no ranking.
+
+- O jogo avisa a planilha no começo e no fim de cada partida (`acao: "inicio"` / `"fim"`). Os avisos ficam numa fila no celular (`epidemia-py-fila`): sem conexão, ou com o teto atingido, o jogo não trava e reenvia em 30 s e quando a conexão volta.
+- `apps-script/Codigo.gs` (versão 2): aba **Partidas** (uma linha por partida), ranking com a melhor partida de cada e-mail, aba **Resumo** pelo menu, apagar nome e e-mail em 30/11/2026. Aceita também o envio da versão 1 do jogo.
+- Sem o `rankingUrl` (ranking desligado) ou depois de 31/10/2026, a janela não aparece e ninguém dá dados.
 
