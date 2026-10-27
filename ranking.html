@@ -72,6 +72,8 @@ button { font: inherit; color: inherit; }
 /* beta6: arte "luz contra a névoa", a mesma do jogo */
 .topo { border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
 .topo .emb { width: 54px; height: 54px; flex: none; }
+/* volta ao jogo no celular (27/10/2026); no tablet do estande (#estande) fica escondido */
+.topo .voltar { order: -1; display: inline-flex; align-items: center; gap: 4px; min-height: 40px; text-decoration: none; font-weight: 800; flex-basis: 100%; justify-content: flex-start; border: 0; background: transparent; padding: 0; color: var(--accent); }
 .topo h1 { font-weight: 900; text-transform: uppercase; letter-spacing: .02em; }
 .topo h1 small { font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
 .btn-ico { border-radius: 0; clip-path: var(--chanfro-p); }
@@ -86,6 +88,7 @@ button { font: inherit; color: inherit; }
 </head>
 <body>
 <header class="topo">
+  <a class="btn-ico voltar" id="voltar" href="./">← <span id="t-voltar">Jugar</span></a>
   <img class="emb" src="arte/emblema.svg" alt="">
   <h1><span id="t-titulo">Ranking</span><small id="t-sub">Epidemia: Paraguay contra el cáncer</small></h1>
   <button class="btn-ico" id="btn-tela" type="button" aria-label="Pantalla completa" hidden>⛶</button>

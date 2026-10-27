@@ -7,12 +7,12 @@ const TXT = {
     lgpd: "Nombre, facultad y curso se muestran solo durante el congreso, hasta el 31/10/2026. El e-mail nunca aparece.",
     vazio: "Todavía no hay partidas en el ranking. ¡Sé el primero!", semUrl: "El ranking aún no está configurado.",
     erro: "Sin conexión con el ranking. Reintentando…", atual: (h) => `Actualizado a las ${h}`, encerrado: "El ranking del congreso terminó.",
-    tela: "Pantalla completa", pts: "puntos" },
+    tela: "Pantalla completa", pts: "puntos", voltar: "Volver al juego" },
   pt: { titulo: "Ranking", sub: "Epidemia: Paraguai contra o câncer", escaneie: "Escaneie e jogue", partidas: "partidas jogadas",
     lgpd: "Nome, faculdade e turma aparecem só durante o congresso, até 31/10/2026. O e-mail nunca aparece.",
     vazio: "Ainda não há partidas no ranking. Seja o primeiro!", semUrl: "O ranking ainda não está configurado.",
     erro: "Sem conexão com o ranking. Tentando de novo…", atual: (h) => `Atualizado às ${h}`, encerrado: "O ranking do congresso terminou.",
-    tela: "Tela cheia", pts: "pontos" },
+    tela: "Tela cheia", pts: "pontos", voltar: "Voltar ao jogo" },
 };
 let lang = "es";
 try { if (localStorage.getItem("epidemia-py-lang") === '"pt"') lang = "pt"; } catch (e) { /* sem armazenamento */ }
@@ -29,6 +29,8 @@ function textos() {
   $("#t-lgpd").textContent = t("lgpd");
   $("#btn-idioma").textContent = lang === "es" ? "PT" : "ES";
   $("#btn-tela").setAttribute("aria-label", t("tela"));
+  $("#t-voltar").textContent = t("voltar");
+  $("#voltar").hidden = location.hash === "#estande";   // no estande ninguém joga nesta tela
   const url = cfg().jogoUrl || location.href.replace(/ranking\.html.*$/, "");
   $("#url").textContent = url.replace(/^https?:\/\//, "");
 }
