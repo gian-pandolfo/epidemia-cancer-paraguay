@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-G1ciy7mERCeSAqDmMr6vmZvmGDqavJe38URb2hUGrb8=' 'sha256-ERHcHRbwXJrKFAStn3ehEjW14uSucAxm5Mp8tOAXvDs='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-jpx+6RZL3As3VlF6BbkbcUJsQB0+UXXFPDjKZ7Lbbns=' 'sha256-ERHcHRbwXJrKFAStn3ehEjW14uSucAxm5Mp8tOAXvDs='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>:root { color-scheme: light; } body { margin: 0; font: 14px system-ui, sans-serif; } img { max-width: 100%; } [hidden] { display: none !important; }</style>
 </head>
@@ -726,7 +726,8 @@ function legenda() {
 
 function setCapa(c) { capa = c; pintarMapa(); }
 
-function selecionar(id, rolar = true) {
+/* Escolher região ou câncer não rola a tela: ela fica parada até a pessoa descer até o painel */
+function selecionar(id) {
   selecionado = id && porId[id] ? id : null;
   $("#btn-pais").setAttribute("aria-pressed", String(!selecionado));
   document.querySelectorAll(".sel").forEach((el) => el.classList.remove("sel"));
@@ -737,9 +738,6 @@ function selecionar(id, rolar = true) {
     });
   }
   renderPainel();
-  if (rolar && selecionado && window.matchMedia("(max-width: 860px)").matches) {
-    $("#painel").scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
-  }
 }
 
 /* ---------- gráficos ---------- */
@@ -976,7 +974,7 @@ function setVista(v) {
   renderPainel();
 }
 
-function selecionarCancer(id, sexo, rolar = true) {
+function selecionarCancer(id, sexo) {
   const c = canPorId[id] || null;
   cancerSel = c ? c.id : null;
   if (c) {
@@ -985,9 +983,6 @@ function selecionarCancer(id, sexo, rolar = true) {
   }
   if (vista !== "canceres") setVista("canceres");
   else { pintarOrgaos(); renderPainel(); }
-  if (rolar && c && window.matchMedia("(max-width: 860px)").matches) {
-    $("#painel").scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
-  }
 }
 
 /* Painel sem câncer escolhido: os 7 cânceres lado a lado, homens e mulheres */
@@ -1181,8 +1176,8 @@ function navegarLocal(texto) {
   const palavras = norm(texto).split(" ").filter((w) => w && !VAZIAS.has(w));
   if (!palavras.length || palavras.length > 4) return null;
   const resto = palavras.join(" ");
-  if (VISTA_VOZ[resto] === "canceres") { selecionarCancer(null, null, false); return t("mostrando")(t("can_tit")); }
-  if (VISTA_VOZ[resto] === "regioes") { setVista("regioes"); selecionar(null, false); return t("mostrando")(t("pais")); }
+  if (VISTA_VOZ[resto] === "canceres") { selecionarCancer(null, null); return t("mostrando")(t("can_tit")); }
+  if (VISTA_VOZ[resto] === "regioes") { setVista("regioes"); selecionar(null); return t("mostrando")(t("pais")); }
   const cc = acharCancer(resto);
   if (cc) {
     const sx = /\b(mujer|mujeres|mulher|mulheres|femenino|feminino)\b/.test(resto) ? "M"
@@ -1258,7 +1253,7 @@ const FERRAMENTAS = [
       const d = acharDep(String(input.nombre || ""));
       if (!d) throw new Error("Departamento no encontrado: " + String(input.nombre || ""));
       setVista("regioes");
-      selecionar(d.id, false);
+      selecionar(d.id);
       return {
         departamento: d.nome, tee_total: d.tee, posicion: d.rank, muertes_2015_2019: d.obitos, tee_hombres: d.tee_h, tee_mujeres: d.tee_m,
         top5_hombres: d.top.H.slice(0, 5).map((x) => `${x[0]} ${x[3]}%`), top5_mujeres: d.top.M.slice(0, 5).map((x) => `${x[0]} ${x[3]}%`),
@@ -1293,10 +1288,10 @@ const FERRAMENTAS = [
     execute: (input) => {
       const c = canPorId[String(input.cancer || "")];
       if (!c) {
-        selecionarCancer(null, null, false);
+        selecionarCancer(null, null);
         return { canceres: CANS.map((x) => ({ cancer: x.nome.es, tee_hombres: teeNac(x, "H"), tee_mujeres: x.chave.M === "np" ? "no publicada" : teeNac(x, "M") })) };
       }
-      selecionarCancer(c.id, input.sexo === "H" || input.sexo === "M" ? input.sexo : null, false);
+      selecionarCancer(c.id, input.sexo === "H" || input.sexo === "M" ? input.sexo : null);
       return detalheCancer(c);
     },
   },
@@ -1309,7 +1304,7 @@ const FERRAMENTAS = [
   {
     name: "mostrar_paraguay",
     description: "Quita la selección del mapa y muestra el resumen nacional en el panel. Úsala cuando la pregunta trate del país en general.",
-    execute: () => { setVista("regioes"); selecionar(null, false); return "ok"; },
+    execute: () => { setVista("regioes"); selecionar(null); return "ok"; },
   },
 ];
 
@@ -1611,7 +1606,7 @@ function iniciar(estado) {
   prepararLinks();
   $("#btn-tela").hidden = !(document.fullscreenEnabled || document.webkitFullscreenEnabled);
   aplicarIdioma();
-  if (estado && estado.selecionado) selecionar(estado.selecionado, false);
+  if (estado && estado.selecionado) selecionar(estado.selecionado);
   if (estado && canPorId[estado.cancerSel]) { cancerSel = estado.cancerSel; sexoSel = estado.sexoSel === "M" ? "M" : "H"; }
   if (estado && estado.vista === "canceres") setVista("canceres");
   if (VISITANTE) return;
