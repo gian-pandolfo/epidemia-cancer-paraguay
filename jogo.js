@@ -133,18 +133,34 @@ const T = {
     qrAlt: "Código QR del juego",
     beta: "Versión beta para pruebas. Cuéntanos qué te pareció.",
     rankTit: "Ranking del congreso",
-    rankIntro: "Entra al ranking que se muestra en el stand. Puedes usar tu nombre o un apodo.",
-    rankNome: "Nombre", rankFac: "Facultad", rankTurma: "Curso",
-    rankConsent: "Acepto que mi nombre, facultad y curso aparezcan en el ranking del congreso. Los datos quedan en una planilla de Google de Gianmarlon Pandolfo, autor del juego, y se borran el 31/10/2026.",
-    rankEnviar: "Entrar al ranking", rankEnviando: "Enviando…",
+    rankNome: "Nombre", rankEmail: "E-mail", rankFac: "Facultad", rankTurma: "Curso",
+    rankEnviando: "Enviando tu puntuación al ranking…",
     rankJa: (p) => `¡Listo! Estás en el ranking${p ? `, en el puesto ${p}` : ""}.`,
-    rankCampos: "Completa nombre, facultad y curso.",
-    rankSemOk: "Para entrar al ranking, marca la autorización.",
-    rankErro: "No se pudo enviar. Revisa la conexión e inténtalo de nuevo.",
-    rankLimite: "Muchos envíos en este momento. Inténtalo de nuevo en 1 minuto.", rankCheio: "El ranking del congreso llegó al límite de partidas.",
+    rankPendente: "No se pudo enviar ahora: tu puntuación se enviará sola cuando haya conexión.",
+    rankSemDados: "Jugaste sin datos: esta partida no entra en el ranking. Para entrar, completa tus datos al empezar la próxima.",
+    rankFalhou: "No se pudo registrar esta partida en el ranking.",
+    rankCheio: "El ranking del congreso llegó al límite de partidas.",
     rankFechado: "El ranking del congreso abre pronto.",
     rankEncerrado: "El ranking del congreso ya terminó.",
     rankVer: "Ver ranking",
+    dadosTit: "Antes de empezar",
+    dadosIntro: "Para entrar en el ranking del congreso, completa los cuatro datos y acepta los términos. Si prefieres, juega sin datos: la partida cuenta, pero no entra en el ranking.",
+    dadosOk: "Leí y acepto los términos.",
+    dadosJogar: "Aceptar y jugar", dadosSem: "Jugar sin datos",
+    dadosCampos: "Completa nombre, e-mail, facultad y curso.",
+    dadosEmail: "Revisa el e-mail: parece incompleto.",
+    dadosSemOk: "Para entrar en el ranking, acepta los términos.",
+    termosTit: "Términos y privacidad",
+    termos: (c) => [
+      `Responsable: Gianmarlon Pandolfo, autor del juego. Contacto: ${c}.`,
+      "Si completas tus datos, guardamos nombre, e-mail, facultad y curso, con la hora de inicio y de fin y la puntuación de cada partida.",
+      "Para qué: mostrar el ranking del congreso (nombre, facultad, curso y puntos; el e-mail nunca aparece), no repetir jugadores, contar quién jugó y terminó, calcular promedios por facultad y curso, y contactar a quienes ganen.",
+      "Dónde: en una planilla privada de Google; solo el autor tiene acceso.",
+      "Hasta cuándo: los nombres salen del ranking el 31/10/2026; nombre y e-mail se borran el 30/11/2026 y quedan solo totales y promedios.",
+      "Puedes pedir ver, corregir o borrar tus datos escribiendo al contacto.",
+      "En tu celular: el juego recuerda tus datos para la próxima partida; se borran solos el 31/10/2026.",
+      "Sin datos: de toda partida registramos, sin identificarte, la hora de inicio y de fin, la puntuación y el idioma.",
+    ],
     ultimo: "Ver mi último resultado",
     shareTxt: "Juega Epidemia: Paraguay contra el cáncer",
     meses: ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"],
@@ -326,18 +342,34 @@ const T = {
     qrAlt: "Código QR do jogo",
     beta: "Versão beta para testes. Conte o que achou.",
     rankTit: "Ranking do congresso",
-    rankIntro: "Entre no ranking que aparece no estande. Pode usar seu nome ou um apelido.",
-    rankNome: "Nome", rankFac: "Faculdade", rankTurma: "Turma",
-    rankConsent: "Aceito que meu nome, faculdade e turma apareçam no ranking do congresso. Os dados ficam numa planilha do Google de Gianmarlon Pandolfo, autor do jogo, e são apagados em 31/10/2026.",
-    rankEnviar: "Entrar no ranking", rankEnviando: "Enviando…",
+    rankNome: "Nome", rankEmail: "E-mail", rankFac: "Faculdade", rankTurma: "Turma",
+    rankEnviando: "Enviando sua pontuação ao ranking…",
     rankJa: (p) => `Pronto! Você está no ranking${p ? `, na posição ${p}` : ""}.`,
-    rankCampos: "Preencha nome, faculdade e turma.",
-    rankSemOk: "Para entrar no ranking, marque a autorização.",
-    rankErro: "Não deu para enviar. Confira a conexão e tente de novo.",
-    rankLimite: "Muitos envios agora. Tente de novo em 1 minuto.", rankCheio: "O ranking do congresso chegou ao limite de partidas.",
+    rankPendente: "Não deu para enviar agora: sua pontuação vai sozinha quando houver conexão.",
+    rankSemDados: "Você jogou sem dados: esta partida não entra no ranking. Para entrar, preencha seus dados ao começar a próxima.",
+    rankFalhou: "Não deu para registrar esta partida no ranking.",
+    rankCheio: "O ranking do congresso chegou ao limite de partidas.",
     rankFechado: "O ranking do congresso abre em breve.",
     rankEncerrado: "O ranking do congresso já terminou.",
     rankVer: "Ver ranking",
+    dadosTit: "Antes de começar",
+    dadosIntro: "Para entrar no ranking do congresso, preencha os quatro dados e aceite os termos. Se preferir, jogue sem dados: a partida conta, mas não entra no ranking.",
+    dadosOk: "Li e aceito os termos.",
+    dadosJogar: "Aceitar e jogar", dadosSem: "Jogar sem dados",
+    dadosCampos: "Preencha nome, e-mail, faculdade e turma.",
+    dadosEmail: "Confira o e-mail: parece incompleto.",
+    dadosSemOk: "Para entrar no ranking, aceite os termos.",
+    termosTit: "Termos e privacidade",
+    termos: (c) => [
+      `Responsável: Gianmarlon Pandolfo, autor do jogo. Contato: ${c}.`,
+      "Se você preencher seus dados, guardamos nome, e-mail, faculdade e turma, com a hora de início e de fim e a pontuação de cada partida.",
+      "Para quê: mostrar o ranking do congresso (nome, faculdade, turma e pontos; o e-mail nunca aparece), não repetir jogadores, contar quem jogou e terminou, calcular médias por faculdade e turma e contatar quem ganhar.",
+      "Onde: numa planilha privada do Google; só o autor tem acesso.",
+      "Até quando: os nomes saem do ranking em 31/10/2026; nome e e-mail são apagados em 30/11/2026 e ficam só totais e médias.",
+      "Você pode pedir para ver, corrigir ou apagar seus dados escrevendo para o contato.",
+      "No seu celular: o jogo lembra seus dados para a próxima partida; eles se apagam sozinhos em 31/10/2026.",
+      "Sem dados: de toda partida registramos, sem identificar você, a hora de início e de fim, a pontuação e o idioma.",
+    ],
     ultimo: "Ver meu último resultado",
     shareTxt: "Jogue Epidemia: Paraguai contra o câncer",
     meses: ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"],
@@ -1316,7 +1348,7 @@ function escolherLicao(houveFila) {
 
 function proximoAno() {
   fecharModal();
-  if (S.anoIdx >= ANOS.length - 1) { S.fim = true; S.fase = "fim"; salvar(); mostrarFim(); return; }
+  if (S.anoIdx >= ANOS.length - 1) { S.fim = true; S.fase = "fim"; salvar(); avisar("fim"); mostrarFim(); return; }
   S.anoIdx++;
   iniciarAno();
   render();
@@ -1642,7 +1674,7 @@ function telaInicio() {
   $("#tela-jogo").hidden = true; $("#tela-fim").hidden = true; $("#barra").hidden = true; $("#tela-inicio").hidden = false;
   const salvo = ler(CHAVE);
   const temSalvo = salvo && !salvo.fim && salvo.deps;
-  const ultimoFim = salvo && salvo.fim && !salvo.enviado && CFG.rankingUrl && !rankingEncerrado();
+  const ultimoFim = salvo && salvo.fim && salvo.jogador && !salvo.enviado && CFG.rankingUrl && !rankingEncerrado();
   $("#tela-inicio").innerHTML = `
     <img class="capa" src="arte/capa.svg" alt="${esc(t("capaAlt"))}">
     <h1>${esc(t("h1"))}</h1>
@@ -2055,48 +2087,98 @@ function inicioExtra() {
   return partes.length ? `<p class="meta trofeus">${esc(partes.join(" · "))}</p>` : "";
 }
 
-/* ---------- ranking do congresso ---------- */
+/* ---------- ranking do congresso: dados antes de começar e registro das partidas ---------- */
 const CFG = window.EPIDEMIA_CONFIG || {};
 const rankingEncerrado = () => CFG.fimDadosPessoais && new Date() >= new Date(CFG.fimDadosPessoais);
+const pedeDados = () => !!CFG.rankingUrl && !rankingEncerrado();
+const contato = () => (Array.isArray(CFG.contato) ? CFG.contato.join("@") : CFG.contato || "—");
+const TERMOS = "2026-10-27";   // versão dos termos aceitos: mudar quando o texto dos termos mudar
+const emailOk = (e) => e.length <= 254 && /^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/.test(e);   // a mesma regra do Codigo.gs
+let jogadorEscolhido = null;   // dados confirmados em "Antes de empezar", para a partida que vai começar
 
-function cartaoRanking() {
-  const tit = `<h2>${esc(t("rankTit"))}</h2>`;
-  if (!CFG.rankingUrl) return `<div class="cartao">${tit}<p class="meta">${esc(t("rankFechado"))}</p></div>`;
-  if (S.enviado) return `<div class="cartao form-rank">${tit}<p class="msg-rank ok">${esc(t("rankJa")(S.enviado.posicao))}</p><div class="btns"><a class="btn sec" href="ranking.html">${esc(t("rankVer"))}</a></div></div>`;
-  if (rankingEncerrado()) return `<div class="cartao">${tit}<p class="meta">${esc(t("rankEncerrado"))}</p></div>`;
-  const j = ler("epidemia-py-jogador") || {};
-  return `<div class="cartao form-rank" id="form-rank">${tit}<p class="meta">${esc(t("rankIntro"))}</p>
-    <label>${esc(t("rankNome"))}<input type="text" id="r-nome" maxlength="40" autocomplete="name" value="${esc(j.nome || "")}"></label>
-    <label>${esc(t("rankFac"))}<input type="text" id="r-fac" maxlength="60" value="${esc(j.faculdade || "")}"></label>
-    <label>${esc(t("rankTurma"))}<input type="text" id="r-turma" maxlength="20" value="${esc(j.turma || "")}"></label>
-    <label class="consent"><input type="checkbox" id="r-ok"><span>${esc(t("rankConsent"))}</span></label>
-    <div class="btns"><button class="btn" type="button" id="btn-enviar">${esc(t("rankEnviar"))}</button></div>
-    <p class="msg-rank" id="r-msg" role="status"></p></div>`;
+/* Antes de começar (decisão do Gi, 27/10/2026): nome, e-mail, faculdade e turma + aceite dos termos para entrar
+   no ranking, ou jogar sem dados (a partida só conta) */
+function mostrarDados(v = ler("epidemia-py-jogador") || {}) {
+  janela = "dados";
+  abrirModal(`<h2>${esc(t("dadosTit"))}</h2><p class="meta">${esc(t("dadosIntro"))}</p>
+    <div class="form-rank">
+      <label>${esc(t("rankNome"))}<input type="text" id="d-nome" maxlength="40" autocomplete="name" value="${esc(v.nome || "")}"></label>
+      <label>${esc(t("rankEmail"))}<input type="email" id="d-email" maxlength="254" autocomplete="email" value="${esc(v.email || "")}"></label>
+      <label>${esc(t("rankFac"))}<input type="text" id="d-fac" maxlength="60" value="${esc(v.faculdade || "")}"></label>
+      <label>${esc(t("rankTurma"))}<input type="text" id="d-turma" maxlength="20" value="${esc(v.turma || "")}"></label>
+      <details class="termos"${v.termosAbertos ? " open" : ""}><summary>${esc(t("termosTit"))}</summary><ul>${t("termos")(contato()).map((l) => `<li>${esc(l)}</li>`).join("")}</ul></details>
+      <label class="consent"><input type="checkbox" id="d-ok"${v.ok ? " checked" : ""}><span>${esc(t("dadosOk"))}</span></label>
+      <p class="msg-rank" id="d-msg" role="status"></p>
+      <button class="btn" type="button" id="btn-dados-ok">${esc(t("dadosJogar"))}</button>
+      <button class="btn sec" type="button" id="btn-dados-sem">${esc(t("dadosSem"))}</button>
+    </div>`, "dados");
+}
+/* O que já foi digitado (para trocar de idioma sem perder) */
+const valoresDados = () => ({ nome: $("#d-nome").value, email: $("#d-email").value, faculdade: $("#d-fac").value, turma: $("#d-turma").value,
+  ok: $("#d-ok").checked, termosAbertos: $(".termos").open });
+
+function confirmarDados() {
+  const v = valoresDados();
+  const j = { nome: v.nome.trim(), email: v.email.trim().toLowerCase(), faculdade: v.faculdade.trim(), turma: v.turma.trim() };
+  const erro = (k) => { const m = $("#d-msg"); m.textContent = t(k); m.className = "msg-rank erro"; };
+  if (j.nome.length < 2 || !j.email || j.faculdade.length < 2 || !j.turma) return erro("dadosCampos");
+  if (!emailOk(j.email)) return erro("dadosEmail");
+  if (!v.ok) return erro("dadosSemOk");
+  guardar("epidemia-py-jogador", j);
+  jogadorEscolhido = j;
+  mostrarPersonagens();
 }
 
-async function enviarRanking() {
-  const nome = $("#r-nome").value.trim(), faculdade = $("#r-fac").value.trim(), turma = $("#r-turma").value.trim();
-  const msg = $("#r-msg"), btn = $("#btn-enviar");
-  const erro = (k) => { msg.textContent = t(k); msg.className = "msg-rank erro"; };
-  if (nome.length < 2 || faculdade.length < 2 || !turma) return erro("rankCampos");
-  if (!$("#r-ok").checked) return erro("rankSemOk");
-  guardar("epidemia-py-jogador", { nome, faculdade, turma });
-  btn.disabled = true; btn.textContent = t("rankEnviando"); msg.textContent = "";
-  try {
-    const r = await fetch(CFG.rankingUrl, {
-      method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ nome, faculdade, turma, consentimento: true, pontos: S.pontos, anos: S.log.map((x) => x.pts), idioma: lang, versao: CFG.versao || "", id: S.id }),
-    });
-    const d = await r.json();
-    if (d.ok || d.erro === "repetido") { S.enviado = { posicao: d.posicao || null }; salvar(); mostrarFim(); return; }
-    if (d.erro === "encerrado") { btn.hidden = true; return erro("rankEncerrado"); }
-    if (d.erro === "campos") throw new Error("campos");
-    if (d.erro === "limite" || d.erro === "cheio") throw new Error(d.erro);
-    throw new Error(d.erro || "erro");
-  } catch (e) {
-    btn.disabled = false; btn.textContent = t("rankEnviar");
-    erro(e.message === "campos" ? "rankCampos" : e.message === "limite" ? "rankLimite" : e.message === "cheio" ? "rankCheio" : "rankErro");
+/* Registro das partidas: os avisos de começo e de fim entram numa fila no celular e seguem para a planilha.
+   Sem conexão, ou com a planilha no teto, o jogo não trava: a fila tenta de novo em 30 s e quando a conexão volta. */
+const FILA = "epidemia-py-fila";
+let enviandoFila = false, filaParada = false, esperaFila = null;
+function avisar(acao) {
+  if (!CFG.rankingUrl || !S) return;
+  const ev = { acao, id: S.id, idioma: lang, versao: CFG.versao || "" };
+  if (S.jogador) { ev.dados = S.jogador; ev.termos = S.termos; }
+  if (acao === "fim") { ev.pontos = S.pontos; ev.anos = S.log.map((x) => x.pts); }
+  const fila = (ler(FILA) || []).filter((x) => !(x.acao === acao && x.id === ev.id)).slice(-19);   // até 20 avisos guardados
+  fila.push(ev);
+  guardar(FILA, fila);
+  enviarFila();
+}
+async function enviarFila() {
+  if (enviandoFila || !CFG.rankingUrl) return;
+  enviandoFila = true; filaParada = false;
+  clearTimeout(esperaFila);
+  let fila = ler(FILA) || [];
+  while (fila.length) {
+    const ev = fila[0];
+    let d;
+    try {
+      const r = await fetch(CFG.rankingUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(ev) });
+      d = await r.json();
+    } catch (e) { d = { ok: false, erro: "rede" }; }
+    if (!d.ok && ["rede", "limite", "servidor"].includes(d.erro)) { filaParada = true; break; }   // passageiro: tenta depois
+    fila = (ler(FILA) || []).filter((x) => !(x.acao === ev.acao && x.id === ev.id));   // relê: pode ter entrado aviso novo
+    guardar(FILA, fila);
+    if (ev.acao === "fim" && S && S.id === ev.id) { S.enviado = d.ok ? { posicao: d.posicao || null } : { erro: d.erro || "erro" }; salvar(); }
   }
+  enviandoFila = false;
+  if (filaParada) esperaFila = setTimeout(enviarFila, 30000);
+  atualizarCartaoRanking();
+}
+window.addEventListener("online", enviarFila);
+
+function cartaoRanking() {
+  const tit = `<h2>${esc(t("rankTit"))}</h2>`, ver = `<div class="btns"><a class="btn sec" href="ranking.html">${esc(t("rankVer"))}</a></div>`;
+  if (!CFG.rankingUrl) return `<div class="cartao" id="cartao-rank">${tit}<p class="meta">${esc(t("rankFechado"))}</p></div>`;
+  if (!S.jogador) return `<div class="cartao" id="cartao-rank">${tit}<p class="meta">${esc(t(rankingEncerrado() ? "rankEncerrado" : "rankSemDados"))}</p>${ver}</div>`;
+  const e = S.enviado;
+  const [cls, txt] = !e ? ["", t(filaParada ? "rankPendente" : "rankEnviando")]
+    : e.erro ? ["erro", t(e.erro === "cheio" ? "rankCheio" : e.erro === "encerrado" ? "rankEncerrado" : "rankFalhou")]
+    : ["ok", t("rankJa")(e.posicao)];
+  return `<div class="cartao form-rank" id="cartao-rank">${tit}<p class="msg-rank ${cls}" role="status">${esc(txt)}</p>${ver}</div>`;
+}
+function atualizarCartaoRanking() {
+  const el = $("#cartao-rank");
+  if (el && S && S.fim) el.outerHTML = cartaoRanking();
 }
 
 const creditosHTML = (comTitulo) => `<div class="creditos">${comTitulo ? `<h2>${esc(t("creditosTit"))}</h2>` : ""}${t("creditos").map((c) => `<p>${c}</p>`).join("")}</div>`;
@@ -2307,9 +2389,13 @@ function salvar() { guardar(CHAVE, S); }
 
 function novoJogo(pers = escolhaPers) {
   S = novoEstado(pers);
+  S.jogador = jogadorEscolhido;   // null: jogou sem dados (a partida conta, mas não entra no ranking)
+  S.termos = jogadorEscolhido ? TERMOS : "";
+  jogadorEscolhido = null;
   prepararInicio();
   iniciarAno();
   render();
+  avisar("inicio");
 }
 
 function mostrarModalDaFase() {
@@ -2380,7 +2466,9 @@ document.addEventListener("click", (ev) => {
     return;
   }
   if (alvo.closest("[data-proximo]")) { proximoAno(); return; }
-  if (alvo.id === "btn-nova") { mostrarPersonagens(); return; }
+  if (alvo.id === "btn-nova") { if (pedeDados()) mostrarDados(); else mostrarPersonagens(); return; }
+  if (alvo.id === "btn-dados-ok") { confirmarDados(); return; }
+  if (alvo.id === "btn-dados-sem") { jogadorEscolhido = null; mostrarPersonagens(); return; }
   if (alvo.id === "btn-pers-ok") { guardar("epidemia-py-pers", escolhaPers); fecharModal(); novoJogo(escolhaPers); return; }
   if (alvo.id === "btn-continuar") { continuar(); return; }
   if (alvo.id === "btn-fechar") { fecharAno(); return; }
@@ -2389,20 +2477,15 @@ document.addEventListener("click", (ev) => {
   if (alvo.id === "btn-comp-enviar") { enviarLink(); return; }
   if (alvo.id === "btn-comp-copiar") { copiarLink(); return; }
   if (alvo.id === "btn-comp-fechar") { fecharModal(); return; }   // só fecha: na tela de início não volta para a partida
-  if (alvo.id === "btn-enviar") { enviarRanking(); return; }
   if (alvo.id === "btn-ultimo") { S = ler(CHAVE); mostrarFim(); return; }
   if (alvo.id === "btn-idioma") {
     lang = lang === "es" ? "pt" : "es"; guardar("epidemia-py-lang", lang);
     document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
     if (!$("#modal").hidden) ({ evento: mostrarEvento, demanda: mostrarDemanda, quiz: mostrarQuiz, missoes: mostrarMissoes, arvore: mostrarArvore, pers: mostrarPersonagens, financas: mostrarFinancas, prestigio: mostrarPrestigio, acao: () => mostrarAcao(S.fichaAtual.id, S.fichaAtual.a),
-      resumo: () => mostrarResumo(S.log[S.log.length - 1]) }[janela] || mostrarAjuda)();
+      resumo: () => mostrarResumo(S.log[S.log.length - 1]), dados: () => mostrarDados(valoresDados()) }[janela] || mostrarAjuda)();
     if (!S) telaInicio();
-    else if (S.fim) {
-      const ids = ["#r-nome", "#r-fac", "#r-turma"], campos = ids.map((c) => $(c) && $(c).value), ok = $("#r-ok") && $("#r-ok").checked;
-      mostrarFim();
-      ids.forEach((c, i) => { if ($(c) && campos[i] != null) $(c).value = campos[i]; });
-      if ($("#r-ok")) $("#r-ok").checked = !!ok;
-    } else render();
+    else if (S.fim) mostrarFim();
+    else render();
   }
 });
 document.addEventListener("keydown", (ev) => {
@@ -2431,8 +2514,14 @@ async function copiarLink() {
   catch (e) { $("#comp-msg").textContent = t("compFalhou"); }
 }
 
-if (rankingEncerrado()) { try { localStorage.removeItem("epidemia-py-jogador"); } catch (e) { /* sem armazenamento */ } }
+// Depois de 31/10/2026 o celular esquece os dados do jogador (termos), também na partida salva e na fila de envio
+if (rankingEncerrado()) {
+  try { localStorage.removeItem("epidemia-py-jogador"); localStorage.removeItem(FILA); } catch (e) { /* sem armazenamento */ }
+  const salvo = ler(CHAVE);
+  if (salvo && salvo.jogador) { salvo.jogador = null; guardar(CHAVE, salvo); }
+}
 document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
 montarMapa();
 calcularLimites();
 telaInicio();
+enviarFila();   // avisos que ficaram na fila (sem conexão da última vez)
