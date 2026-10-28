@@ -189,7 +189,7 @@ const LINKS_FONTES = {
  },
  "directrelief_2022": {
   "url": "https://www.directrelief.org/2022/10/direct-relief-amgen-and-c-can-team-up-to-improve-access-to-breast-cancer-diagnostics-and-treatment-in-paraguay/",
-  "arquivo": null
+  "arquivo": "https://web.archive.org/web/20261028134420/https://www.directrelief.org/2022/10/direct-relief-amgen-and-c-can-team-up-to-improve-access-to-breast-cancer-diagnostics-and-treatment-in-paraguay/"
  },
  "codas_2016": {
   "url": "https://doi.org/10.1016/j.canep.2015.11.005",
