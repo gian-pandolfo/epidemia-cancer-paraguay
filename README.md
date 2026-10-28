@@ -121,3 +121,8 @@ Pedidos do Gi na manhã do congresso: «os cenários aleatórios precisam ter ba
 - **Manchetes do ano:** tocar no ano (ou no «📰» da ajuda) abre o fato do ano, o imprevisto e a demanda em curso e os títulos reais da imprensa e dos documentos daquele ano, com «ver ↗»; dá para voltar aos anos anteriores.
 - **Luz:** a 1.ª vez que se toca em Luz | Tasas abre a explicação com um desenho em três quadros (névoa = casos ocultos → diagnóstico revela → luz = equilíbrio 0–3) e a nota sobre Tasas (Atlas 2015–2019); o «?» ao lado dos botões e o título da legenda reabrem; a troca de camada dá um brilho curto no mapa.
 - Partidas salvas continuam (mesma chave `epidemia-py-v4`).
+
+## Ranking a um toque e mapa a partir do ranking (beta13, 28/10/2026)
+
+- **No jogo:** 🏆 discreto na barra de baixo, em qualquer fase, e «🏆 Ranking» na tela de início; a partida fica salva e o ranking tem «Volver al juego».
+- **No ranking:** botão «Mapa del cáncer», que abre o mapa público do congresso (`/mapa/`), ao lado de «Abrir el juego» e «Copiar enlace».
