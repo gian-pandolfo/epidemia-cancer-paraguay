@@ -102,7 +102,7 @@ main { max-width: 640px; margin: 0 auto; }
 .seg button { border: 0; background: transparent; border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: .88rem; cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 .seg.mini { display: grid; grid-template-columns: 1fr 1fr; border-radius: 10px; padding: 2px; }
-.seg.mini button { padding: 7px 2px; font-size: .68rem; border-radius: 8px; }
+.seg.mini button { padding: 6px 2px; font-size: .68rem; border-radius: 8px; }   /* um pouco mais alto que antes, sem a caixa do canto cobrir «Concepción» */
 .legenda { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; font-size: .64rem; color: var(--muted); padding: 4px 6px; border-radius: 8px; background: color-mix(in srgb, var(--bg) 80%, transparent); }
 .legenda .leg-tit { grid-column: 1 / -1; font-weight: 700; color: var(--ink); line-height: 1.2; white-space: normal; }
 .legenda span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
@@ -110,7 +110,7 @@ main { max-width: 640px; margin: 0 auto; }
 .legenda i { width: 12px; height: 9px; border-radius: 3px; border: 1px solid var(--line); display: inline-block; flex: none; }
 /* Números do país em tempo real, logo abaixo de Equilíbrio | Taxas: cada um também vira a camada do mapa */
 .vivo { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
-.vivo button { display: grid; text-align: left; min-width: 0; padding: 4px 5px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); cursor: pointer; line-height: 1.1; }
+.vivo button { display: grid; text-align: left; min-width: 0; padding: 2px 5px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); cursor: pointer; line-height: 1.1; }
 .vivo span { font-size: .56rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .vivo b { font-size: .76rem; font-variant-numeric: tabular-nums; }
 .vivo .v-mort b { color: var(--warn); }
@@ -344,7 +344,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .acao { min-height: 40px; padding: 5px; }
   .painel-acoes { gap: 5px; margin-top: 6px; }
   .barra .btn { padding: 10px 16px; min-height: 46px; font-size: 1rem; }
-  .legenda { font-size: .6rem; }
+  .legenda { font-size: .6rem; padding: 3px 6px; row-gap: 1px; }   /* a caixa do canto não cobre «Concepción» em 375 px */
 }
 /* celulares até 440 px: o topo continua numa linha só com o botão de som, mesmo com o placar do fim do jogo (27/10/2026).
    ".hud" na frente porque regras do tema, mais abaixo, também mexem em chip e retrato */
