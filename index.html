@@ -290,6 +290,9 @@ main { max-width: 640px; margin: 0 auto; }
 .legenda.luz-leg { grid-template-columns: repeat(4, auto) 1fr; font-size: .8rem; }
 .chips-anos { display: flex; flex-wrap: wrap; gap: 6px; } .chips-anos .chip { min-height: 30px; padding: 3px 10px; }
 .titulares li { margin-bottom: 6px; }
+/* beta13: entrar no ranking em qualquer fase (pedido do Gi, 28/10/2026): 🏆 discreto na barra de baixo */
+.barra .ranking-mini { flex: none; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); background: var(--surface-2); text-decoration: none; font-size: .95rem; clip-path: var(--chanfro-p); }
+.inicio .btns .ranking-link { text-decoration: none; }
 .hab-desc { display: grid; gap: 6px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
 .hab-desc p { margin: 0; font-size: .88rem; }
 .mini-lista { padding: 10px 12px; font-size: .84rem; }
@@ -606,6 +609,7 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
 
 <footer class="barra" id="barra" hidden>
   <div class="barra-in">
+    <a class="ranking-mini" id="btn-ranking" href="ranking.html" aria-label="Ranking" title="Ranking">🏆</a>
     <div class="dica" id="dica"><button class="missao-mini" id="btn-missoes" type="button"></button><span id="dica-txt"></span></div>
     <button class="btn" id="btn-fechar" type="button"></button>
   </div>
@@ -616,11 +620,11 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
 <div id="faixa" class="faixa" role="status" aria-live="polite" hidden></div>
 </div>
 
-<script src="config.js?v=12"></script>
-<script src="dados.js?v=12"></script>
-<script src="links.js?v=12"></script>
-<script src="icones.js?v=12"></script>
-<script src="jogo.js?v=12"></script>
-<script src="musica.js?v=12"></script>
+<script src="config.js?v=13"></script>
+<script src="dados.js?v=13"></script>
+<script src="links.js?v=13"></script>
+<script src="icones.js?v=13"></script>
+<script src="jogo.js?v=13"></script>
+<script src="musica.js?v=13"></script>
 </body>
 </html>

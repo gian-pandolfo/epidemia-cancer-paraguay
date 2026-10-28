@@ -88,6 +88,8 @@ button { font: inherit; color: inherit; }
 .qr-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 .qr-btns .btn-ico { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; min-height: 46px; }
 .qr-btns .abrir { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+/* beta13 (pedido do Gi, 28/10/2026): o mapa público do congresso, a um toque do ranking */
+.qr-btns .mapa { border-color: var(--ouro); color: var(--ouro); }
 </style>
 </head>
 <body>
@@ -106,7 +108,7 @@ button { font: inherit; color: inherit; }
       <h2 id="t-escaneie">Escanea y juega</h2>
       <div class="qr" id="qr"><img src="qr-jogo.svg" alt="QR" width="240" height="240"></div>
       <p class="url" id="url"></p>
-      <div class="qr-btns"><a class="btn-ico abrir" id="abrir-jogo" href="./">▶ <span id="t-abrir">Abrir el juego</span></a><button class="btn-ico" id="copiar" type="button">⧉ <span id="t-copiar">Copiar enlace</span></button></div>
+      <div class="qr-btns"><a class="btn-ico abrir" id="abrir-jogo" href="./">▶ <span id="t-abrir">Abrir el juego</span></a><button class="btn-ico" id="copiar" type="button">⧉ <span id="t-copiar">Copiar enlace</span></button><a class="btn-ico mapa" id="abrir-mapa" href="https://gian-pandolfo.github.io/epidemia-cancer-paraguay/mapa/">🗺️ <span id="t-mapa">Mapa del cáncer</span></a></div>
     </div>
     <div class="cartao estat"><b id="partidas">—</b><span id="t-partidas">partidas jugadas</span></div>
   </aside>
@@ -117,7 +119,7 @@ button { font: inherit; color: inherit; }
   <span class="estado" id="estado"></span>
 </footer>
 
-<script src="config.js?v=12"></script>
-<script src="ranking.js?v=12"></script>
+<script src="config.js?v=13"></script>
+<script src="ranking.js?v=13"></script>
 </body>
 </html>

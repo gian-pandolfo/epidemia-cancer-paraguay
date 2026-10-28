@@ -2039,7 +2039,7 @@ function telaInicio() {
     <details class="cartao regras"><summary>${esc(t("ajuda"))}</summary><ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol></details>
     <div class="pers-teaser">${Object.keys(PERSONAGENS).map(avatarHTML).join("")}<span>${esc(t("persTeaser"))}</span></div>
     <div class="btns">${temSalvo ? `<button class="btn" id="btn-continuar" type="button">${esc(t("continuar"))}</button><button class="btn sec" id="btn-nova" type="button">${esc(t("nova"))}</button>`
-      : `<button class="btn" id="btn-nova" type="button">${esc(t("comecar"))}</button>`}${ultimoFim ? `<button class="btn sec" id="btn-ultimo" type="button">${esc(t("ultimo"))}</button>` : ""}<button class="btn sec" id="btn-compartir-inicio" type="button">${esc(t("compartir"))}</button></div>
+      : `<button class="btn" id="btn-nova" type="button">${esc(t("comecar"))}</button>`}${ultimoFim ? `<button class="btn sec" id="btn-ultimo" type="button">${esc(t("ultimo"))}</button>` : ""}<button class="btn sec" id="btn-compartir-inicio" type="button">${esc(t("compartir"))}</button><a class="btn sec ranking-link" href="ranking.html">🏆 Ranking</a></div>
     ${inicioExtra()}
     <p class="aviso">${esc(t("aviso"))}</p>
     ${creditosHTML(false)}`;
