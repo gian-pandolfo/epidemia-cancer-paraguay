@@ -2013,7 +2013,7 @@ function render() {
   if (!S || S.fim) return renderHud();
   S.orc = dec(S.orc);   // dinheiro em múltiplos de 0,1, igual ao que aparece na tela
   verificar();
-  if (S.fase === "jogando" && !S.dicaChips) { S.dicaChips = true; faixa("💰", t("dicaChipsTit"), t("dicaChipsTxt"), "ouro"); }   // beta12: uma vez por partida
+  if (S.fase === "jogando" && !S.dicaChips) { S.dicaChips = true; faixa("💡", t("dicaChipsTit"), t("dicaChipsTxt"), "ouro"); }   // beta12: uma vez por partida (ícone 💡: o título já traz 💰)
   $("#tela-inicio").hidden = true; $("#tela-fim").hidden = true; $("#tela-jogo").hidden = false; $("#barra").hidden = false;
   document.querySelectorAll("#modos button").forEach((b) => { b.textContent = b.dataset.modo === "cob" ? t("modoCob") : t("modoReg"); });
   montarVivo();
