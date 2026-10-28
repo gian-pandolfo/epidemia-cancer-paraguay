@@ -57,16 +57,17 @@ const T = {
       "Arriba a la derecha: incidencia, prevalencia, muertes y curas del país por año; cambian en el acto con cada decisión. Tócalas para ver el mapa de cada una.",
       "Cada año trae un hecho real, a veces un imprevisto (royalties, epidemias, donaciones, recortes del Congreso) y una demanda de la sociedad. Cumplir la demanda da ⭐ y 🎖️; rechazarla cuesta 🎖️ 1; prometer y no cumplir cuesta más.",
       "🎯 Misiones, ⚡ desafíos relámpago y 🏅 logros dan premios. ❤️ Vidas salvadas, 🍎 casos evitados y 🕯️ muertes sin diagnóstico muestran el efecto de tus decisiones (modelo del juego, comparado con no hacer nada).",
-      "Los ⭐ puntos salen sobre todo del resultado: cada vida salvada vale 1, cada caso evitado ½ y cada muerte sin diagnóstico quita ½. La estructura construida suma poco.",
+      "Los ⭐ puntos salen sobre todo del resultado: cada vida salvada vale 1 y cada caso evitado ½. Meta del país: menos de 400 muertes sin diagnóstico al año; cada una por encima quita ½ y cada una por debajo suma ½. La estructura construida suma poco.",
       "Donde la estadística es baja, falta diagnóstico, no cáncer: diagnosticar revela casos ocultos y la tasa registrada sube. ¡Es buena señal!",
     ],
     aviso: "Simulación educativa (beta). Los datos de partida y el hecho histórico de cada año son reales, con fuente. Los efectos de las acciones, los personajes, los números en tiempo real, los imprevistos, las demandas y los puntos son del modelo del juego.",
-    creditosTit: "Créditos",
+    creditosTit: "Créditos", dicaFin: "💡 Poco dinero: toca 💰 arriba para conseguir más (impuesto al tabaco, préstamo…) o 🎖️ para pedir una ampliación al Congreso.",
     creditos: [
       "<b>Desarrollo:</b> Gianmarlon Pandolfo, estudiante de Medicina (UNINTER Tres Fronteras).",
       "<b>Trabajo base:</b> Silva GIS, Pandolfo GA, et al. <i>Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control</i>. Revisión sistemática, 2026.",
       "<b>Coautoría:</b> Claude Opus 5.5 (Anthropic), en el diseño del juego, la programación y la verificación de las fuentes.",
       "<b>Arte:</b> ilustraciones vectoriales hechas para el juego (estilo «luz contra la niebla»). Tipografías Big Shoulders Display y Atkinson Hyperlegible (licencia OFL).",
+      "<b>Música:</b> composición original, tocada por el propio celular (guitarra de cuerdas dobles, como el ronroco, en re menor). Sin archivos de audio ni obras de terceros. Botón 🔊/🔇 arriba.",
     ],
     comecar: "Empezar", continuar: "Continuar partida", nova: "Nueva partida",
     ajuda: "Cómo se juega", fechar: "Cerrar",
@@ -195,7 +196,8 @@ const T = {
     funcoes: { P: "Prevención", D: "Diagnóstico", T: "Tratamiento", X: "Investigación" },
     fichaCompra: "Compra", fichaPrest: "Prestigio", fichaManut: "Mantenimiento", porAnoCurto: "/año",
     fichaImplementar: (c, p) => `Implementar · 💰 ${c}${p ? ` · 🎖️ ${p}` : ""}`,
-    fichaConv: (c) => `🤝 Convenio: 💰 ${c} por año (ahora y cada enero), sin compra ni prestigio`,
+    fichaConv: (c) => `🤝 Convenio · 💰 ${c}/año`, fichaConvNota: "Convenio: se paga ahora y cada enero, sin compra ni prestigio.",
+    fichaAperta: (x) => `⚠️ Con esto, el mantenimiento de enero supera el presupuesto en 💰 ${x}: se cerrará lo más caro.`,
     fichaManutNota: "El mantenimiento se paga cada enero, a partir del año siguiente.",
     evEconomia: (r, m) => `Presupuesto del año: +💰 ${r} · mantenimiento y convenios: −💰 ${m}`,
     evFechou: (l) => `Sin dinero para el mantenimiento: se cerró ${l} (−🎖️ 2 cada uno).`,
@@ -207,7 +209,7 @@ const T = {
     bloqRef2: "🔒 2.ª", bloqRef2Txt: "La atención terciaria necesita atención secundaria en el departamento o en un vecino (derivación).",
     bloqPrest: (p) => `Necesitas 🎖️ ${p} de prestigio.`, bloqOrc: "Presupuesto insuficiente.", bloqConvAno: (a) => `🤝 Convenios desde ${a}`,
     semPrest: "Prestigio insuficiente",
-    economia: (r) => `💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/año`,
+    economia: (r) => `${r < 0 ? "⚠️ " : ""}💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/año`,
     fechouTxt: (ico, n, d) => `Sin dinero: se cerró ${ico} ${n} en ${d} (−🎖️ 2)`,
     resPrestAno: (a, b) => `Prestigio: 🎖️ ${a} → ${b}`, resPrest: (c) => `Prestigio al final: 🎖️ <b>${c}</b>`,
     resFechou: (l) => `Cierres por falta de dinero: ${l}`, resHab: (l) => `Habilidades elegidas: ${l}`,
@@ -223,7 +225,7 @@ const T = {
     quizCerto: (o) => `¡Correcto! +⭐ ${BONUS_QUIZ} · +💰 ${o} · +🎖️ 1`, quizErrado: "No era así.", quizSeguir: "Seguir",
     racha: (n) => `Racha de ${n} aciertos 🔥`, rachaPremio: "+🎖️ 2 por la racha",
     nivelSobe: (n) => `¡Equilibrio ${n}/3!`, novoRecorde: "¡Nuevo récord!", recordeTxt: "Superaste tu mejor puntaje en este celular.",
-    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Presupuesto anual menos mantenimiento · vidas salvadas (modelo) · puntos que suma este año",
+    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ ${p}`, rodapeTit: "Presupuesto anual menos mantenimiento · vidas salvadas (modelo) · saldo de puntos del año (si queda negativo, el año suma 0)", contaPiso: "= 0 (el año no baja de 0)",
     consTit: "Consecuencia de tus decisiones",
     metVidas: "vidas salvadas", vidasPerd: "vidas perdidas", metEvit: "casos evitados por la prevención", metSemDx: "murieron sin diagnóstico",
     metModelo: "Modelo del juego, comparado con no hacer nada.",
@@ -252,9 +254,9 @@ const T = {
     promOk: (n, d, p, pr) => `Compromiso cumplido: ${n} en ${d} (+⭐ ${p} · +🎖️ ${pr})`,
     promFalhou: (n, d, p, pr) => `Compromiso incumplido: ${n} en ${d} (−⭐ ${p} · −🎖️ ${pr})`,
     demAgora: (p, pr) => `+⭐ ${p}${pr ? ` · +🎖️ ${pr}` : ""}`,
-    demSe: (p, pr, pf, prf) => `si cumples: +⭐ ${p} · +🎖️ ${pr} · si no: −⭐ ${pf} · −🎖️ ${prf}`,
+    demSe: (p, pr, pf, prf) => `si cumples: +⭐ ${p} · +🎖️ ${pr}\nsi no cumples: −⭐ ${pf} · −🎖️ ${prf}`,
     demRegra: "Cumplir da puntos y prestigio; rechazar cuesta poco. Prometer y no cumplir cuesta más: cuanto mayor la promesa, mayor el premio y la pena.",
-    contaTit: "Puntos del año: 🏗️ ¼ de la estructura, ❤️ 1 por vida salvada, 🍎 ½ por caso evitado, 🕯️ −½ por muerte sin diagnóstico, 📣 demanda y ⚡ desafío (de 0 a 3.000 por año).",
+    contaTit: "Puntos del año: 🏗️ ¼ de la estructura, ❤️ 1 por vida salvada, 🍎 ½ por caso evitado, 🕯️ meta de menos de 400 muertes sin diagnóstico al año (−½ por cada una por encima, +½ por debajo), 📣 demanda y ⚡ desafío (de 0 a 3.000 por año).", demReq: (r) => `requisito: ${r}`,
     resPais: (c, m, k) => `País este año (modelo): ${c} casos diagnosticados, ${m} muertes y ${k} curas.`,
     resComp: (ok, tot) => `Compromisos cumplidos: <b>${ok}</b> de ${tot}`,
     resTot: (c, m, k) => `En 10 años (modelo del juego): <b>${c}</b> casos diagnosticados, <b>${m}</b> muertes y <b>${k}</b> curas.`,
@@ -275,16 +277,17 @@ const T = {
       "No alto à direita: incidência, prevalência, óbitos e curas do país por ano; mudam na hora a cada decisão. Toque nelas para ver o mapa de cada uma.",
       "Cada ano traz um fato real, às vezes um imprevisto (royalties, epidemias, doações, cortes do Congresso) e uma demanda da sociedade. Cumprir a demanda dá ⭐ e 🎖️; recusar custa 🎖️ 1; prometer e não cumprir custa mais.",
       "🎯 Missões, ⚡ desafios relâmpago e 🏅 conquistas dão prêmios. ❤️ Vidas salvas, 🍎 casos evitados e 🕯️ óbitos sem diagnóstico mostram o efeito das suas decisões (modelo do jogo, comparado com não fazer nada).",
-      "Os ⭐ pontos vêm sobretudo do resultado: cada vida salva vale 1, cada caso evitado ½ e cada óbito sem diagnóstico tira ½. A estrutura construída soma pouco.",
+      "Os ⭐ pontos vêm sobretudo do resultado: cada vida salva vale 1 e cada caso evitado ½. Meta do país: menos de 400 óbitos sem diagnóstico por ano; cada um acima tira ½ e cada um abaixo soma ½. A estrutura construída soma pouco.",
       "Onde a estatística é baixa, falta diagnóstico, não câncer: diagnosticar revela casos ocultos e a taxa registrada sobe. É bom sinal!",
     ],
     aviso: "Simulação educativa (beta). Os dados de partida e o fato histórico de cada ano são reais, com fonte. Os efeitos das ações, os personagens, os números em tempo real, os imprevistos, as demandas e os pontos são do modelo do jogo.",
-    creditosTit: "Créditos",
+    creditosTit: "Créditos", dicaFin: "💡 Pouco dinheiro: toque 💰 no alto para conseguir mais (imposto sobre o tabaco, empréstimo…) ou 🎖️ para pedir uma ampliação ao Congresso.",
     creditos: [
       "<b>Desenvolvimento:</b> Gianmarlon Pandolfo, estudante de Medicina (UNINTER Tres Fronteras).",
       "<b>Trabalho base:</b> Silva GIS, Pandolfo GA, et al. <i>Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control</i>. Revisão sistemática, 2026.",
       "<b>Coautoria:</b> Claude Opus 5.5 (Anthropic), no desenho do jogo, na programação e na conferência das fontes.",
       "<b>Arte:</b> ilustrações vetoriais feitas para o jogo (estilo «luz contra a névoa»). Tipografias Big Shoulders Display e Atkinson Hyperlegible (licença OFL).",
+      "<b>Música:</b> composição original, tocada pelo próprio celular (violão de cordas duplas, como o ronroco, em ré menor). Sem arquivos de áudio nem obras de terceiros. Botão 🔊/🔇 no alto.",
     ],
     comecar: "Começar", continuar: "Continuar partida", nova: "Nova partida",
     ajuda: "Como se joga", fechar: "Fechar",
@@ -413,7 +416,8 @@ const T = {
     funcoes: { P: "Prevenção", D: "Diagnóstico", T: "Tratamento", X: "Pesquisa" },
     fichaCompra: "Compra", fichaPrest: "Prestígio", fichaManut: "Manutenção", porAnoCurto: "/ano",
     fichaImplementar: (c, p) => `Implantar · 💰 ${c}${p ? ` · 🎖️ ${p}` : ""}`,
-    fichaConv: (c) => `🤝 Convênio: 💰 ${c} por ano (agora e todo janeiro), sem compra nem prestígio`,
+    fichaConv: (c) => `🤝 Convênio · 💰 ${c}/ano`, fichaConvNota: "Convênio: paga-se agora e todo janeiro, sem compra nem prestígio.",
+    fichaAperta: (x) => `⚠️ Com isto, a manutenção de janeiro passa do orçamento em 💰 ${x}: o mais caro vai fechar.`,
     fichaManutNota: "A manutenção se paga todo janeiro, a partir do ano seguinte.",
     evEconomia: (r, m) => `Orçamento do ano: +💰 ${r} · manutenção e convênios: −💰 ${m}`,
     evFechou: (l) => `Sem dinheiro para a manutenção: fechou ${l} (−🎖️ 2 cada).`,
@@ -425,7 +429,7 @@ const T = {
     bloqRef2: "🔒 2ª", bloqRef2Txt: "A atenção terciária precisa de atenção secundária no departamento ou num vizinho (encaminhamento).",
     bloqPrest: (p) => `Você precisa de 🎖️ ${p} de prestígio.`, bloqOrc: "Orçamento insuficiente.", bloqConvAno: (a) => `🤝 Convênios a partir de ${a}`,
     semPrest: "Prestígio insuficiente",
-    economia: (r) => `💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/ano`,
+    economia: (r) => `${r < 0 ? "⚠️ " : ""}💰 ${r >= 0 ? "+" : "−"}${fmtM(Math.abs(r))}/ano`,
     fechouTxt: (ico, n, d) => `Sem dinheiro: fechou ${ico} ${n} em ${d} (−🎖️ 2)`,
     resPrestAno: (a, b) => `Prestígio: 🎖️ ${a} → ${b}`, resPrest: (c) => `Prestígio no fim: 🎖️ <b>${c}</b>`,
     resFechou: (l) => `Fechamentos por falta de dinheiro: ${l}`, resHab: (l) => `Habilidades escolhidas: ${l}`,
@@ -441,7 +445,7 @@ const T = {
     quizCerto: (o) => `Correto! +⭐ ${BONUS_QUIZ} · +💰 ${o} · +🎖️ 1`, quizErrado: "Não era assim.", quizSeguir: "Continuar",
     racha: (n) => `Sequência de ${n} acertos 🔥`, rachaPremio: "+🎖️ 2 pela sequência",
     nivelSobe: (n) => `Equilíbrio ${n}/3!`, novoRecorde: "Novo recorde!", recordeTxt: "Você superou sua melhor pontuação neste celular.",
-    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ +${p}`, rodapeTit: "Orçamento anual menos manutenção · vidas salvas (modelo) · pontos que soma neste ano",
+    rodapeV4: (e, v, p) => `${e} · ❤️ ${v} · ⭐ ${p}`, rodapeTit: "Orçamento anual menos manutenção · vidas salvas (modelo) · saldo de pontos do ano (se ficar negativo, o ano soma 0)", contaPiso: "= 0 (o ano não fica abaixo de 0)",
     consTit: "Consequência das suas decisões",
     metVidas: "vidas salvas", vidasPerd: "vidas perdidas", metEvit: "casos evitados pela prevenção", metSemDx: "morreram sem diagnóstico",
     metModelo: "Modelo do jogo, comparado com não fazer nada.",
@@ -470,9 +474,9 @@ const T = {
     promOk: (n, d, p, pr) => `Compromisso cumprido: ${n} em ${d} (+⭐ ${p} · +🎖️ ${pr})`,
     promFalhou: (n, d, p, pr) => `Compromisso não cumprido: ${n} em ${d} (−⭐ ${p} · −🎖️ ${pr})`,
     demAgora: (p, pr) => `+⭐ ${p}${pr ? ` · +🎖️ ${pr}` : ""}`,
-    demSe: (p, pr, pf, prf) => `se cumprir: +⭐ ${p} · +🎖️ ${pr} · se não: −⭐ ${pf} · −🎖️ ${prf}`,
+    demSe: (p, pr, pf, prf) => `se cumprir: +⭐ ${p} · +🎖️ ${pr}\nse não cumprir: −⭐ ${pf} · −🎖️ ${prf}`,
     demRegra: "Cumprir dá pontos e prestígio; recusar custa pouco. Prometer e não cumprir custa mais: quanto maior a promessa, maior o prêmio e a pena.",
-    contaTit: "Pontos do ano: 🏗️ ¼ da estrutura, ❤️ 1 por vida salva, 🍎 ½ por caso evitado, 🕯️ −½ por óbito sem diagnóstico, 📣 demanda e ⚡ desafio (de 0 a 3.000 por ano).",
+    contaTit: "Pontos do ano: 🏗️ ¼ da estrutura, ❤️ 1 por vida salva, 🍎 ½ por caso evitado, 🕯️ meta de menos de 400 óbitos sem diagnóstico por ano (−½ por cada um acima, +½ abaixo), 📣 demanda e ⚡ desafio (de 0 a 3.000 por ano).", demReq: (r) => `requisito: ${r}`,
     resPais: (c, m, k) => `País neste ano (modelo): ${c} casos diagnosticados, ${m} óbitos e ${k} curas.`,
     resComp: (ok, tot) => `Compromissos cumpridos: <b>${ok}</b> de ${tot}`,
     resTot: (c, m, k) => `Em 10 anos (modelo do jogo): <b>${c}</b> casos diagnosticados, <b>${m}</b> óbitos e <b>${k}</b> curas.`,
@@ -1234,8 +1238,11 @@ const pontosAno = () => DEPS.reduce((s, d) => s + pontosDep(d.id), 0);
    ¼ da estrutura + 1 por vida salva + ½ por caso evitado (com os bônus do departamento) − ½ por óbito sem diagnóstico.
    A missão de ⭐× multiplica o ano, a demanda soma ou tira, e o ano fica entre 0 e 3.000 (o servidor do ranking confere) */
 const PESO = { estr: 0.25, vida: 1, evit: 0.5, semdx: 0.5 };
+/* Meta do país (jogo 2 da revisão, 27/10/2026): menos de 400 óbitos sem diagnóstico por ano. Cada um acima tira ½ ⭐, cada um
+   abaixo soma ½. Antes, os ~680 do começo tiravam ~340 de todo mundo e o ano ficava no piso, engolindo compras e demandas */
+const META_SEMDX = 400;
 function partesAno(estr, inds) {
-  const p = { estr: PESO.estr * estr, vidas: 0, evit: 0, semdx: 0 };
+  const p = { estr: PESO.estr * estr, vidas: 0, evit: 0, semdx: PESO.semdx * META_SEMDX };
   for (const d of DEPS) {
     const m = modPts(d.id), x = inds[d.id];
     p.vidas += PESO.vida * x.vidas * m;
@@ -1244,10 +1251,12 @@ function partesAno(estr, inds) {
   }
   return p;
 }
-function totalAno(p, mult, dem) {
+/* Saldo do ano antes do piso: pode ser negativo (mostrado no rodapé e no resumo, para o jogador ver cada compra contar) */
+function saldoAno(p, mult, dem) {
   const b = p.estr + p.vidas + p.evit + p.semdx;
-  return Math.min(3000, Math.max(0, Math.round((b > 0 ? b * mult : b) + dem)));
+  return (b > 0 ? b * mult : b) + dem;
 }
+const totalAno = (p, mult, dem) => Math.min(3000, Math.max(0, Math.round(saldoAno(p, mult, dem))));
 /* Pontos que o ano vai dar com o que já está feito (a mesma conta do fim do ano, sem o desafio relâmpago) */
 function previsaoAno() {
   const resto = (12 - S.mes) / 12, inds = {};
@@ -1255,7 +1264,7 @@ function previsaoAno() {
     const st = S.deps[d.id], a = anoDep(d.id);
     inds[d.id] = { vidas: st.ind.vidas + a.vidas * resto, evit: st.ind.evit + a.evit * resto, semdx: st.ind.semdx + a.semdx * resto };
   }
-  return totalAno(partesAno(S.ptsAno + pontosAno() * resto, inds), S.multAno, S.demPts || 0);
+  return Math.min(3000, Math.round(saldoAno(partesAno(S.ptsAno + pontosAno() * resto, inds), S.multAno, S.demPts || 0)));
 }
 
 /* ---------- formatação ---------- */
@@ -1394,7 +1403,8 @@ function fecharAno() {
   const dem = S.demPts || 0;
   const pts = totalAno(partes, S.multAno, dem) + (S.quizOk ? BONUS_QUIZ : 0);   // teto do ano no ranking + acerto do desafio
   S.pontos += pts;
-  const parc = { estr: Math.round(partes.estr), vidas: Math.round(partes.vidas), evit: Math.round(partes.evit), semdx: Math.round(partes.semdx), mult: S.multAno, dem };
+  const parc = { estr: Math.round(partes.estr), vidas: Math.round(partes.vidas), evit: Math.round(partes.evit), semdx: Math.round(partes.semdx), mult: S.multAno, dem,
+    piso: saldoAno(partes, S.multAno, dem) < 0 };
   ganharPrest(novosEq);
   ganharPrest(-Math.round(filas.length * (num("filaMeia") ? 0.5 : 1)));   // fila tira prestígio
   const n3 = DEPS.filter((d) => equil(d.id) >= 1).length;
@@ -1949,6 +1959,8 @@ function mostrarAcao(id, a) {
   const pode = !pub && !b && c <= S.orc && p <= S.prest;
   const motivo = pub ? t("fichaAtivo") : b ? b.txt : c > S.orc ? t("bloqOrc") : p > S.prest ? t("bloqPrest")(p) : "";
   const temConv = ACOES[a].conv && !pub, convOk = ano() >= convLib();
+  // janeiro: renda menos manutenção depois desta compra (ou deste convênio); negativo = algo vai fechar
+  const saldoJan = rendaAno() - manutAno(), apertaCompra = !pub && saldoJan - manutAcao(a) < 0, apertaConv = temConv && !cv && saldoJan - anuidadeConv(a) < 0;
   abrirModal(`
     <div class="ficha-topo"><span class="ficha-ico" aria-hidden="true" style="--nv: ${ACOES[a].nivel === "X" ? "var(--ouro)" : `var(--nv-${ACOES[a].nivel.toLowerCase()})`}">${ico(a)}</span><div><h2>${esc(nome)}</h2><p class="meta">${esc(DEP[id].nome)} · ${esc(t("funcoes")[ACOES[a].nivel])} → ${esc(alvo)}</p></div></div>
     <p><span class="nat n${at}">${esc(t("niveisAt")[at])}</span></p>
@@ -1957,8 +1969,9 @@ function mostrarAcao(id, a) {
       <div><small>${esc(t("fichaPrest"))}</small><b>${ico("medalha")} ${p}</b></div>
       <div><small>${esc(t("fichaManut"))}</small><b>${ico("moeda")} ${fmtM(m)}${esc(t("porAnoCurto"))}</b></div>
     </div>
-    <p class="meta">${esc(t("fichaManutNota"))}</p>
+    <p class="meta">${esc(t("fichaManutNota"))}${temConv && !cv ? ` ${esc(t("fichaConvNota"))}` : ""}</p>
     ${motivo && !cv ? `<p class="fila">${esc(motivo)}</p>` : ""}
+    ${!motivo && (apertaCompra || apertaConv) ? `<p class="fila">${esc(t("fichaAperta")(fmtM(-(saldoJan - (apertaCompra ? manutAcao(a) : anuidadeConv(a))))))}</p>` : ""}
     ${cv ? `<p class="meta">${esc(t("fichaConvAtivo"))}</p>` : ""}
     <div class="ficha-btns">
       ${desfazivel(d, a) ? `<button class="btn sec" type="button" data-ficha="desfazer">${esc(t("fichaDesfazer")(fmtM(d.pago[a] || 0), d.prestPago[a] || 0))}</button>`
@@ -1978,7 +1991,8 @@ function revelados() {
   const achado = DEPS.reduce((s, d) => s + (vis(d.id) - S.deps[d.id].vis0) * d.pop, 0);
   return Math.max(0, Math.min(100, 100 * achado / faltava));
 }
-const vidasTotal = () => S.tot.vidas + DEPS.reduce((s, d) => s + S.deps[d.id].ind.vidas, 0);
+/* No resumo o ano já entrou em S.tot: somar o contador do ano de novo contaria em dobro */
+const vidasTotal = () => S.tot.vidas + (S.fase === "resumo" ? 0 : DEPS.reduce((s, d) => s + S.deps[d.id].ind.vidas, 0));
 const estrelas = (p) => (p >= 30) + (p >= 50) + (p >= 75);   // população em equilíbrio: 30%, 50% e 75%
 const estrelasHTML = (n) => `<span class="estrelas" role="img" aria-label="${esc(t("estrelasAria")(n))}">${[0, 1, 2].map((i) => `<span class="${i < n ? "on" : ""}" style="animation-delay:${0.3 + i * 0.2}s">★</span>`).join("")}</span>`;
 const progTxt = (m) => { const p = Math.min(m.prog(), m.meta); return (m.fmt || ((a, b) => `${a}/${b}`))(p, m.meta); };
@@ -2056,7 +2070,8 @@ function proximaFaixa() {
   el.hidden = false;
   void el.offsetWidth;
   el.classList.add("on");
-  setTimeout(() => { el.classList.remove("on"); setTimeout(() => { el.hidden = true; proximaFaixa(); }, 400); }, 2600);
+  const ms = filaFaixas.length ? 1600 : 2600;   // com outras na fila, cada faixa passa mais rápido (várias conquistas de uma vez)
+  setTimeout(() => { el.classList.remove("on"); setTimeout(() => { el.hidden = true; proximaFaixa(); }, 400); }, ms);
 }
 
 /* Confete: na moldura de celular (tela larga) os elementos fixos se posicionam pela moldura */
@@ -2127,8 +2142,10 @@ function renderRodape() {
   } else b.innerHTML = `<span class="m-tit">${esc(t("semMissao"))}</span>`;
   b.setAttribute("aria-label", `${t("missoesTit")}: ${m ? `${m[lang][0]} ${progTxt(m)}` : t("semMissao")}`);
   const txt = $("#dica-txt");
-  txt.textContent = t("rodapeV4")(t("economia")(rendaAno() - manutAno()), fmtInt(Math.max(0, vidasTotal())), fmtInt(previsaoAno()));
+  const prev = previsaoAno();   // saldo do ano até agora: negativo quando os óbitos sem diagnóstico pesam mais
+  txt.textContent = t("rodapeV4")(t("economia")(rendaAno() - manutAno()), fmtInt(Math.max(0, vidasTotal())), `${prev < 0 ? "−" : "+"}${fmtInt(Math.abs(prev))}`);
   txt.title = t("rodapeTit");
+  txt.classList.toggle("alerta", rendaAno() - manutAno() < 0);   // em janeiro vai faltar dinheiro: algo fecha
 }
 
 function escolherConsequencia() {
@@ -2306,6 +2323,7 @@ function mostrarEvento() {
     ${ao.proveedor ? `<p class="fila">${esc(t("evProveedor"))}</p>` : ""}
     ${ao.ensayo ? `<p class="efeito">${esc(t("evEnsayo")[ao.ensayo])}</p>` : ""}
     <p><b>${esc(t("evOrc")(fmtM(S.orc)))}</b> · 🎖️ ${S.prest}</p>
+    ${S.orc < 4 ? `<p class="meta">${esc(t("dicaFin"))}</p>` : ""}
     <button class="btn" type="button" data-fechar>${esc(S.demanda ? t("proxDemanda") : t("evBtn"))}</button>`, "papel");
 }
 
@@ -2325,8 +2343,8 @@ function efeitoOpcao(o, dep) {
   const v = valorOpcao(o, dep);
   if (recusa(o)) return o.prest ? `−🎖️ ${Math.abs(o.prest)}` : "";
   if (!o.promessa) return t("demAgora")(fmtInt(Math.round(PTS_VALOR * v)), o.prest || 0);
-  const pr = premioProm(v), pe = penaProm(v);
-  return t("demSe")(fmtInt(pr.pts), pr.prest, fmtInt(pe.pts), pe.prest);
+  const pr = premioProm(v), pe = penaProm(v), b = dep ? bloqueio(dep, o.promessa.a) : null;   // o que ainda falta para cumprir
+  return t("demSe")(fmtInt(pr.pts), pr.prest, fmtInt(pe.pts), pe.prest) + (b ? `\n⚠️ ${t("demReq")(b.curto)}` : "");
 }
 
 function mostrarDemanda() {
@@ -2380,7 +2398,7 @@ function escolherOpcao(i) {
 function contaAno(r) {
   const p = r.parc, s = (x) => `${x < 0 ? "−" : "+"}${fmtInt(Math.abs(x))}`;
   return [`🏗️ ${s(p.estr)}`, `❤️ ${s(p.vidas)}`, `🍎 ${s(p.evit)}`, `🕯️ ${s(p.semdx)}`, p.mult > 1 ? `⭐×${fmt1(p.mult)}` : "",
-    p.dem ? `📣 ${s(p.dem)}` : "", r.quiz ? `⚡ +${BONUS_QUIZ}` : ""].filter(Boolean).join(" · ");
+    p.dem ? `📣 ${s(p.dem)}` : "", p.piso ? t("contaPiso") : "", r.quiz ? `⚡ +${BONUS_QUIZ}` : ""].filter(Boolean).join(" · ");
 }
 
 function mostrarResumo(r) {
@@ -2524,7 +2542,7 @@ function continuar() {
 document.addEventListener("click", (ev) => {
   const alvo = ev.target;
   if (!alvo.closest) return;
-  const dep = alvo.closest("#mapa .dep");
+  const dep = alvo.closest("#mapa .dep, #mapa .lbl[data-dep]");   // o nome também escolhe: é onde o dedo vai nos departamentos pequenos
   if (dep && S && !S.fim) { S.sel = dep.dataset.dep; salvar(); render(); return; }
   const ac = alvo.closest("#painel .acao");
   if (ac && S && !S.fim) { mostrarAcao(S.sel, ac.dataset.acao); return; }
@@ -2592,7 +2610,7 @@ document.addEventListener("click", (ev) => {
     lang = lang === "es" ? "pt" : "es"; guardar("epidemia-py-lang", lang);
     document.documentElement.lang = lang === "es" ? "es" : "pt-BR";
     if (!$("#modal").hidden) ({ evento: mostrarEvento, demanda: mostrarDemanda, quiz: mostrarQuiz, missoes: mostrarMissoes, arvore: mostrarArvore, pers: mostrarPersonagens, financas: mostrarFinancas, prestigio: mostrarPrestigio, acao: () => mostrarAcao(S.fichaAtual.id, S.fichaAtual.a),
-      resumo: () => mostrarResumo(S.log[S.log.length - 1]), dados: () => mostrarDados(valoresDados()), semDados: mostrarSemDados }[janela] || mostrarAjuda)();
+      resumo: () => mostrarResumo(S.log[S.log.length - 1]), dados: () => mostrarDados(valoresDados()), semDados: mostrarSemDados, compartir: compartilhar }[janela] || mostrarAjuda)();
     if (!S) telaInicio();
     else if (S.fim) mostrarFim();
     else render();
@@ -2609,6 +2627,7 @@ document.addEventListener("change", (ev) => { if (ev.target.id === "dep-tit" && 
 const urlJogo = () => CFG.jogoUrl || location.href.split("#")[0];   // sempre o link público, também na cópia de revisão
 function compartilhar() {
   const url = urlJogo();
+  janela = "compartir";   // trocar o idioma redesenha esta janela, não abre a ajuda
   abrirModal(`<h2>${esc(t("compTit"))}</h2><p class="meta">${esc(t("compSub"))}</p>
     <img class="qr-jogo" src="qr-jogo.svg" alt="${esc(t("qrAlt"))}" width="240" height="240">
     <p class="link-jogo"><a href="${esc(url)}" target="_blank" rel="noopener">${esc(url.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a></p>
