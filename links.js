@@ -32,7 +32,7 @@ const LINKS_FONTES = {
  },
  "ops_impact_2026": {
   "url": "https://www.paho.org/es/noticias/24-4-2026-paraguay-identifica-brechas-oportunidades-respuesta-al-cancer-con-mision-impact",
-  "arquivo": null,
+  "arquivo": "https://web.archive.org/web/20261028022948/https://www.paho.org/es/noticias/24-4-2026-paraguay-identifica-brechas-oportunidades-respuesta-al-cancer-con-mision-impact",
   "recorte": "recortes/ops_impact_2026.pdf"
  },
  "ccan_2022": {
@@ -45,7 +45,7 @@ const LINKS_FONTES = {
  },
  "decreto_2064": {
   "url": "https://alertas-v3.directoriolegislativo.org/wp-content/uploads/2019/07/DECRETO2064.pdf",
-  "arquivo": null
+  "arquivo": "https://web.archive.org/web/20261028023126/https://alertas-v3.directoriolegislativo.org/wp-content/uploads/2019/07/DECRETO2064.pdf"
  },
  "pediatria_2024": {
   "url": "https://doi.org/10.31698/ped.51022024002",
@@ -108,7 +108,7 @@ const LINKS_FONTES = {
  },
  "oms_perfil_2020": {
   "url": "https://cdn.who.int/media/docs/default-source/country-profiles/cancer/pry-2020.pdf",
-  "arquivo": null
+  "arquivo": "https://web.archive.org/web/20261028023141/https://cdn.who.int/media/docs/default-source/country-profiles/cancer/pry-2020.pdf"
  },
  "dgvs_2024": {
   "url": "https://dgvs.mspbs.gov.py/cerca-de-2-900-diagnosticos-de-cancer-se-registraron-en-asuncion-y-central/",
@@ -140,7 +140,7 @@ const LINKS_FONTES = {
  },
  "ops_riiss_2026": {
   "url": "https://www.paho.org/es/noticias/14-7-2026-salud-avanza-adaptacion-herramienta-para-fortalecer-redes-integradas-servicios",
-  "arquivo": null,
+  "arquivo": "https://web.archive.org/web/20261028023054/https://www.paho.org/es/noticias/14-7-2026-salud-avanza-adaptacion-herramienta-para-fortalecer-redes-integradas-servicios",
   "recorte": "recortes/ops_riiss_2026.pdf"
  },
  "oms_colo_2020": {
@@ -153,7 +153,7 @@ const LINKS_FONTES = {
  },
  "dncp_ips": {
   "url": "https://www.contrataciones.gov.py/documentos/download/acta/352139-lpn-83-18-servicios-tratamientos-radiantes-ips-1",
-  "arquivo": null
+  "arquivo": "https://web.archive.org/web/20261028023235/https://www.contrataciones.gov.py/documentos/download/acta/352139-lpn-83-18-servicios-tratamientos-radiantes-ips-1"
  },
  "geoboundaries": {
   "url": "https://www.geoboundaries.org",
