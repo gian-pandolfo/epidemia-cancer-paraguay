@@ -7,12 +7,12 @@ const TXT = {
     lgpd: "Nombre, facultad y curso se muestran solo durante el congreso, hasta el 31/10/2026. El e-mail nunca aparece.",
     vazio: "Todavía no hay partidas en el ranking. ¡Sé el primero!", semUrl: "El ranking aún no está configurado.",
     erro: "Sin conexión con el ranking. Reintentando…", atual: (h) => `Actualizado a las ${h}`, encerrado: "El ranking del congreso terminó.",
-    tela: "Pantalla completa", pts: "puntos", voltar: "Volver al juego" },
+    tela: "Pantalla completa", pts: "puntos", voltar: "Volver al juego", abrir: "Abrir el juego", copiar: "Copiar enlace", copiado: "¡Enlace copiado!", semCopia: "No se pudo copiar" },
   pt: { titulo: "Ranking", sub: "Epidemia: Paraguai contra o câncer", escaneie: "Escaneie e jogue", partidas: "partidas jogadas",
     lgpd: "Nome, faculdade e turma aparecem só durante o congresso, até 31/10/2026. O e-mail nunca aparece.",
     vazio: "Ainda não há partidas no ranking. Seja o primeiro!", semUrl: "O ranking ainda não está configurado.",
     erro: "Sem conexão com o ranking. Tentando de novo…", atual: (h) => `Atualizado às ${h}`, encerrado: "O ranking do congresso terminou.",
-    tela: "Tela cheia", pts: "pontos", voltar: "Voltar ao jogo" },
+    tela: "Tela cheia", pts: "pontos", voltar: "Voltar ao jogo", abrir: "Abrir o jogo", copiar: "Copiar link", copiado: "Link copiado!", semCopia: "Não deu para copiar" },
 };
 let lang = "es";
 try { if (localStorage.getItem("epidemia-py-lang") === '"pt"') lang = "pt"; } catch (e) { /* sem armazenamento */ }
@@ -31,9 +31,18 @@ function textos() {
   $("#btn-tela").setAttribute("aria-label", t("tela"));
   $("#t-voltar").textContent = t("voltar");
   $("#voltar").hidden = location.hash === "#estande";   // no estande ninguém joga nesta tela
-  const url = cfg().jogoUrl || location.href.replace(/ranking\.html.*$/, "");
-  $("#url").textContent = url.replace(/^https?:\/\//, "");
+  $("#url").textContent = urlJogo().replace(/^https?:\/\//, "");
+  $("#t-abrir").textContent = t("abrir"); $("#t-copiar").textContent = t("copiar");
+  $("#abrir-jogo").href = urlJogo();
 }
+const urlJogo = () => cfg().jogoUrl || location.href.replace(/ranking\.html.*$/, "");
+/* Copiar o link do jogo (beta11): área de transferência; se o navegador não deixar, mostra o aviso */
+async function copiarLink() {
+  const b = $("#t-copiar");
+  try { await navigator.clipboard.writeText(urlJogo()); b.textContent = t("copiado"); } catch (e) { b.textContent = t("semCopia"); }
+  setTimeout(() => { b.textContent = t("copiar"); }, 2000);
+}
+$("#copiar").addEventListener("click", copiarLink);
 
 function desenhar(d) {
   $("#partidas").textContent = fmt(d.partidas || 0);
