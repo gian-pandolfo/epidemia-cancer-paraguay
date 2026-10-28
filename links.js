@@ -158,5 +158,46 @@ const LINKS_FONTES = {
  "geoboundaries": {
   "url": "https://www.geoboundaries.org",
   "arquivo": "https://web.archive.org/web/20261026214333/https://www.geoboundaries.org/"
+ },
+ "lanacion_sindemia_2020": {
+  "url": "https://www.lanacion.com.py/pais/2020/10/20/sindemia-clinicas-saturada-recibe-pacientes-de-covid-19-y-de-dengue/",
+  "arquivo": "https://web.archive.org/web/20211201185621/https://www.lanacion.com.py/pais/2020/10/20/sindemia-clinicas-saturada-recibe-pacientes-de-covid-19-y-de-dengue/",
+  "recorte": "recortes/lanacion_sindemia_2020.pdf"
+ },
+ "ops_incan_covid_2020": {
+  "url": "https://www.paho.org/es/noticias/14-12-2020-ops-paraguay-entrega-equipamiento-para-fortalecer-atencion-modo-covid-19-al",
+  "arquivo": "https://web.archive.org/web/20260408214216/https://www.paho.org/es/noticias/14-12-2020-ops-paraguay-entrega-equipamiento-para-fortalecer-atencion-modo-covid-19-al"
+ },
+ "abc_mama_2022": {
+  "url": "https://www.abc.com.py/nacionales/2022/10/19/octubre-rosa-unos-2000-casos-de-cancer-de-mama-fueron-diagnosticados-en-pandemia/",
+  "arquivo": "https://web.archive.org/web/20260611105755/https://www.abc.com.py/nacionales/2022/10/19/octubre-rosa-unos-2000-casos-de-cancer-de-mama-fueron-diagnosticados-en-pandemia/",
+  "recorte": "recortes/abc_mama_2022.pdf"
+ },
+ "ley_6524": {
+  "url": "https://www.bacn.gov.py/leyes-paraguayas/9156/ley-n-6524--declara-estado-de-emergencia-en-todo-el-territorio-de-la-repblica-del-paraguay-ante-la-pandemia-declarada-por-la-organizacin-mundial-de-la-salud-a-causa-del-covid19-o-coronavirus-y-se-establecen-medidas-administrativas-fiscales-y-financieras",
+  "arquivo": "https://web.archive.org/web/20250809091841/https://www.bacn.gov.py/leyes-paraguayas/9156/ley-n-6524--declara-estado-de-emergencia-en-todo-el-territorio-de-la-repblica-del-paraguay-ante-la-pandemia-declarada-por-la-organizacin-mundial-de-la-salud-a-causa-del-covid19-o-coronavirus-y-se-establecen-medidas-administrativas-fiscales-y-financieras"
+ },
+ "abc_incan_recorte_2023": {
+  "url": "https://www.abc.com.py/nacionales/2023/01/11/oncologicos-protestan-ante-desesperacion-por-falta-de-medicamentos-y-recorte-presupuestario/",
+  "arquivo": "https://web.archive.org/web/20260217093021/https://www.abc.com.py/nacionales/2023/01/11/oncologicos-protestan-ante-desesperacion-por-falta-de-medicamentos-y-recorte-presupuestario/",
+  "recorte": "recortes/abc_incan_recorte_2023.pdf"
+ },
+ "lanacion_sanrafael_2021": {
+  "url": "https://www.lanacion.com.py/pais/2021/11/22/fundacion-san-rafael-con-un-pequeno-granito-de-arena-cambian-muchas-vidas/",
+  "arquivo": "https://web.archive.org/web/20251207163600/https://www.lanacion.com.py/pais/2021/11/22/fundacion-san-rafael-con-un-pequeno-granito-de-arena-cambian-muchas-vidas/",
+  "recorte": "recortes/lanacion_sanrafael_2021.pdf"
+ },
+ "directrelief_2022": {
+  "url": "https://www.directrelief.org/2022/10/direct-relief-amgen-and-c-can-team-up-to-improve-access-to-breast-cancer-diagnostics-and-treatment-in-paraguay/",
+  "arquivo": null
+ },
+ "codas_2016": {
+  "url": "https://doi.org/10.1016/j.canep.2015.11.005",
+  "arquivo": null
+ },
+ "lanacion_itaipu_mamografos_2024": {
+  "url": "https://www.lanacion.com.py/pais/2024/10/19/itaipu-fortalece-el-sistema-de-salud-con-30-nuevos-mamografos-para-hospitales/",
+  "arquivo": "https://web.archive.org/web/20241108191541/https://www.lanacion.com.py/pais/2024/10/19/itaipu-fortalece-el-sistema-de-salud-con-30-nuevos-mamografos-para-hospitales/",
+  "recorte": "recortes/lanacion_itaipu_mamografos_2024.pdf"
  }
 };

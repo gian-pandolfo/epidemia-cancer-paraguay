@@ -111,3 +111,13 @@ Pedidos do Gi na noite de 27/10, com os colegas já testando: «os jogadores est
 - **Árvore 4/3/3:** cada personagem tem um ramo principal com 4 habilidades e dois com 3; um nível só abre depois do anterior do mesmo ramo (uma escolha por cargo). Quem se especializa chega ao 4.º nível (Predicción con IA, Gran alianza, Centro oncológico regional); quem espalha ganha amplitude. Saíram da árvore (mas valem nas partidas salvas): Publicación internacional, APS 4.0, Mecenas, Polo regional, Liderazgo médico, Excelencia científica.
 - **Ranking:** abaixo do QR, botões «Abrir el juego» e «Copiar enlace» (também no modo `#estande`).
 - Partidas salvas na beta8, beta9 e beta10 continuam na beta11 (mesma chave `epidemia-py-v4`; testado).
+
+## Imprevistos com base real, dicas de dinheiro, manchetes do ano e o «Luz» explicado (beta12, 28/10/2026)
+
+Pedidos do Gi na manhã do congresso: «os cenários aleatórios precisam ter base na realidade, apontando para matérias; o foco é a epidemiologia do câncer no Paraguai», «ainda ficamos sem dinheiro: intuir o clique em Prestígio e Finanças», «clicando no ano, manchetes do ano» e «o Luz ainda está confuso».
+
+- **Imprevistos:** os 15 trazem um exemplo real com fonte e botão «ver ↗»: epidemia de dengue (Clínicas saturado, La Nación 20/10/2020), pandemia respiratória (INCAN em modo COVID, OPS 14/12/2020; 1.942 casos de mama em 2020–2021, ABC 18/10/2022), cooperação internacional (Direct Relief/Amgen/C-Can, 2022), cooperação técnica (acelerador do OIEA, 2023), fundo de emergência (Ley 6524/2020), recorte do Congresso (US$ 13 milhões do INCAN em 2023, ABC 11/01/2023), doação religiosa (Fundación San Rafael, La Nación 22/11/2021), universidade (estudo de Itapúa, Codas et al. 2016), doação privada (Hospital Día de Encarnación), open source (registro único), colegas (72.133 testes de HPV), Itaipú (30 mamógrafos, La Nación 19/10/2024). Nove fontes novas em `links.js` e cinco recortes novos (resumos próprios).
+- **Dinheiro:** uma dica única ao começar a jogar («Toca 💰 … y 🎖️ …»); com menos de 💰 4 ou janeiro no vermelho, os chips 💰 e 🎖️ piscam.
+- **Manchetes do ano:** tocar no ano (ou no «📰» da ajuda) abre o fato do ano, o imprevisto e a demanda em curso e os títulos reais da imprensa e dos documentos daquele ano, com «ver ↗»; dá para voltar aos anos anteriores.
+- **Luz:** a 1.ª vez que se toca em Luz | Tasas abre a explicação com um desenho em três quadros (névoa = casos ocultos → diagnóstico revela → luz = equilíbrio 0–3) e a nota sobre Tasas (Atlas 2015–2019); o «?» ao lado dos botões e o título da legenda reabrem; a troca de camada dá um brilho curto no mapa.
+- Partidas salvas continuam (mesma chave `epidemia-py-v4`).

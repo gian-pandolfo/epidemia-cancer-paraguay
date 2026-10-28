@@ -74,6 +74,13 @@ const T = {
     ajuda: "Cómo se juega", fechar: "Cerrar",
     anoDe: (a, i) => `${a} · año ${i} de 10`,
     modoCob: "Luz", modoReg: "Tasas",
+    dicaChipsTit: "💰 Finanzas y 🎖️ favores", dicaChipsTxt: "Toca 💰 arriba para conseguir dinero (impuesto al tabaco, préstamo, ensayo clínico…) y 🎖️ para pedir favores (ampliación del Congreso, terreno, brigada…).",
+    titulares: { tit: (a) => `Titulares de ${a}`, hecho: "Hecho del año", imp: "Imprevisto de este año", dem: "Demanda de la sociedad", reales: "En la prensa y en los documentos (idioma original)", dica: "Toca «ver ↗» para abrir el recorte o la fuente.", nada: "Sin titulares guardados para este año: el hecho del año tiene su fuente arriba." },
+    luz: { sub: "El mapa", tit: "¿Qué muestran Luz y Tasas?", alt: "Tres departamentos: con niebla, con diagnóstico y con luz",
+      p1t: "Niebla = casos ocultos.", p1: "Donde falta diagnóstico, el cáncer no entra en la estadística: la tasa parece baja, pero no es riesgo bajo.",
+      p2t: "Diagnóstico y registro.", p2: "Test de VPH, mamógrafo, registro e investigación revelan casos: la niebla se disipa y la tasa registrada sube. ¡Es buena señal!",
+      p3t: "Luz = equilibrio.", p3: "Prevención, diagnóstico y tratamiento juntos. El nivel de luz (0 a 3) es el más bajo de los tres: solo las tres funciones curan más y multiplican los puntos.",
+      tasas: "Tasas: el mapa real del Atlas 2015–2019 (tasa de mortalidad por cáncer estandarizada por edad, por 100.000 habitantes).", ok: "¡Entendido!" },
     verMapa: "Ver en el mapa", noMapa: "En el mapa", lerNoticia: "Leer la noticia", recKicker: "Datos reales · para investigar",
     recPoucos: "* Pocas muertes en 5 años: la tasa es inestable.", recFeito: "hecho", hab: "hab.", muertes: "muertes",
     misSeguir: "Toca un departamento de la noticia para verlo en el mapa.",
@@ -295,6 +302,13 @@ const T = {
     ajuda: "Como se joga", fechar: "Fechar",
     anoDe: (a, i) => `${a} · ano ${i} de 10`,
     modoCob: "Luz", modoReg: "Taxas",
+    dicaChipsTit: "💰 Finanças e 🎖️ favores", dicaChipsTxt: "Toque 💰 no alto para conseguir dinheiro (imposto sobre o tabaco, empréstimo, ensaio clínico…) e 🎖️ para pedir favores (ampliação do Congresso, terreno, brigada…).",
+    titulares: { tit: (a) => `Manchetes de ${a}`, hecho: "Fato do ano", imp: "Imprevisto deste ano", dem: "Demanda da sociedade", reales: "Na imprensa e nos documentos (idioma original)", dica: "Toque em «ver ↗» para abrir o recorte ou a fonte.", nada: "Sem manchetes guardadas para este ano: o fato do ano tem a fonte acima." },
+    luz: { sub: "O mapa", tit: "O que mostram Luz e Taxas?", alt: "Três departamentos: com névoa, com diagnóstico e com luz",
+      p1t: "Névoa = casos ocultos.", p1: "Onde falta diagnóstico, o câncer não entra na estatística: a taxa parece baixa, mas não é risco baixo.",
+      p2t: "Diagnóstico e registro.", p2: "Teste de HPV, mamógrafo, registro e pesquisa revelam casos: a névoa se dissipa e a taxa registrada sobe. É bom sinal!",
+      p3t: "Luz = equilíbrio.", p3: "Prevenção, diagnóstico e tratamento juntos. O nível de luz (0 a 3) é o mais baixo dos três: só as três funções curam mais e multiplicam os pontos.",
+      tasas: "Taxas: o mapa real do Atlas 2015–2019 (taxa de mortalidade por câncer padronizada por idade, por 100.000 habitantes).", ok: "Entendi!" },
     verMapa: "Ver no mapa", noMapa: "No mapa", lerNoticia: "Ler a notícia", recKicker: "Dados reais · para investigar",
     recPoucos: "* Poucos óbitos em 5 anos: a taxa é instável.", recFeito: "feito", hab: "hab.", muertes: "óbitos",
     misSeguir: "Toque num departamento da notícia para vê-lo no mapa.",
@@ -541,55 +555,55 @@ const EVENTOS = {
   },
 };
 
-/* ---------- imprevistos: a partir de 2016, em metade dos anos, sem repetir ---------- */
+/* ---------- imprevistos: a partir de 2016, em metade dos anos, sem repetir. Cada um traz um exemplo real com fonte (beta12, pedido do Gi): o foco é a epidemiologia do câncer no Paraguai ---------- */
 const EVENTOS_ALEAT = [
   { id: "itaipu", alvo: () => sortear(DEPS).id, aplicar: (dep) => { S.orc += 2 + num("royaltyExtra"); S.regiao = { dep, valor: 1 }; },
-    es: ["Royalties de Itaipú", "Los royalties de la represa impulsan el desarrollo de {dep}.", "+💰 2 y, este año, las acciones en {dep} cuestan 💰 1 menos.", "Ejemplo real: la Itaipú Binacional compró, vía Fundación Tesai, el mamógrafo del primer servicio de mamografía de Concepción (MSPBS, 21/11/2024)."],
-    pt: ["Royalties de Itaipu", "Os royalties da usina impulsionam o desenvolvimento de {dep}.", "+💰 2 e, neste ano, as ações em {dep} custam 💰 1 a menos.", "Exemplo real: a Itaipu Binacional comprou, via Fundación Tesai, o mamógrafo do primeiro serviço de mamografia de Concepción (MSPBS, 21/11/2024)."] },
+    es: ["Royalties de Itaipú", "Los royalties de la represa impulsan el desarrollo de {dep}.", "+💰 2 y, este año, las acciones en {dep} cuestan 💰 1 menos.", "Ejemplo real: en 2024 la Itaipú Binacional entregó 30 mamógrafos al Ministerio de Salud para hospitales de 13 departamentos, y la red pública pasó a tener 56 (La Nación, 19/10/2024); también compró, vía Fundación Tesai, el mamógrafo del primer servicio de mamografía de Concepción (MSPBS, 21/11/2024)."],
+    pt: ["Royalties de Itaipu", "Os royalties da usina impulsionam o desenvolvimento de {dep}.", "+💰 2 e, neste ano, as ações em {dep} custam 💰 1 a menos.", "Exemplo real: em 2024 a Itaipu Binacional entregou 30 mamógrafos ao Ministério da Saúde para hospitais de 13 departamentos, e a rede pública passou a ter 56 (La Nación, 19/10/2024); também comprou, via Fundación Tesai, o mamógrafo do primeiro serviço de mamografia de Concepción (MSPBS, 21/11/2024)."] },
   { id: "dengue", aplicar: () => { S.orc = Math.max(0, S.orc - 3); },
-    es: ["Epidemia de dengue", "Los hospitales se llenan de casos de dengue y parte del presupuesto del cáncer se desvía.", "−💰 3 este año.", ""],
-    pt: ["Epidemia de dengue", "Os hospitais lotam de casos de dengue e parte do orçamento do câncer é desviada.", "−💰 3 neste ano.", ""] },
+    es: ["Epidemia de dengue", "Los hospitales se llenan de casos de dengue y parte del presupuesto del cáncer se desvía.", "−💰 3 este año.", "Ejemplo real: en octubre de 2020 el Hospital de Clínicas tenía el 100% de sus 30 camas de contingencia ocupadas y ya recibía pacientes de dengue junto con los de COVID-19; en la epidemia de inicios de 2019 el país había registrado 9 muertes y más de 10.000 casos confirmados (La Nación, 20/10/2020)."],
+    pt: ["Epidemia de dengue", "Os hospitais lotam de casos de dengue e parte do orçamento do câncer é desviada.", "−💰 3 neste ano.", "Exemplo real: em outubro de 2020 o Hospital de Clínicas tinha 100% das suas 30 camas de contingência ocupadas e já recebia pacientes de dengue junto com os de COVID-19; na epidemia do início de 2019 o país tinha registrado 9 mortes e mais de 10.000 casos confirmados (La Nación, 20/10/2020)."] },
   { id: "respiratoria", aplicar: () => { for (const a of SLOTS.D) S.mod[a] = (S.mod[a] || 0) + 1; },
-    es: ["Brote de enfermedad respiratoria", "Las consultas se llenan y el diagnóstico de cáncer se atrasa.", "Este año, las acciones de diagnóstico cuestan 💰 1 más.", ""],
-    pt: ["Surto de doença respiratória", "As consultas lotam e o diagnóstico de câncer atrasa.", "Neste ano, as ações de diagnóstico custam 💰 1 a mais.", ""] },
+    es: ["Pandemia respiratoria", "Las consultas se llenan, las citas presenciales se reducen y el diagnóstico de cáncer se atrasa.", "Este año, las acciones de diagnóstico cuestan 💰 1 más.", "Ejemplo real: en la pandemia de COVID-19 el INCAN tuvo que reducir las consultas presenciales; la OPS/OMS le entregó equipos para agendar por teléfono y atender a distancia (OPS/OMS, 14/12/2020). En 2020 y 2021 se diagnosticaron 1.942 casos de cáncer de mama y 821 mujeres murieron por la enfermedad (ABC Color, 18/10/2022)."],
+    pt: ["Pandemia respiratória", "As consultas lotam, as consultas presenciais diminuem e o diagnóstico de câncer atrasa.", "Neste ano, as ações de diagnóstico custam 💰 1 a mais.", "Exemplo real: na pandemia de COVID-19 o INCAN teve de reduzir as consultas presenciais; a OPAS/OMS entregou equipamentos para agendar por telefone e atender a distância (OPAS/OMS, 14/12/2020). Em 2020 e 2021 foram diagnosticados 1.942 casos de câncer de mama e 821 mulheres morreram pela doença (ABC Color, 18/10/2022)."] },
   { id: "inversion", aplicar: () => { S.mod.mamo = (S.mod.mamo || 0) - 1; S.mod.vph = (S.mod.vph || 0) - 1; },
-    es: ["Inversión extranjera en salud", "Un fondo internacional financia equipos de diagnóstico del cáncer.", "Este año, el mamógrafo y el test de VPH cuestan 💰 1 menos.", ""],
-    pt: ["Investimento estrangeiro em saúde", "Um fundo internacional financia equipamentos de diagnóstico do câncer.", "Neste ano, o mamógrafo e o teste de HPV custam 💰 1 a menos.", ""] },
+    es: ["Cooperación internacional en salud", "Un fondo internacional financia diagnóstico y tratamiento del cáncer.", "Este año, el mamógrafo y el test de VPH cuestan 💰 1 menos.", "Ejemplo real: Direct Relief, Amgen y City Cancer Challenge lanzaron en 2022 una iniciativa de varios años para el cáncer de mama en Paraguay: medicamentos donados y refuerzo del diagnóstico, el tratamiento y los cuidados paliativos (Direct Relief, 19/10/2022)."],
+    pt: ["Cooperação internacional em saúde", "Um fundo internacional financia diagnóstico e tratamento do câncer.", "Neste ano, o mamógrafo e o teste de HPV custam 💰 1 a menos.", "Exemplo real: Direct Relief, Amgen e City Cancer Challenge lançaram em 2022 uma iniciativa de vários anos para o câncer de mama no Paraguai: medicamentos doados e reforço do diagnóstico, do tratamento e dos cuidados paliativos (Direct Relief, 19/10/2022)."] },
   { id: "ops", alvo: () => alvoSem("vph"), aplicar: (dep) => darGratis(dep, "vph"),
     es: ["Cooperación de la OPS/OMS", "La OPS/OMS apoya el test de VPH en {dep}.", "{dep} recibe gratis el test de VPH.", "Ejemplo real: prueba de VPH para 100 mil mujeres de Alto Paraná (OPS/OMS, 12/02/2024)."],
     pt: ["Cooperação da OPAS/OMS", "A OPAS/OMS apoia o teste de HPV em {dep}.", "{dep} ganha de graça o teste de HPV.", "Exemplo real: teste de HPV para 100 mil mulheres de Alto Paraná (OPAS/OMS, 12/02/2024)."] },
   { id: "oiea", aplicar: () => { S.mod.radio = (S.mod.radio || 0) - 3; },
-    es: ["Cooperación técnica para radioterapia", "Un organismo internacional ofrece apoyo técnico para nuevos aceleradores.", "Este año, el acelerador lineal cuesta 💰 3 menos.", ""],
-    pt: ["Cooperação técnica para radioterapia", "Um organismo internacional oferece apoio técnico para novos aceleradores.", "Neste ano, o acelerador linear custa 💰 3 a menos.", ""] },
+    es: ["Cooperación técnica para radioterapia", "Un organismo internacional ofrece apoyo técnico para nuevos aceleradores.", "Este año, el acelerador lineal cuesta 💰 3 menos.", "Ejemplo real: un acelerador lineal valuado en US$ 2 millones, donado por EE. UU. y el OIEA, llegó al INCAN en 2023 (La Nación, 25/04/2023)."],
+    pt: ["Cooperação técnica para radioterapia", "Um organismo internacional oferece apoio técnico para novos aceleradores.", "Neste ano, o acelerador linear custa 💰 3 a menos.", "Exemplo real: um acelerador linear avaliado em US$ 2 milhões, doado pelos EUA e pela AIEA, chegou ao INCAN em 2023 (La Nación, 25/04/2023)."] },
   { id: "yacyreta", alvo: () => (temSlot(S.deps.itapua, "radio") ? undefined : "itapua"), aplicar: () => { S.cupons.push({ dep: "itapua", a: "radio", valor: 4 }); S.orc += num("royaltyExtra"); },
     es: ["Fondos de Yacyretá para Itapúa", "La Entidad Binacional Yacyretá ofrece fondos para la radioterapia en Itapúa.", "Este año, el acelerador en Itapúa cuesta 💰 4 menos.", "Ejemplo real: el Gobierno se comprometió a comprar un acelerador para Encarnación con fondos de Yacyretá (ABC Color, 10/05/2024)."],
     pt: ["Recursos de Yacyretá para Itapúa", "A Entidad Binacional Yacyretá oferece recursos para a radioterapia em Itapúa.", "Neste ano, o acelerador em Itapúa custa 💰 4 a menos.", "Exemplo real: o governo se comprometeu a comprar um acelerador para Encarnación com recursos de Yacyretá (ABC Color, 10/05/2024)."] },
   { id: "gobierno", cond: () => S.aleatUsados.includes("dengue") || S.aleatUsados.includes("respiratoria") || S.anoIdx >= 6, aplicar: () => { S.orc += 4; },
-    es: ["Fondo de emergencia del Gobierno Nacional", "Después de la epidemia, el Gobierno Nacional refuerza el presupuesto de salud.", "+💰 4.", ""],
-    pt: ["Fundo de emergência do Governo Nacional", "Depois da epidemia, o Governo Nacional reforça o orçamento da saúde.", "+💰 4.", ""] },
+    es: ["Fondo de emergencia del Gobierno Nacional", "Después de la epidemia, el Gobierno Nacional refuerza el presupuesto de salud.", "+💰 4.", "Ejemplo real: la Ley 6524/2020 declaró la emergencia por la COVID-19, creó un Fondo de Emergencia Sanitaria con parte del presupuesto del Ministerio de Salud y autorizó préstamos de hasta US$ 1.600 millones (Ley N° 6524/2020)."],
+    pt: ["Fundo de emergência do Governo Nacional", "Depois da epidemia, o Governo Nacional reforça o orçamento da saúde.", "+💰 4.", "Exemplo real: a Ley 6524/2020 declarou a emergência pela COVID-19, criou um Fundo de Emergência Sanitária com parte do orçamento do Ministério da Saúde e autorizou empréstimos de até US$ 1,6 bilhão (Ley N° 6524/2020)."] },
   { id: "global", cond: () => contar(COLO, (id) => temSlot(S.deps[id], "vph")) >= 4 && DEPS.filter((d) => temSlot(S.deps[d.id], "vacuna")).length >= 4,
     aplicar: () => { S.orc += 6; ganharPrest(3); },
     es: ["Premio internacional contra el cáncer de cuello uterino", "Un organismo internacional reconoce tus avances en vacunación y en test de VPH.", "+💰 6 y +🎖️ 3.", "Inspirado en la estrategia de la OMS para eliminar el cáncer de cuello uterino: metas 90-70-90 para 2030 (resolución WHA73.2, 2020)."],
     pt: ["Prêmio internacional contra o câncer do colo do útero", "Um organismo internacional reconhece seus avanços em vacinação e teste de HPV.", "+💰 6 e +🎖️ 3.", "Inspirado na estratégia da OMS para eliminar o câncer do colo do útero: metas 90-70-90 para 2030 (resolução WHA73.2, 2020)."] },
   { id: "recorte", alvo: () => { const r = S.log[S.log.length - 1], f = r && DEPS.find((d) => r.filas.includes(d.nome)); return f ? f.id : (S.comp.find((c) => c.estado === "falhou") || {}).dep; },
     aplicar: () => { S.orc = Math.max(0, S.orc - 3); ganharPrest(-1); },
-    es: ["El Congreso recorta fondos de {dep}", "{dep} no alcanzó sus metas y el Congreso recorta parte del presupuesto de salud.", "−💰 3 y −🎖️ 1.", ""],
-    pt: ["O Congresso corta verbas de {dep}", "{dep} não alcançou suas metas e o Congresso corta parte do orçamento da saúde.", "−💰 3 e −🎖️ 1.", ""] },
+    es: ["El Congreso recorta fondos de {dep}", "{dep} no alcanzó sus metas y el Congreso recorta parte del presupuesto de salud.", "−💰 3 y −🎖️ 1.", "Ejemplo real: el Presupuesto 2023 recortó unos US$ 13 millones al INCAN, cerca de G. 88 mil millones para medicamentos; con «stock cero» de fármacos oncológicos, los pacientes protestaron frente al Ministerio de Salud (ABC Color, 11/01/2023)."],
+    pt: ["O Congresso corta verbas de {dep}", "{dep} não alcançou suas metas e o Congresso corta parte do orçamento da saúde.", "−💰 3 e −🎖️ 1.", "Exemplo real: o Orçamento 2023 cortou cerca de US$ 13 milhões do INCAN, perto de G. 88 bilhões para medicamentos; com «estoque zero» de fármacos oncológicos, os pacientes protestaram em frente ao Ministério da Saúde (ABC Color, 11/01/2023)."] },
   { id: "religiosa", alvo: () => alvoSem("paliativos"), aplicar: (dep) => darGratis(dep, "paliativos"),
-    es: ["Donación de instituciones religiosas", "Instituciones religiosas donan un servicio de cuidados paliativos en {dep}.", "{dep} recibe gratis los cuidados paliativos.", ""],
-    pt: ["Doação de instituições religiosas", "Instituições religiosas doam um serviço de cuidados paliativos em {dep}.", "{dep} ganha de graça os cuidados paliativos.", ""] },
+    es: ["Donación de instituciones religiosas", "Instituciones religiosas donan un servicio de cuidados paliativos en {dep}.", "{dep} recibe gratis los cuidados paliativos.", "Ejemplo real: la Fundación San Rafael, fundada y dirigida por el padre Aldo Trento desde 1999, mantiene una clínica de cuidados paliativos con 48 camas, sobre todo para pacientes terminales de cáncer y VIH, sostenida con donaciones (La Nación, 22/11/2021)."],
+    pt: ["Doação de instituições religiosas", "Instituições religiosas doam um serviço de cuidados paliativos em {dep}.", "{dep} ganha de graça os cuidados paliativos.", "Exemplo real: a Fundación San Rafael, fundada e dirigida pelo padre Aldo Trento desde 1999, mantém uma clínica de cuidados paliativos com 48 leitos, sobretudo para pacientes terminais de câncer e HIV, sustentada com doações (La Nación, 22/11/2021)."] },
   { id: "academia", alvo: () => alvoSem("registro"), aplicar: (dep) => darGratis(dep, "registro"),
-    es: ["Una universidad cede académicos", "Residentes e investigadores de una universidad organizan el registro de cáncer en {dep}.", "{dep} recibe gratis la notificación y el registro.", ""],
-    pt: ["Uma universidade cede acadêmicos", "Residentes e pesquisadores de uma universidade organizam o registro de câncer em {dep}.", "{dep} ganha de graça a notificação e o registro.", ""] },
+    es: ["Una universidad cede académicos", "Residentes e investigadores de una universidad organizan el registro de cáncer en {dep}.", "{dep} recibe gratis la notificación y el registro.", "Ejemplo real: un estudio de la mortalidad por cáncer en Itapúa 2003–2012 encontró tasas más bajas en los distritos remotos, señal de falta de diagnóstico y registro, no de menos cáncer (Codas et al., Cancer Epidemiology 2016)."],
+    pt: ["Uma universidade cede acadêmicos", "Residentes e pesquisadores de uma universidade organizam o registro de câncer em {dep}.", "{dep} ganha de graça a notificação e o registro.", "Exemplo real: um estudo da mortalidade por câncer em Itapúa 2003–2012 encontrou taxas mais baixas nos distritos remotos, sinal de falta de diagnóstico e registro, não de menos câncer (Codas et al., Cancer Epidemiology 2016)."] },
   { id: "empresa", aplicar: () => { S.orc += 4; },
-    es: ["Donación de empresas privadas", "Empresas privadas donan dinero para la lucha contra el cáncer.", "+💰 4.", ""],
-    pt: ["Doação de empresas privadas", "Empresas privadas doam dinheiro para a luta contra o câncer.", "+💰 4.", ""] },
+    es: ["Donación privada", "Empresas y donantes privados aportan dinero para la lucha contra el cáncer.", "+💰 4.", "Ejemplo real: el Hospital Día Oncológico de Encarnación funciona en un edificio donado y con un acuerdo público-privado con el Ministerio de Salud; la atención es gratuita (ABC Color, 10/05/2024)."],
+    pt: ["Doação privada", "Empresas e doadores privados dão dinheiro para a luta contra o câncer.", "+💰 4.", "Exemplo real: o Hospital Día Oncológico de Encarnación funciona num prédio doado e com um acordo público-privado com o Ministério da Saúde; o atendimento é gratuito (ABC Color, 10/05/2024)."] },
   { id: "opensource", cond: () => S.pers === "bob", alvo: () => alvoMenorVisSem("registro"), aplicar: (dep) => { darGratis(dep, "registro"); ganharPrest(1); },
-    es: ["La comunidad open source ayuda a Bob", "Programadores voluntarios instalan un registro digital de cáncer en {dep}.", "{dep} recibe gratis el registro y +🎖️ 1.", ""],
-    pt: ["A comunidade open source ajuda o Bob", "Programadores voluntários instalam um registro digital de câncer em {dep}.", "{dep} ganha de graça o registro e +🎖️ 1.", ""] },
+    es: ["La comunidad open source ayuda a Bob", "Programadores voluntarios instalan un registro digital de cáncer en {dep}.", "{dep} recibe gratis el registro y +🎖️ 1.", "Ejemplo real: el Ministerio de Salud construye un registro nacional de pacientes con cáncer, alimentado por los oncólogos (MSPBS, 20/11/2024)."],
+    pt: ["A comunidade open source ajuda o Bob", "Programadores voluntários instalam um registro digital de câncer em {dep}.", "{dep} ganha de graça o registro e +🎖️ 1.", "Exemplo real: o Ministério da Saúde constrói um registro nacional de pacientes com câncer, alimentado pelos oncologistas (MSPBS, 20/11/2024)."] },
   { id: "medicas", cond: () => S.pers === "beatriz", alvo: () => alvoSem("vph"), aplicar: (dep) => { darGratis(dep, "vph"); ganharPrest(1); },
-    es: ["Colegas de la Dra. Beatriz", "Sociedades médicas organizan una jornada de test de VPH en {dep}.", "{dep} recibe gratis el test de VPH y +🎖️ 1.", ""],
-    pt: ["Colegas da Dra. Beatriz", "Sociedades médicas organizam uma jornada de teste de HPV em {dep}.", "{dep} ganha de graça o teste de HPV e +🎖️ 1.", ""] },
+    es: ["Colegas de la Dra. Beatriz", "Sociedades médicas organizan una jornada de test de VPH en {dep}.", "{dep} recibe gratis el test de VPH y +🎖️ 1.", "Ejemplo real: en 2024 se hicieron 72.133 pruebas de VPH en trece regiones sanitarias y 744 mujeres iniciaron tratamiento a tiempo (MSPBS, 12/03/2025)."],
+    pt: ["Colegas da Dra. Beatriz", "Sociedades médicas organizam uma jornada de teste de HPV em {dep}.", "{dep} ganha de graça o teste de HPV e +🎖️ 1.", "Exemplo real: em 2024 foram feitos 72.133 testes de HPV em treze regiões sanitárias e 744 mulheres iniciaram tratamento a tempo (MSPBS, 12/03/2025)."] },
 ];
 
 /* ---------- demandas da sociedade: uma por ano, estilo SimCity. Atender dá ⭐ e 🎖️ pelo valor; recusar custa 🎖️ 1; promessa vira compromisso (prêmio ou pena no prazo) ---------- */
@@ -1152,6 +1166,102 @@ function migrar(s) {
   }
 }
 
+/* ---------- manchetes do ano (beta12, pedido do Gi em 28/10/2026): tocar no ano abre os títulos reais da imprensa e dos documentos.
+   [chave de links.js, título original (citação curta, com atribuição), veículo e data, observação]. Os títulos ficam no idioma original. ---------- */
+const TITULARES = {
+  2015: [["abc_encarnacion", "Inauguran nueva sede del Hospital Día Oncológico de Encarnación", "ABC Color, 10/05/2024", "sobre el Hospital Día que nació en 2015"]],
+  2016: [["oiea_2026", "Paraguay strengthens national cancer control, international review finds", "OIEA, 2026 (en inglés)", "sobre la 1.ª misión imPACT, de 2016"],
+    ["ops_impact_2026", "Paraguay identifica brechas y oportunidades en la respuesta al cáncer con la misión ImPACT", "OPS/OMS, 24/04/2026", "la 2.ª misión, diez años después"]],
+  2017: [["ccan_2022", "Locally-led strategies to develop and implement cancer care policy", "City Cancer Challenge, 2022 (en inglés)", "Asunción está en la C/Can desde 2017"]],
+  2018: [["ley_6266", "Ley N° 6266/2018, de atención integral a las personas con cáncer", "BACN, 2018", ""]],
+  2019: [["decreto_2064", "Decreto N° 2064/2019, que reglamenta la Ley 6266", "Poder Ejecutivo, 03/07/2019", ""]],
+  2020: [["ley_6524", "Ley N° 6524/2020, que declara estado de emergencia ante la pandemia de COVID-19", "BACN, 26/03/2020", ""],
+    ["lanacion_sindemia_2020", "Sindemia: Clínicas, saturado, recibe pacientes de COVID-19 y de dengue", "La Nación, 20/10/2020", ""],
+    ["ops_incan_covid_2020", "OPS en Paraguay entrega equipamiento para fortalecer atención en modo COVID-19 al Instituto Nacional del Cáncer", "OPS/OMS, 14/12/2020", ""]],
+  2021: [["lanacion_sanrafael_2021", "Fundación San Rafael: con un pequeño granito de arena cambian muchas vidas", "La Nación, 22/11/2021", ""]],
+  2022: [["abc_tabaco_2022", "Impuesto selectivo al tabaco todavía sigue siendo el más bajo en la región", "ABC Color, 13/02/2022", ""],
+    ["atlas", "Atlas de Mortalidad por Cáncer en Paraguay 2015–2019", "MSPBS/DVENT, 2022", ""],
+    ["abc_mama_2022", "Octubre Rosa: unos 2.000 casos de cáncer de mama fueron diagnosticados en pandemia", "ABC Color, 18/10/2022", ""],
+    ["directrelief_2022", "Direct Relief, Amgen, and C/Can Team Up to Improve Access to Breast Cancer Diagnostics and Treatment in Paraguay", "Direct Relief, 19/10/2022 (en inglés)", ""]],
+  2023: [["abc_incan_recorte_2023", "Pacientes de cáncer protestan ante desesperación por falta de medicamentos y recorte presupuestario", "ABC Color, 11/01/2023", ""],
+    ["lanacion_bid_2023", "Aprueban USD 45 millones para mejorar red de servicios de salud en 4 departamentos", "La Nación, 13/04/2023", ""],
+    ["lanacion_2023", "El Incan incorporará equipo de radioterapia valuado en US$ 2 millones", "La Nación, 25/04/2023", ""],
+    ["abc_incan_2023", "Diputados aprueban ampliación presupuestaria para el Incan", "ABC Color, 03/05/2023", ""],
+    ["enfr", "Segunda encuesta nacional muestra elevada prevalencia de factores de riesgo", "MSPBS, 01/06/2023", ""]],
+  2024: [["dgvs_2024", "Cerca de 2.900 diagnósticos de cáncer se registraron en Asunción y Central", "DGVS/MSPBS, 05/02/2024", ""],
+    ["ops_vph_2024", "100 mil mujeres serán beneficiadas con la prueba de VPH en el Sistema de Salud Pública del Alto Paraná", "OPS/OMS, 12/02/2024", ""],
+    ["mspbs_incan_acelerador", "Adiós a las listas de espera: INCAN habilita tercer acelerador lineal", "MSPBS, 13/03/2024", ""],
+    ["abc_encarnacion", "Inauguran nueva sede del Hospital Día Oncológico de Encarnación", "ABC Color, 10/05/2024", ""],
+    ["lanacion_2024", "Radioterapia en Alto Paraná será de gran impacto para pacientes, según oncólogo", "La Nación, 23/07/2024", ""],
+    ["mspbs_dosis_unica", "A partir de mañana, se implementa nuevo esquema de dosis única contra el VPH para niñas y niños", "MSPBS, 31/07/2024", ""],
+    ["lanacion_itaipu_mamografos_2024", "Itaipú fortalece el sistema de salud con 30 nuevos mamógrafos para hospitales", "La Nación, 19/10/2024", ""],
+    ["mspbs_registro_unico", "Registro único para luchar contra el cáncer: Salud avanza hacia una mejor planificación y atención", "MSPBS, 20/11/2024", ""],
+    ["mspbs_concepcion", "Décimo Hospital Día Oncológico del país ya es una realidad en Concepción", "MSPBS, 21/11/2024", ""]],
+};
+function mostrarTitulares(a) {
+  janela = "titulares";
+  const atual = ano(), alvo = a || atual, idx = ANOS.indexOf(alvo), tx = t("titulares");
+  const [tit, txt, efeito, fonte] = EVENTOS[alvo][lang];
+  const sub = (s, dep) => s.replaceAll("{dep}", dep ? DEP[dep].nome : "");
+  // imprevisto e demanda só do ano em curso (o jogo guarda os do ano)
+  const ev = alvo === atual && S.evAleat && EVENTOS_ALEAT.find((e) => e.id === S.evAleat.id);
+  const dm = alvo === atual && S.demanda && DEMANDAS.find((d) => d.id === S.demanda.id);
+  const lista = (TITULARES[alvo] || []).map(([k, h, quem, obs]) => `<li class="tit-item">«${esc(h)}» <span class="meta">— ${esc(quem)}${obs ? ` · ${esc(obs)}` : ""}</span>${linkFonte(k)}</li>`).join("");
+  const anos = ANOS.slice(0, idx === -1 ? 1 : Math.max(idx, S.anoIdx) + 1).filter((x) => x <= atual);
+  abrirModal(`
+    <p class="ano">📰 ${esc(tx.tit(alvo))}</p>
+    <div class="chips-anos">${anos.map((x) => `<button type="button" class="chip ano" data-tit-ano="${x}" aria-pressed="${x === alvo}">${x}</button>`).join("")}</div>
+    <h2>${esc(tx.hecho)}</h2>
+    <p><b>${esc(tit)}</b> ${esc(txt)}</p>
+    <p class="fonte">${esc(t("fonte"))}: ${fonteHTML(fonte)}</p>
+    ${ev ? `<h2>${esc(tx.imp)}</h2><p><b>${esc(sub(ev[lang][0], S.evAleat.dep))}</b> ${esc(sub(ev[lang][1], S.evAleat.dep))}</p><p class="fonte">${ev[lang][3] ? fonteHTML(sub(ev[lang][3], S.evAleat.dep)) : esc(t("escenario"))}</p>` : ""}
+    ${dm ? `<h2>${esc(tx.dem)}</h2><p>${esc(sub(dm[lang], S.demanda.dep))}</p>${dm.fonte ? `<p class="fonte">${esc(t("fonte"))}: ${fonteHTML(dm.fonte)}</p>` : ""}` : ""}
+    <h2>${esc(tx.reales)}</h2>
+    ${lista ? `<ul class="linhas titulares">${lista}</ul><p class="meta">${esc(tx.dica)}</p>` : `<p class="meta">${esc(tx.nada)}</p>`}
+    <button class="btn" type="button" data-fechar>${esc(t("voltar"))}</button>`);
+}
+/* ---------- «Luz»: o que o mapa mostra (beta12, pedido do Gi em 28/10/2026). Abre no 1.º toque em Luz | Tasas, no «?» ao lado e na ajuda.
+   Três quadros: névoa (casos ocultos) → diagnóstico (a névoa se dissipa e a taxa sobe) → luz (equilíbrio das três funções, níveis 0 a 3). ---------- */
+function luzSVG() {
+  const blob = (x, cor, extra = "") => `<path d="M${x - 46},-14 L${x - 22},-46 L${x + 24},-46 L${x + 46},-10 L${x + 40},40 L${x + 8},56 L${x - 36},44 Z" fill="var(${cor})" stroke="rgba(255,255,255,.18)" stroke-width="2"${extra}/>`;
+  const nevoa = (x, w, op) => `<ellipse cx="${x}" cy="4" rx="${w}" ry="38" fill="url(#g-nevoa-luz)" opacity="${op}"/>`;
+  const interrog = (x, y, s) => `<text x="${x}" y="${y}" font-size="${s}" font-weight="800" fill="rgba(236,230,218,.85)" text-anchor="middle">?</text>`;
+  return `<svg viewBox="0 0 380 150" role="img" aria-label="${esc(t("luz").alt)}">
+    <defs>
+      <radialGradient id="g-nevoa-luz"><stop offset="0" stop-color="#AEBDCD" stop-opacity=".75"/><stop offset="1" stop-color="#AEBDCD" stop-opacity="0"/></radialGradient>
+      <radialGradient id="g-brilho-luz"><stop offset="0" stop-color="#FFE2A0" stop-opacity=".9"/><stop offset=".5" stop-color="#F0A43A" stop-opacity=".35"/><stop offset="1" stop-color="#F0A43A" stop-opacity="0"/></radialGradient>
+    </defs>
+    <g transform="translate(0,62)">
+      ${blob(62, "--cob0")}${nevoa(62, 60, 1)}${interrog(48, 2, 22)}${interrog(78, 20, 16)}${interrog(66, -22, 14)}
+      <text x="140" y="8" font-size="26" fill="var(--accent)" text-anchor="middle">→</text>
+      ${blob(190, "--cob1")}${nevoa(204, 34, .8)}${interrog(214, 10, 14)}
+      <circle cx="166" cy="-6" r="15" fill="none" stroke="#ECE6DA" stroke-width="4"/><line x1="177" y1="5" x2="192" y2="20" stroke="#ECE6DA" stroke-width="5" stroke-linecap="round"/>
+      <text x="152" y="44" font-size="13" font-weight="800" fill="#93C572">+casos</text>
+      <text x="268" y="8" font-size="26" fill="var(--accent)" text-anchor="middle">→</text>
+      <circle cx="318" cy="4" r="70" fill="url(#g-brilho-luz)"/>
+      ${blob(318, "--cob3")}
+      <g stroke="#FFE2A0" stroke-width="3" stroke-linecap="round" opacity=".9"><line x1="318" y1="-62" x2="318" y2="-74"/><line x1="276" y1="-34" x2="266" y2="-42"/><line x1="360" y1="-34" x2="370" y2="-42"/></g>
+    </g>
+    <g font-size="12" font-weight="800" fill="var(--ink)" text-anchor="middle"><text x="62" y="142">1</text><text x="190" y="142">2</text><text x="318" y="142">3</text></g>
+  </svg>`;
+}
+function mostrarLuz() {
+  janela = "luz";
+  const L = t("luz"), caixa = (n) => `<span><i style="background:var(--cob${n})"></i>${n}</span>`;
+  abrirModal(`
+    <p class="ano">${ico("luz")} ${esc(L.sub)}</p>
+    <h2>${esc(L.tit)}</h2>
+    <div class="luz-dia">${luzSVG()}</div>
+    <div class="luz-pasos">
+      <p><b>1 · ${esc(L.p1t)}</b> ${esc(L.p1)}</p>
+      <p><b>2 · ${esc(L.p2t)}</b> ${esc(L.p2)}</p>
+      <p><b>3 · ${esc(L.p3t)}</b> ${esc(L.p3)}</p>
+    </div>
+    <div class="legenda luz-leg">${[0, 1, 2, 3].map(caixa).join("")}<span class="leg-nevoa"><i></i>${esc(t("legNevoa"))}</span></div>
+    <p class="meta">${esc(L.tasas)}</p>
+    <p class="fonte">${esc(t("fonte"))}: ${fonteHTML("Atlas 2015–2019")}</p>
+    <button class="btn" type="button" data-fechar>${esc(L.ok)}</button>`);
+}
 /* ---------- consequências: o jogo reage às escolhas (modelo do jogo; no máximo uma por ano, cada uma uma vez) ---------- */
 const nPrev = () => DEPS.reduce((s, d) => s + nivel(S.deps[d.id], "P"), 0);
 const CONSEQ = [
@@ -1225,6 +1335,15 @@ const FONTES = [
   ["Ley N° 2969/2006: aprueba el Convenio Marco de la OMS para el Control del Tabaco.", ["ley_2969"]],
   ["La Nación, 25/04/2023; 23/07/2024; 09/03/2026.", ["lanacion_2023", "lanacion_2024", "lanacion_2026"]],
   ["DNCP. Subasta LPN 83-18: servicios de tratamientos radiantes para el IPS, 06/12/2018.", ["dncp_ips"]],
+  ["La Nación. Sindemia: Clínicas, saturado, recibe pacientes de COVID-19 y de dengue. 20/10/2020.", ["lanacion_sindemia_2020"]],
+  ["OPS/OMS Paraguay. OPS en Paraguay entrega equipamiento para fortalecer atención en modo COVID-19 al Instituto Nacional del Cáncer. 14/12/2020.", ["ops_incan_covid_2020"]],
+  ["ABC Color. Octubre Rosa: unos 2.000 casos de cáncer de mama fueron diagnosticados en pandemia. 18/10/2022.", ["abc_mama_2022"]],
+  ["Ley N° 6524/2020, que declara estado de emergencia en todo el territorio de la República del Paraguay ante la pandemia de COVID-19 y establece medidas administrativas, fiscales y financieras. BACN, 26/03/2020.", ["ley_6524"]],
+  ["ABC Color. Pacientes de cáncer protestan ante desesperación por falta de medicamentos y recorte presupuestario. 11/01/2023.", ["abc_incan_recorte_2023"]],
+  ["La Nación. Fundación San Rafael: con un pequeño granito de arena cambian muchas vidas. 22/11/2021.", ["lanacion_sanrafael_2021"]],
+  ["Direct Relief. Direct Relief, Amgen, and C/Can team up to improve access to breast cancer diagnostics and treatment in Paraguay. 19/10/2022.", ["directrelief_2022"]],
+  ["Codas M, Pesch B, Adolphs M, et al. Cancer mortality in Itapúa — a rural province of Paraguay 2003–2012. Cancer Epidemiol. 2016;40:1-6.", ["codas_2016"]],
+  ["La Nación. Itaipú fortalece el sistema de salud con 30 nuevos mamógrafos para hospitales. 19/10/2024.", ["lanacion_itaipu_mamografos_2024"]],
   ["Mapa: geoBoundaries (CC BY 4.0).", ["geoboundaries"]],
 ];
 /* Texto da fonte (como aparece no jogo) → documentos com link */
@@ -1239,7 +1358,11 @@ const FONTE_CHAVES = {
   "DNCP, licitación de radioterapia del IPS": ["dncp_ips"], "DNCP, licitação de radioterapia do IPS": ["dncp_ips"],
   "OMS, Cancer Country Profile Paraguay 2020": ["oms_perfil_2020"], "DGVS/MSPBS, 05/02/2024": ["dgvs_2024"],
   "ABC Color, 13/02/2022": ["abc_tabaco_2022"], "ABC Color, 03/05/2023": ["abc_incan_2023"], "La Nación, 13/04/2023": ["lanacion_bid_2023"],
-  "Ley N° 2969/2006": ["ley_2969"], "Censo 2022 (INE)": ["ine_censo"], "geoBoundaries": ["geoboundaries"], "Res. S.G. N° 752 (MSPBS, 2024)": ["mspbs_registro_unico"],
+  "Ley N° 2969/2006": ["ley_2969"], "Censo 2022 (INE)": ["ine_censo"], "geoBoundaries": ["geoboundaries"],
+  "La Nación, 20/10/2020": ["lanacion_sindemia_2020"], "OPS/OMS, 14/12/2020": ["ops_incan_covid_2020"], "OPAS/OMS, 14/12/2020": ["ops_incan_covid_2020"],
+  "ABC Color, 18/10/2022": ["abc_mama_2022"], "Ley N° 6524/2020": ["ley_6524"], "ABC Color, 11/01/2023": ["abc_incan_recorte_2023"],
+  "La Nación, 22/11/2021": ["lanacion_sanrafael_2021"], "Direct Relief, 19/10/2022": ["directrelief_2022"], "Codas et al., Cancer Epidemiology 2016": ["codas_2016"],
+  "La Nación, 19/10/2024": ["lanacion_itaipu_mamografos_2024"], "MSPBS, 20/11/2024": ["mspbs_registro_unico"], "MSPBS, 13/03/2024": ["mspbs_incan_acelerador"], "MSPBS, 31/07/2024": ["mspbs_dosis_unica"], "MSPBS, 01/06/2023": ["enfr"], "Res. S.G. N° 752 (MSPBS, 2024)": ["mspbs_registro_unico"],
   "OPS/OMS, 12/02/2024": ["ops_vph_2024"], "OPAS/OMS, 12/02/2024": ["ops_vph_2024"], "IARC, GLOBOCAN 2022": ["globocan_2022"],
   "WHA73.2, 2020": ["oms_colo_2020"], "Alma-Ata, OMS/UNICEF, 1978": ["alma_ata"], "OPS, 14/07/2026": ["ops_riiss_2026"], "OPAS, 14/07/2026": ["ops_riiss_2026"],
 };
@@ -1732,8 +1855,8 @@ function corDep(id) {
 
 function legendaHTML() {
   const caixa = (cor, txt) => `<span><i style="background:var(${cor})"></i>${txt}</span>`;
-  if (S.modo === "cob") return `<span class="leg-tit">${esc(t("legCob"))}</span>${[0, 1, 2, 3].map((n) => caixa(`--cob${n}`, n)).join("")}<span class="leg-nevoa"><i></i>${esc(t("legNevoa"))}</span>`;
-  if (S.modo === "reg") return `<span class="leg-tit">${esc(t("legReg"))}</span>${["<60", "60–80", "80–100", "≥100"].map((r, i) => caixa(`--reg${i + 1}`, r)).join("")}`;
+  if (S.modo === "cob") return `<button type="button" class="leg-tit leg-btn" data-abrir="luz">${esc(t("legCob"))} <u>?</u></button>${[0, 1, 2, 3].map((n) => caixa(`--cob${n}`, n)).join("")}<span class="leg-nevoa"><i></i>${esc(t("legNevoa"))}</span>`;
+  if (S.modo === "reg") return `<button type="button" class="leg-tit leg-btn" data-abrir="luz">${esc(t("legReg"))} <u>?</u></button>${["<60", "60–80", "80–100", "≥100"].map((r, i) => caixa(`--reg${i + 1}`, r)).join("")}`;
   const L = LIM[S.modo].map(fmtInt), cor = S.modo === "cura" ? "--cur" : "--reg";
   return `<span class="leg-tit">${esc(t("legVivo")[S.modo])}</span>${[`<${L[0]}`, `${L[0]}–${L[1]}`, `${L[1]}–${L[2]}`, `≥${L[2]}`].map((r, i) => caixa(`${cor}${i + 1}`, r)).join("")}`;
 }
@@ -1868,10 +1991,14 @@ function renderVivo() {
   if (!S || S.fim) return;
   const sr = SR_PLACAR[lang];   // o ícone é só desenho: o nome vai escondido para o leitor de tela
   $("#h-ano").innerHTML = `${ico("ano")}<span class="sr">${sr[0]} </span><b>${ano()}</b>`;
-  $("#h-ano").title = t("anoDe")(ano(), S.anoIdx + 1);
+  $("#h-ano").title = `${t("anoDe")(ano(), S.anoIdx + 1)} · ${t("titulares").tit(ano())}`;
   $("#h-dinheiro").innerHTML = `${ico("moeda")}<span class="sr">${sr[1]} </span><b>${fmtM(S.orc)}</b><span class="mais" aria-hidden="true">+</span>`;
   $("#h-prest").innerHTML = `${ico("medalha")}<span class="sr">${sr[2]} </span><b>${S.prest}</b><span class="mais" aria-hidden="true">›</span>`;
   $("#h-dinheiro").title = t("finTit"); $("#h-prest").title = t("prestTit");
+  // beta12: com o dinheiro apertado, 💰 e 🎖️ piscam para lembrar das finanças e dos favores
+  const aperto = S.fase === "jogando" && (S.orc < 4 || rendaAno() - manutAno() < 0);
+  $("#h-dinheiro").classList.toggle("chama", aperto);
+  $("#h-prest").classList.toggle("chama", aperto && S.prest >= 3 && (S.pol || {}).ampl !== S.anoIdx);
   $("#btn-ajuda").classList.toggle("alerta-asc", pendentes() > 0);
   $("#h-pontos").innerHTML = `${ico("estrela")}<span class="sr">${sr[3]} </span><b>${fmtInt(S.pontos + S.ptsAno)}</b>`;
   const tot = { inc: 0, prev: 0, mort: 0, cura: 0 };   // por ano, com o que funciona agora: muda na hora a cada decisão
@@ -1886,6 +2013,7 @@ function render() {
   if (!S || S.fim) return renderHud();
   S.orc = dec(S.orc);   // dinheiro em múltiplos de 0,1, igual ao que aparece na tela
   verificar();
+  if (S.fase === "jogando" && !S.dicaChips) { S.dicaChips = true; faixa("💰", t("dicaChipsTit"), t("dicaChipsTxt"), "ouro"); }   // beta12: uma vez por partida
   $("#tela-inicio").hidden = true; $("#tela-fim").hidden = true; $("#tela-jogo").hidden = false; $("#barra").hidden = false;
   document.querySelectorAll("#modos button").forEach((b) => { b.textContent = b.dataset.modo === "cob" ? t("modoCob") : t("modoReg"); });
   montarVivo();
@@ -2662,6 +2790,7 @@ function mostrarAjuda() {
     <h2>${esc(t("ajuda"))}</h2>
     <ol class="passos">${t("passos").map((p) => `<li>${p}</li>`).join("")}</ol>
     <p class="fonte">${fonteHTML(t("niveisFonte"))}</p>
+    <div class="btns"><button class="btn sec" type="button" data-abrir="luz">${ico("luz")} ${esc(t("luz").tit)}</button><button class="btn sec" type="button" data-abrir="titulares">📰 ${esc(t("titulares").tit(ano()))}</button></div>
     <p class="aviso">${esc(t("aviso"))} ${esc(t("modeloNota"))}</p>
     <h2>${esc(t("fontesTit"))}</h2>${listaFontes()}
     ${creditosHTML(true)}
@@ -2736,7 +2865,10 @@ document.addEventListener("click", (ev) => {
   const hb = alvo.closest("[data-hab]");
   if (hb && S) { S.habSel = hb.dataset.hab; mostrarArvore(); return; }
   const abr = alvo.closest("[data-abrir]");
-  if (abr && S) { if (abr.dataset.abrir === "missoes") mostrarMissoes(); else mostrarAjuda(); return; }
+  if (abr && S) { const q = abr.dataset.abrir; if (q === "missoes") mostrarMissoes(); else if (q === "luz") mostrarLuz(); else if (q === "titulares") mostrarTitulares(); else mostrarAjuda(); return; }
+  const ta = alvo.closest("[data-tit-ano]");
+  if (ta && S) { mostrarTitulares(+ta.dataset.titAno); return; }
+  if (alvo.closest("#h-ano") && S && !S.fim) { mostrarTitulares(); return; }   // beta12: tocar no ano abre as manchetes
   const op = alvo.closest("[data-opcao]");
   if (op && !op.disabled) { escolherOpcao(+op.dataset.opcao); return; }
   const qz = alvo.closest("[data-quiz]");
@@ -2744,7 +2876,12 @@ document.addEventListener("click", (ev) => {
   if (alvo.closest("[data-quiz-seguir]") && S && S.fase === "quiz") { seguirQuiz(); return; }
   if (alvo.closest("#btn-missoes") && S && !S.fim) { mostrarMissoes(); return; }
   const modo = alvo.closest("[data-modo]");
-  if (modo && S && !S.fim) { S.modo = modo.dataset.modo; salvar(); pintarMapa(); const el = $("#dep-linha"); if (el) el.innerHTML = linhaDep(); return; }
+  if (modo && S && !S.fim) {
+    S.modo = modo.dataset.modo; pintarMapa(); const el = $("#dep-linha"); if (el) el.innerHTML = linhaDep();
+    const mw = $("#mapa-wrap"); mw.classList.remove("troca"); void mw.offsetWidth; mw.classList.add("troca");   // a camada nova aparece com um brilho curto
+    if (!S.luzVisto && modo.closest("#modos")) { S.luzVisto = true; mostrarLuz(); }   // beta12: a 1.ª vez explica o que o mapa mostra
+    salvar(); return;
+  }
   if (alvo.closest("[data-fechar]")) {
     const eraEvento = S && !S.fim && S.fase === "evento";
     if (eraEvento && S.demanda) { S.fase = "demanda"; salvar(); mostrarDemanda(); return; }
