@@ -9,7 +9,8 @@ const ANOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
 const ORC_BASE = 15;   // receita por ano, que entra mês a mês
 const RAZAO_INC = 2.1;             // incidência ≈ 2,1 × óbitos (GLOBOCAN 2022: 13.783 casos / 6.581 óbitos)
 const CHAVE = "epidemia-py-v4";    // v4: personagens, habilidades, prestígio e manutenção (partidas salvas de versões anteriores não continuam)
-const RANKS = [0, 1200, 4000, 7500, 11000];   // pontos de cada cargo; cada promoção libera uma habilidade
+const RANKS = [0, 1000, 3000, 6000, 9000];   // carreira (pontos + méritos) de cada cargo; cada promoção libera uma habilidade (beta11)
+const BONUS_CARGO = 2;   // 💰 ao subir de cargo (beta11: «dopamina», pedido do Gi em 28/10/2026)
 const CONV_DESDE = 2016;   // convênios a partir de 2016 (Don Patrón desde o começo)
 const CHAVE_LOGROS = "epidemia-py-logros";   // conquistas deste celular, entre partidas
 const MODOS_VIVOS = ["inc", "prev", "mort", "cura"];
@@ -25,19 +26,19 @@ const ler = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (
 
 /* ---------- ações: 3 por nível + centro de pesquisa. "conv" = anuidade do convênio que cumpre o mesmo papel ---------- */
 const SLOTS = { P: ["vacuna", "tabaco", "habitos"], D: ["vph", "mamo", "registro"], T: ["quimio", "radio", "paliativos"] };
-/* at = nível de atenção (1ª primária, 2ª secundária, 3ª terciária); manut = manutenção por ano; prest = prestígio para aprovar;
+/* at = nível de atenção (1ª primária, 2ª secundária, 3ª terciária); manut = manutenção por ano (20% do custo desde a beta11, pedido do Gi em 27/10/2026); prest = prestígio para aprovar;
    desde = ano em que fica disponível; conv = anuidade do convênio que cumpre o mesmo papel */
 const ACOES = {
-  vacuna: { nivel: "P", at: 1, custo: 2, manut: 0.5, prest: 0, ico: "💉" },
-  tabaco: { nivel: "P", at: 1, custo: 1, manut: 0.5, prest: 0, ico: "🚭" },
-  habitos: { nivel: "P", at: 1, custo: 1, manut: 0.5, prest: 0, ico: "🍎" },
-  vph: { nivel: "D", at: 1, custo: 2, manut: 0.5, prest: 0, ico: "🔬", vis: 0.06, conv: 1 },
-  mamo: { nivel: "D", at: 2, custo: 3, manut: 1, prest: 1, ico: "🎗️", vis: 0.06, conv: 2 },
-  registro: { nivel: "D", at: 2, custo: 1, manut: 0.5, prest: 0, ico: "📋", vis: 0.08 },
-  quimio: { nivel: "T", at: 2, custo: 4, manut: 1.5, prest: 1, ico: "💊", conv: 2 },
-  radio: { nivel: "T", at: 3, custo: 8, manut: 2.5, prest: 3, ico: "☢️", conv: 3, desde: 2020 },
-  paliativos: { nivel: "T", at: 1, custo: 2, manut: 0.5, prest: 0, ico: "🤲", conv: 1 },
-  pesquisa: { nivel: "X", at: 3, custo: 5, manut: 1.5, prest: 2, ico: "🎓", conv: 2, desde: 2016 },
+  vacuna: { nivel: "P", at: 1, custo: 2, manut: 0.4, prest: 0, ico: "💉" },
+  tabaco: { nivel: "P", at: 1, custo: 1, manut: 0.2, prest: 0, ico: "🚭" },
+  habitos: { nivel: "P", at: 1, custo: 1, manut: 0.2, prest: 0, ico: "🍎" },
+  vph: { nivel: "D", at: 1, custo: 2, manut: 0.4, prest: 0, ico: "🔬", vis: 0.06, conv: 1 },
+  mamo: { nivel: "D", at: 2, custo: 3, manut: 0.6, prest: 1, ico: "🎗️", vis: 0.06, conv: 2 },
+  registro: { nivel: "D", at: 2, custo: 1, manut: 0.2, prest: 0, ico: "📋", vis: 0.08 },
+  quimio: { nivel: "T", at: 2, custo: 4, manut: 0.8, prest: 1, ico: "💊", conv: 2 },
+  radio: { nivel: "T", at: 3, custo: 8, manut: 1.6, prest: 3, ico: "☢️", conv: 3, desde: 2020 },
+  paliativos: { nivel: "T", at: 1, custo: 2, manut: 0.4, prest: 0, ico: "🤲", conv: 1 },
+  pesquisa: { nivel: "X", at: 3, custo: 5, manut: 1, prest: 2, ico: "🎓", conv: 2, desde: 2016 },
 };
 
 /* ---------- textos ---------- */
@@ -56,7 +57,7 @@ const T = {
       "🤝 Convenios: sin compra ni prestigio, pero se pagan todos los años.",
       "Arriba a la derecha: incidencia, prevalencia, muertes y curas del país por año; cambian en el acto con cada decisión. Tócalas para ver el mapa de cada una.",
       "Cada año trae un hecho real, a veces un imprevisto (royalties, epidemias, donaciones, recortes del Congreso) y una demanda de la sociedad. Cumplir la demanda da ⭐ y 🎖️; rechazarla cuesta 🎖️ 1; prometer y no cumplir cuesta más.",
-      "🎯 Misiones, ⚡ desafíos relámpago y 🏅 logros dan premios. ❤️ Vidas salvadas, 🍎 casos evitados y 🕯️ muertes sin diagnóstico muestran el efecto de tus decisiones (modelo del juego, comparado con no hacer nada).",
+      "🎯 Misiones, ⚡ desafíos relámpago y 🏅 logros dan premios; misiones y aciertos también suben tu cargo (⭐ 500 y ⭐ 250 de carrera). ❤️ Vidas salvadas, 🍎 casos evitados y 🕯️ muertes sin diagnóstico muestran el efecto de tus decisiones (modelo del juego, comparado con no hacer nada).",
       "Los ⭐ puntos salen sobre todo del resultado: cada vida salvada vale 1 y cada caso evitado ½. Meta del país: menos de 400 muertes sin diagnóstico al año; cada una por encima quita ½ y cada una por debajo suma ½. La estructura construida suma poco.",
       "Donde la estadística es baja, falta diagnóstico, no cáncer: diagnosticar revela casos ocultos y la tasa registrada sube. ¡Es buena señal!",
     ],
@@ -189,9 +190,10 @@ const T = {
     pers: { escolher: "Elige tu personaje", jogarCom: (n) => `Jugar con ${n}`, passiva: "Lo que ya sabe hacer", lado: "Contactos" },
     cargos: ["Coordinador/a local", "Director/a regional", "Director/a nacional", "Viceministro/a", "Ministro/a de Salud"],
     arvTit: "Personaje y habilidades", arvAscenso: (c) => `¡Ascenso a ${c}! Elige una habilidad de esa columna.`,
-    arvProx: (c, p) => `Próximo cargo: ${c} con ⭐ ${p}`, arvTopo: "Llegaste al cargo más alto.",
-    arvEscolher: "Elegir esta habilidad", arvEscolhida: "Ya la elegiste.", arvBloq: "Se habilita al llegar al cargo de esa columna (una sola por cargo).",
-    ascensoFaixa: (c) => `¡Ascenso: ${c}!`, ascensoTxt: "Elige una nueva habilidad.",
+    arvProx: (c, f) => `Próximo cargo: ${c} · faltan ⭐ ${f}`, arvTopo: "Llegaste al cargo más alto.",
+    arvCarreira: (tot, pts, m, q) => `Carrera ⭐ ${tot} = puntos ${pts} + 🎯 ${m} misiones × ${MERITO.mis} + ⚡ ${q} aciertos × ${MERITO.quiz}`, nivelHab: (i) => `Nivel ${i}`,
+    arvEscolher: "Elegir esta habilidad", arvEscolhida: "Ya la elegiste.", arvBloq: "Se habilita después de la anterior de su rama; una elección por cargo.",
+    ascensoFaixa: (c) => `¡Ascenso: ${c}!`, ascensoTxt: "+💰 2 de presupuesto. Elige una nueva habilidad.",
     niveisAt: ["", "1.ª atención primaria", "2.ª atención secundaria", "3.ª atención terciaria"], nivAtCurto: ["", "1.ª", "2.ª", "3.ª"],
     funcoes: { P: "Prevención", D: "Diagnóstico", T: "Tratamiento", X: "Investigación" },
     fichaCompra: "Compra", fichaPrest: "Prestigio", fichaManut: "Mantenimiento", porAnoCurto: "/año",
@@ -276,7 +278,7 @@ const T = {
       "🤝 Convênios: sem compra nem prestígio, mas se pagam todo ano.",
       "No alto à direita: incidência, prevalência, óbitos e curas do país por ano; mudam na hora a cada decisão. Toque nelas para ver o mapa de cada uma.",
       "Cada ano traz um fato real, às vezes um imprevisto (royalties, epidemias, doações, cortes do Congresso) e uma demanda da sociedade. Cumprir a demanda dá ⭐ e 🎖️; recusar custa 🎖️ 1; prometer e não cumprir custa mais.",
-      "🎯 Missões, ⚡ desafios relâmpago e 🏅 conquistas dão prêmios. ❤️ Vidas salvas, 🍎 casos evitados e 🕯️ óbitos sem diagnóstico mostram o efeito das suas decisões (modelo do jogo, comparado com não fazer nada).",
+      "🎯 Missões, ⚡ desafios relâmpago e 🏅 conquistas dão prêmios; missões e acertos também sobem o seu cargo (⭐ 500 e ⭐ 250 de carreira). ❤️ Vidas salvas, 🍎 casos evitados e 🕯️ óbitos sem diagnóstico mostram o efeito das suas decisões (modelo do jogo, comparado com não fazer nada).",
       "Os ⭐ pontos vêm sobretudo do resultado: cada vida salva vale 1 e cada caso evitado ½. Meta do país: menos de 400 óbitos sem diagnóstico por ano; cada um acima tira ½ e cada um abaixo soma ½. A estrutura construída soma pouco.",
       "Onde a estatística é baixa, falta diagnóstico, não câncer: diagnosticar revela casos ocultos e a taxa registrada sobe. É bom sinal!",
     ],
@@ -409,9 +411,10 @@ const T = {
     pers: { escolher: "Escolha seu personagem", jogarCom: (n) => `Jogar com ${n}`, passiva: "O que já sabe fazer", lado: "Contatos" },
     cargos: ["Coordenador/a local", "Diretor/a regional", "Diretor/a nacional", "Vice-ministro/a", "Ministro/a da Saúde"],
     arvTit: "Personagem e habilidades", arvAscenso: (c) => `Promoção a ${c}! Escolha uma habilidade dessa coluna.`,
-    arvProx: (c, p) => `Próximo cargo: ${c} com ⭐ ${p}`, arvTopo: "Você chegou ao cargo mais alto.",
-    arvEscolher: "Escolher esta habilidade", arvEscolhida: "Você já a escolheu.", arvBloq: "Libera ao chegar ao cargo dessa coluna (uma só por cargo).",
-    ascensoFaixa: (c) => `Promoção: ${c}!`, ascensoTxt: "Escolha uma nova habilidade.",
+    arvProx: (c, f) => `Próximo cargo: ${c} · faltam ⭐ ${f}`, arvTopo: "Você chegou ao cargo mais alto.",
+    arvCarreira: (tot, pts, m, q) => `Carreira ⭐ ${tot} = pontos ${pts} + 🎯 ${m} missões × ${MERITO.mis} + ⚡ ${q} acertos × ${MERITO.quiz}`, nivelHab: (i) => `Nível ${i}`,
+    arvEscolher: "Escolher esta habilidade", arvEscolhida: "Você já a escolheu.", arvBloq: "Libera depois da anterior do seu ramo; uma escolha por cargo.",
+    ascensoFaixa: (c) => `Promoção: ${c}!`, ascensoTxt: "+💰 2 de orçamento. Escolha uma nova habilidade.",
     niveisAt: ["", "1ª atenção primária", "2ª atenção secundária", "3ª atenção terciária"], nivAtCurto: ["", "1ª", "2ª", "3ª"],
     funcoes: { P: "Prevenção", D: "Diagnóstico", T: "Tratamento", X: "Pesquisa" },
     fichaCompra: "Compra", fichaPrest: "Prestígio", fichaManut: "Manutenção", porAnoCurto: "/ano",
@@ -683,11 +686,11 @@ const DEMANDAS = [
     ] },
 ];
 
-/* ---------- personagens: passiva + árvore de 3 especializações × 4 cargos (estilo XCOM 2); arvore[cargo][especialização] ---------- */
+/* ---------- personagens: passiva + árvore de 3 ramos com 4, 3 e 3 habilidades (estilo XCOM 2); arvore[ramo][nível], cada nível pede o anterior do mesmo ramo (beta11) ---------- */
 const PERSONAGENS = {
   bob: { ico: "🧑‍💻", cor: "#79B0DE",
     ef: { custo: { pesquisa: 0.6, n1: 0.8 }, ano: { radio: 3, pesquisa: 1 }, sorte: { opensource: 4, academia: 2 } },
-    arvore: [["b_reg", "b_beca", "b_agentes"], ["b_ia", "b_uni", "b_tele"], ["b_vig", "b_ensaios", "b_movel"], ["b_pred", "b_paper", "b_aps40"]],
+    arvore: [["b_reg", "b_ia", "b_vig", "b_pred"], ["b_beca", "b_uni", "b_ensaios"], ["b_agentes", "b_tele", "b_movel"]],
     es: { nome: "Bob", papel: "Estudiante de Medicina", lado: "Comunidad open source",
       bio: "Entusiasta de la epidemiología y de las nuevas tecnologías, aprendiz de inteligencia artificial. Ingenioso para inventar soluciones en la atención primaria.",
       ramos: ["🤖 Tecnología e IA", "🔬 Investigación", "🏘️ APS inventiva"],
@@ -698,7 +701,7 @@ const PERSONAGENS = {
       tracos: ["🎓 Centro de pesquisa 40% mais barato", "☢️ Acelerador disponível 3 anos antes", "🏘️ Atenção primária 20% mais barata", "💻 A comunidade open source o ajuda"] } },
   patron: { ico: "🤵", cor: "#D9B25F",
     ef: { renda: 1 / 3, conv: { todos: 0.6 }, convDesde: 2015, sorte: { religiosa: 3, empresa: 3, itaipu: 2, yacyreta: 2, gobierno: 2 } },
-    arvore: [["p_chave", "p_kermes", "p_camara"], ["p_concessao", "p_caridade", "p_royalties"], ["p_acelconc", "p_fundacao", "p_zona"], ["p_grande", "p_mecenas", "p_polo"]],
+    arvore: [["p_chave", "p_concessao", "p_acelconc", "p_grande"], ["p_kermes", "p_caridade", "p_fundacao"], ["p_camara", "p_royalties", "p_zona"]],
     es: { nome: "Don Patrón", papel: "Empresario", lado: "Instituciones religiosas",
       bio: "Exitoso en los negocios, ve en la salud una oportunidad para desarrollar la región. Su ambición termina haciendo el bien. Creyente.",
       ramos: ["🤝 Alianzas público-privadas", "🙏 Filantropía", "🏗️ Desarrollo regional"],
@@ -709,7 +712,7 @@ const PERSONAGENS = {
       tracos: ["💰 +4 por ano", "🤝 Convênios 40% mais baratos e desde 2015", "🍀 Mais doações e royalties", "⛪ As instituições religiosas o ajudam"] } },
   beatriz: { ico: "👩‍⚕️", cor: "#E08BC0",
     ef: { custo: { n1: 0.9, n2: 0.8, n3: 0.8 }, prest: { n2: -1, n3: -1 }, cura: 0.02, demMedPrest: 2, sorte: { medicas: 4, academia: 2 } },
-    arvore: [["d_gestao", "d_colegas", "d_protocolos"], ["d_rede", "d_residentes", "d_mbe"], ["d_acel", "d_tamizaje", "d_rcbp"], ["d_centro", "d_lider", "d_excel"]],
+    arvore: [["d_gestao", "d_rede", "d_acel", "d_centro"], ["d_colegas", "d_residentes", "d_tamizaje"], ["d_protocolos", "d_mbe", "d_rcbp"]],
     es: { nome: "Dra. Beatriz", papel: "Médica", lado: "Instituciones médicas",
       bio: "Altamente capacitada y articulada: ciencia básica y avanzada, metodología y medicina como un todo. Respetada entre colegas.",
       ramos: ["🏥 Hospitales", "🩺 Clínica", "📚 Ciencia y método"],
@@ -957,6 +960,7 @@ const LOGROS = [
 
 /* ---------- desafio relâmpago: um por ano, no meio do ano; só fatos que o jogo já cita, com a mesma fonte ---------- */
 const BONUS_QUIZ = 100;   // pontos do ranking por acerto (decisão do Gi, 27/10/2026); fica fora do teto de 3.000 do ano
+const QUIZ_ORC = 4;       // 💰 por acerto (era 2; pedido do Gi em 27/10/2026)
 const QUIZ = [
   { v: false, fonte: "Atlas 2015–2019",
     es: ["El pulmón es la 1.ª causa de muerte por cáncer en las mujeres paraguayas.", "En las mujeres lideran la mama y el cuello uterino; el pulmón es la 1.ª causa en los hombres."],
@@ -1003,7 +1007,150 @@ const QUIZ = [
   { v: true, fonte: "Ley N° 6266/2018",
     es: ["La Ley 6.266/2018 garantiza atención integral a las personas con cáncer, de la prevención a los cuidados paliativos.", "También prevé un Fondo Solidario."],
     pt: ["A Ley 6.266/2018 garante atenção integral às pessoas com câncer, da prevenção aos cuidados paliativos.", "Também prevê um Fundo Solidário."] },
+  /* beta11 (28/10/2026, pedido do Gi): perguntas para interpretar os dados dos recortes de imprensa e do Atlas */
+  { v: false, fonte: "ABC Color, 13/02/2022",
+    es: ["En 2022, el impuesto selectivo al tabaco de Paraguay (20%) era más alto que el de Chile.", "Era el más bajo de la región: Chile 89%, Argentina 80%, Brasil 68%, Perú y Colombia 49%, Bolivia 39% (datos de la CEPAL citados por ABC Color)."],
+    pt: ["Em 2022, o imposto seletivo sobre o tabaco do Paraguai (20%) era mais alto que o do Chile.", "Era o mais baixo da região: Chile 89%, Argentina 80%, Brasil 68%, Peru e Colômbia 49%, Bolívia 39% (dados da CEPAL citados pelo ABC Color)."] },
+  { v: true, fonte: "ABC Color, 10/05/2024",
+    es: ["En 8 años, el Hospital Día Oncológico de Encarnación atendió 4.047 pacientes y hizo unas 8.400 sesiones de quimioterapia: más de 2 sesiones por paciente.", "Hoy hace 15 sesiones por día y espera llegar a 25 o 30 en la nueva sede. La atención es gratuita, por un acuerdo público-privado."],
+    pt: ["Em 8 anos, o Hospital Día Oncológico de Encarnación atendeu 4.047 pacientes e fez cerca de 8.400 sessões de quimioterapia: mais de 2 sessões por paciente.", "Hoje faz 15 sessões por dia e espera chegar a 25 ou 30 na nova sede. O atendimento é gratuito, por um acordo público-privado."] },
+  { v: true, fonte: "MSPBS, INCAN 2024",
+    es: ["Con su tercer acelerador lineal, la capacidad diaria de radioterapia del INCAN subió 50%: de 120 a 180 pacientes.", "Es el único hospital del país, público o privado, con tres aceleradores; el tercero fue donado a través del OIEA."],
+    pt: ["Com o terceiro acelerador linear, a capacidade diária de radioterapia do INCAN subiu 50%: de 120 para 180 pacientes.", "É o único hospital do país, público ou privado, com três aceleradores; o terceiro foi doado por meio da AIEA."] },
+  { v: false, fonte: "MSPBS, 12/03/2025",
+    es: ["De las 72.133 pruebas de VPH hechas en 2024, más de la mitad dio positivo.", "Dieron positivo 9.863 (cerca de 14%) y 744 mujeres iniciaron tratamiento a tiempo. La prueba es gratuita de los 30 a los 65 años."],
+    pt: ["Dos 72.133 testes de HPV feitos em 2024, mais da metade deu positivo.", "Deram positivo 9.863 (cerca de 14%) e 744 mulheres iniciaram tratamento a tempo. O teste é gratuito dos 30 aos 65 anos."] },
+  { v: true, fonte: "La Nación, 13/04/2023",
+    es: ["El préstamo del BID aprobado en 2023, de hasta US$ 45 millones, era para la red de salud de Concepción, San Pedro, Caazapá y Alto Paraná.", "Cuatro departamentos del interior. El contrato se había firmado en marzo de 2020."],
+    pt: ["O empréstimo do BID aprovado em 2023, de até US$ 45 milhões, era para a rede de saúde de Concepción, San Pedro, Caazapá e Alto Paraná.", "Quatro departamentos do interior. O contrato tinha sido assinado em março de 2020."] },
+  { v: true, fonte: "La Nación, 23/07/2024",
+    es: ["Según el jefe de oncología del Hospital Regional de Ciudad del Este, 6 de cada 10 pacientes diagnosticados allí necesitan radioterapia.", "Hoy se los deriva al INCAN, en Capiatá, o a Foz de Iguazú, en Brasil. Por eso el Ministerio anunció aceleradores para Alto Paraná e Itapúa."],
+    pt: ["Segundo o chefe de oncologia do Hospital Regional de Ciudad del Este, 6 em cada 10 pacientes diagnosticados lá precisam de radioterapia.", "Hoje são encaminhados ao INCAN, em Capiatá, ou a Foz do Iguaçu, no Brasil. Por isso o Ministério anunciou aceleradores para Alto Paraná e Itapúa."] },
+  { v: true, fonte: "ENFR 2022",
+    es: ["Según la ENFR 2022, cerca de 7 de cada 10 adultos no hacen actividad física en su tiempo libre.", "72,3%. Además, 37% tiene sobrepeso y 32,4%, obesidad."],
+    pt: ["Segundo a ENFR 2022, cerca de 7 em cada 10 adultos não fazem atividade física no tempo livre.", "72,3%. Além disso, 37% têm sobrepeso e 32,4%, obesidade."] },
+  { v: false, fonte: "ENFR 2022",
+    es: ["Según la ENFR 2022, hay más adultos con obesidad que con sobrepeso.", "Sobrepeso 37%, obesidad 32,4%: cerca de 7 de cada 10 adultos tienen exceso de peso."],
+    pt: ["Segundo a ENFR 2022, há mais adultos com obesidade do que com sobrepeso.", "Sobrepeso 37%, obesidade 32,4%: cerca de 7 em cada 10 adultos têm excesso de peso."] },
+  { v: true, fonte: "ENFR 2022",
+    es: ["Entre las dos encuestas nacionales de factores de riesgo, el consumo de cigarrillo convencional bajó de 14,5% a 12,5%.", "Pero 5% ya usa cigarrillo electrónico y 17% usa alguna forma de tabaco."],
+    pt: ["Entre as duas pesquisas nacionais de fatores de risco, o consumo de cigarro convencional caiu de 14,5% para 12,5%.", "Mas 5% já usam cigarro eletrônico e 17% usam alguma forma de tabaco."] },
+  { v: false, fonte: "ENFR 2022",
+    es: ["Entre las dos encuestas, subió la proporción de adultos que comen 5 porciones de frutas y verduras por día.", "Bajó de 15% a 3,9%."],
+    pt: ["Entre as duas pesquisas, subiu a proporção de adultos que comem 5 porções de frutas e verduras por dia.", "Caiu de 15% para 3,9%."] },
+  { v: true, fonte: "Res. S.G. N° 752 (MSPBS, 2024)",
+    es: ["La Ley 6.266 y la Resolución S.G. N° 752 obligan a notificar todo cáncer confirmado, también en el sector privado.", "Con el registro único, el Ministerio planifica la compra de medicamentos, los servicios y la investigación."],
+    pt: ["A Ley 6.266 e a Resolução S.G. N° 752 obrigam a notificar todo câncer confirmado, também no setor privado.", "Com o registro único, o Ministério planeja a compra de medicamentos, os serviços e a pesquisa."] },
+  { v: true, fonte: "OPS/OMS, 12/02/2024",
+    es: ["En Alto Paraná, la prueba de VPH gratuita para mujeres de 30 a 65 años beneficiaría a 100.000 mujeres.", "La OPS y el programa nacional donaron equipos de termocoagulación para tratar las lesiones encontradas."],
+    pt: ["Em Alto Paraná, o teste de HPV gratuito para mulheres de 30 a 65 anos beneficiaria 100.000 mulheres.", "A OPAS e o programa nacional doaram equipamentos de termocoagulação para tratar as lesões encontradas."] },
+  { v: false, fonte: "OIEA, 2026",
+    es: ["La primera misión imPACT del OIEA en Paraguay fue la de 2026.", "La primera fue en 2016 y sirvió de base al Programa Nacional de Control del Cáncer 2020–2024. La de 2026 revisó todo el sistema, de la prevención a los cuidados paliativos."],
+    pt: ["A primeira missão imPACT da AIEA no Paraguai foi a de 2026.", "A primeira foi em 2016 e serviu de base ao Programa Nacional de Control del Cáncer 2020–2024. A de 2026 revisou todo o sistema, da prevenção aos cuidados paliativos."] },
+  { v: true, fonte: "La Nación, 09/03/2026",
+    es: ["El pabellón de oncología del Hospital Regional de Ciudad del Este atiende unos 450 pacientes por mes.", "En 2026, los pacientes se movilizaron por medicamentos, ampliación del pabellón y equipos de radioterapia."],
+    pt: ["O pavilhão de oncologia do Hospital Regional de Ciudad del Este atende cerca de 450 pacientes por mês.", "Em 2026, os pacientes se mobilizaram por medicamentos, ampliação do pavilhão e equipamentos de radioterapia."] },
+  { v: true, fonte: "MSPBS, 21/11/2024",
+    es: ["El primer mamógrafo digital de Concepción, de 2024, atenderá a más de 30.000 mujeres mayores de 40 años.", "Llegó junto con el décimo Hospital Día Oncológico del país."],
+    pt: ["O primeiro mamógrafo digital de Concepción, de 2024, atenderá mais de 30.000 mulheres acima de 40 anos.", "Chegou junto com o décimo Hospital Día Oncológico do país."] },
+  { v: false, fonte: "Atlas 2015–2019",
+    es: ["Entre 2015 y 2019, Asunción registró más muertes por cáncer que Central.", "Central: 6.670 muertes; Asunción: 2.798. Pero Asunción tiene la tasa estandarizada más alta del país (103,9 por 100.000, contra 91,1 en Central): más muertes no significa mayor tasa."],
+    pt: ["Entre 2015 e 2019, Asunción registrou mais mortes por câncer que Central.", "Central: 6.670 mortes; Asunción: 2.798. Mas Asunción tem a taxa padronizada mais alta do país (103,9 por 100.000, contra 91,1 em Central): mais mortes não significa taxa maior."] },
+  { v: true, fonte: "Atlas 2015–2019",
+    es: ["Los tres departamentos del Chaco (Boquerón, Presidente Hayes y Alto Paraguay) suman menos de 700 muertes por cáncer en 2015–2019.", "631 muertes en cinco años: Presidente Hayes 351, Boquerón 242 y Alto Paraguay 38. Con números tan pequeños, las tasas oscilan mucho de un año a otro."],
+    pt: ["Os três departamentos do Chaco (Boquerón, Presidente Hayes e Alto Paraguay) somam menos de 700 mortes por câncer em 2015–2019.", "631 mortes em cinco anos: Presidente Hayes 351, Boquerón 242 e Alto Paraguay 38. Com números tão pequenos, as taxas oscilam muito de um ano para outro."] },
+  { v: true, fonte: "IARC, GLOBOCAN 2022",
+    es: ["Según GLOBOCAN 2022, en Paraguay hay cerca de 1 muerte por cada 2 casos nuevos de cáncer.", "6.581 muertes y 13.783 casos nuevos estimados. Esa proporción (casos ≈ 2,1 × muertes) es la que usa el modelo del juego."],
+    pt: ["Segundo o GLOBOCAN 2022, no Paraguai há cerca de 1 morte para cada 2 casos novos de câncer.", "6.581 mortes e 13.783 casos novos estimados. Essa proporção (casos ≈ 2,1 × mortes) é a que o modelo do jogo usa."] },
+  { v: false, fonte: "DGVS/MSPBS, 05/02/2024",
+    es: ["Los cerca de 2.900 diagnósticos de cáncer registrados en 2019 por el registro poblacional corresponden a todo el país.", "Solo a Asunción y Central: el registro, creado en 2020, no cubre los otros 16 departamentos."],
+    pt: ["Os cerca de 2.900 diagnósticos de câncer registrados em 2019 pelo registro populacional correspondem ao país inteiro.", "Só a Asunción e Central: o registro, criado em 2020, não cobre os outros 16 departamentos."] },
+  /* perguntas geradas dos dados (QUIZ_GEN): a pergunta concreta é sorteada ao abrir o desafio */
+  { gen: "pop" }, { gen: "tee" }, { gen: "obitos" }, { gen: "primH" }, { gen: "primM" }, { gen: "vizinho" }, { gen: "chaco" }, { gen: "mal" },
 ];
+/* ---------- perguntas geradas dos dados (beta11, pedido do Gi em 27/10/2026): geografia, população e epidemiologia do Paraguai.
+   Fontes: Atlas 2015–2019 (óbitos, taxas, 1.ª causa, causas mal definidas), Censo 2022 (população) e o mapa (vizinhos).
+   A pergunta concreta é sorteada ao abrir o desafio e guardada em S.quizGer: a tela repete o mesmo texto e a resposta vale a mesma coisa. ---------- */
+const NOMES_SITIO = { es: { pulmao: "pulmón", prostata: "próstata", pancreas: "páncreas", mama: "mama", colo: "cuello uterino" },
+  pt: { pulmao: "pulmão", prostata: "próstata", pancreas: "pâncreas", mama: "mama", colo: "colo do útero" } };
+const sorteio = (l) => l[Math.floor(Math.random() * l.length)];
+function parDeps(ok) { for (let k = 0; k < 300; k++) { const a = sorteio(DEPS), b = sorteio(DEPS); if (a !== b && ok(a, b)) return [a, b]; } return [DEPS[0], DEPS[1]]; }
+const nomesDeps = (ids) => ids.map((id) => DEP[id].nome).join(", ");
+const QUIZ_GEN = {
+  pop: () => {
+    const [a, b] = parDeps((x, y) => Math.max(x.pop, y.pop) / Math.min(x.pop, y.pop) >= 1.3), v = a.pop > b.pop;
+    return { v, fonte: "Censo 2022 (INE)",
+      es: [`Según el Censo 2022, ${a.nome} tiene más habitantes que ${b.nome}.`, `${a.nome}: ${fmtInt(a.pop)} · ${b.nome}: ${fmtInt(b.pop)} habitantes.`],
+      pt: [`Segundo o Censo 2022, ${a.nome} tem mais habitantes que ${b.nome}.`, `${a.nome}: ${fmtInt(a.pop)} · ${b.nome}: ${fmtInt(b.pop)} habitantes.`] };
+  },
+  tee: () => {
+    const [a, b] = parDeps((x, y) => Math.abs(x.tee - y.tee) >= 8), v = a.tee > b.tee;
+    return { v, fonte: "Atlas 2015–2019",
+      es: [`La tasa de mortalidad por cáncer (estandarizada por edad, 2015–2019) es mayor en ${a.nome} que en ${b.nome}.`, `${a.nome}: ${fmtM(a.tee)} · ${b.nome}: ${fmtM(b.tee)} por 100.000 habitantes. Una tasa baja también puede ser subregistro.`],
+      pt: [`A taxa de mortalidade por câncer (padronizada por idade, 2015–2019) é maior em ${a.nome} do que em ${b.nome}.`, `${a.nome}: ${fmtM(a.tee)} · ${b.nome}: ${fmtM(b.tee)} por 100.000 habitantes. Uma taxa baixa também pode ser sub-registro.`] };
+  },
+  obitos: () => {
+    const [a, b] = parDeps((x, y) => Math.max(x.obitos, y.obitos) / Math.min(x.obitos, y.obitos) >= 1.5), v = a.obitos > b.obitos;
+    return { v, fonte: "Atlas 2015–2019",
+      es: [`Entre 2015 y 2019, ${a.nome} registró más muertes por cáncer que ${b.nome}.`, `${a.nome}: ${fmtInt(a.obitos)} · ${b.nome}: ${fmtInt(b.obitos)} muertes en cinco años. Para comparar el riesgo se usa la tasa estandarizada, no el número de muertes.`],
+      pt: [`Entre 2015 e 2019, ${a.nome} registrou mais mortes por câncer que ${b.nome}.`, `${a.nome}: ${fmtInt(a.obitos)} · ${b.nome}: ${fmtInt(b.obitos)} mortes em cinco anos. Para comparar o risco usa-se a taxa padronizada, não o número de mortes.`] };
+  },
+  primH: () => {
+    const a = sorteio(DEPS.filter((d) => NOMES_SITIO.es[d.primH])), certo = Math.random() < 0.5;
+    const x = certo ? a.primH : sorteio(["pulmao", "prostata", "pancreas"].filter((s) => s !== a.primH));
+    return { v: certo, fonte: "Atlas 2015–2019",
+      es: [`En ${a.nome}, el cáncer que más muertes causa en los hombres es el de ${NOMES_SITIO.es[x]}.`, `En ${a.nome}, la 1.ª causa de muerte por cáncer en los hombres es el cáncer de ${NOMES_SITIO.es[a.primH]} (2015–2019). En el país, el pulmón lidera en ${PULMAO.length} de 18.`],
+      pt: [`Em ${a.nome}, o câncer que mais mata os homens é o de ${NOMES_SITIO.pt[x]}.`, `Em ${a.nome}, a 1ª causa de morte por câncer nos homens é o câncer de ${NOMES_SITIO.pt[a.primH]} (2015–2019). No país, o pulmão lidera em ${PULMAO.length} de 18.`] };
+  },
+  primM: () => {
+    const a = sorteio(DEPS.filter((d) => d.primM === "mama" || d.primM === "colo")), certo = Math.random() < 0.5;
+    const x = certo ? a.primM : (a.primM === "mama" ? "colo" : "mama");
+    return { v: certo, fonte: "Atlas 2015–2019",
+      es: [`En ${a.nome}, el cáncer que más muertes causa en las mujeres es el de ${NOMES_SITIO.es[x]}.`, `En ${a.nome}, la 1.ª causa de muerte por cáncer en las mujeres es el cáncer de ${NOMES_SITIO.es[a.primM]} (2015–2019). El cuello uterino lidera en ${COLO.length} de 18: un cáncer evitable.`],
+      pt: [`Em ${a.nome}, o câncer que mais mata as mulheres é o de ${NOMES_SITIO.pt[x]}.`, `Em ${a.nome}, a 1ª causa de morte por câncer nas mulheres é o câncer de ${NOMES_SITIO.pt[a.primM]} (2015–2019). O colo do útero lidera em ${COLO.length} de 18: um câncer evitável.`] };
+  },
+  vizinho: () => {
+    const a = sorteio(DEPS.filter((d) => d.vizinhos && d.vizinhos.length)), certo = Math.random() < 0.5;
+    const b = certo ? DEP[sorteio(a.vizinhos)] : sorteio(DEPS.filter((d) => d.id !== a.id && !a.vizinhos.includes(d.id)));
+    return { v: certo, fonte: "Mapa: geoBoundaries",
+      es: [`${a.nome} limita con ${b.nome}.`, `${a.nome} limita con: ${nomesDeps(a.vizinhos)}.`],
+      pt: [`${a.nome} faz fronteira com ${b.nome}.`, `${a.nome} faz fronteira com: ${nomesDeps(a.vizinhos)}.`] };
+  },
+  chaco: () => {
+    const a = sorteio(DEPS), v = CHACO.includes(a.id), pct = fmtM(100 * CHACO.reduce((s, id) => s + DEP[id].pop, 0) / PAIS.pop);
+    return { v, fonte: "Censo 2022 (INE)",
+      es: [`${a.nome} está en la Región Occidental (el Chaco).`, `La Región Occidental tiene 3 departamentos: ${nomesDeps(CHACO)}, con ${pct}% de la población. Los otros 14 y Asunción forman la Región Oriental.`],
+      pt: [`${a.nome} fica na Região Ocidental (o Chaco).`, `A Região Ocidental tem 3 departamentos: ${nomesDeps(CHACO)}, com ${pct}% da população. Os outros 14 e Asunción formam a Região Oriental.`] };
+  },
+  mal: () => {
+    const top = DEPS.slice().sort((x, y) => y.mal - x.mal)[0], certo = Math.random() < 0.5, a = certo ? top : sorteio(DEPS.filter((d) => d !== top));
+    return { v: certo, fonte: "Atlas 2015–2019",
+      es: [`${a.nome} es el departamento con mayor proporción de muertes por causas mal definidas (${fmtM(a.mal)}%).`, `Es ${top.nome}, con ${fmtM(top.mal)}%${a !== top ? ` (${a.nome}: ${fmtM(a.mal)}%)` : ""}. Donde el dato es peor, el cáncer puede quedar escondido entre las «causas mal definidas».`],
+      pt: [`${a.nome} é o departamento com maior proporção de mortes por causas mal definidas (${fmtM(a.mal)}%).`, `É ${top.nome}, com ${fmtM(top.mal)}%${a !== top ? ` (${a.nome}: ${fmtM(a.mal)}%)` : ""}. Onde o dado é pior, o câncer pode ficar escondido entre as «causas mal definidas».`] };
+  },
+};
+/* Ordem das perguntas de uma partida: alterna fixa e gerada, para toda partida ter metade de cada */
+function ordemQuiz() {
+  const fixas = embaralhar(QUIZ.map((q, i) => (q.gen ? -1 : i)).filter((i) => i >= 0)), ger = embaralhar(QUIZ.map((q, i) => (q.gen ? i : -1)).filter((i) => i >= 0)), ordem = [];
+  while (fixas.length || ger.length) { if (fixas.length) ordem.push(fixas.shift()); if (ger.length) ordem.push(ger.shift()); }
+  return ordem;
+}
+/* A pergunta do desafio atual; se for gerada, sorteia uma vez e guarda em S.quizGer */
+function perguntaAtual() {
+  const o = S.quiz.ordem, k = o[S.quiz.i % o.length], q = QUIZ[k] || QUIZ[0];
+  if (!q.gen) return q;
+  if (!S.quizGer || S.quizGer.k !== k || S.quizGer.i !== S.quiz.i) S.quizGer = { k, i: S.quiz.i, ...QUIZ_GEN[q.gen]() };
+  return S.quizGer;
+}
+/* Partida salva por uma versão anterior (beta8 a beta10): a lista de perguntas cresceu; as novas entram a partir do próximo desafio */
+function migrar(s) {
+  if (s.quiz && s.quiz.ordem && s.quiz.ordem.length < QUIZ.length) {
+    const tem = new Set(s.quiz.ordem), novas = embaralhar(QUIZ.map((q, i) => i).filter((i) => !tem.has(i)));
+    const feitas = s.quiz.ordem.slice(0, s.quiz.i), resto = s.quiz.ordem.slice(s.quiz.i), mix = [];
+    while (resto.length || novas.length) { if (novas.length) mix.push(novas.shift()); if (resto.length) mix.push(resto.shift()); }
+    s.quiz.ordem = feitas.concat(mix);
+  }
+}
 
 /* ---------- consequências: o jogo reage às escolhas (modelo do jogo; no máximo uma por ano, cada uma uma vez) ---------- */
 const nPrev = () => DEPS.reduce((s, d) => s + nivel(S.deps[d.id], "P"), 0);
@@ -1092,7 +1239,7 @@ const FONTE_CHAVES = {
   "DNCP, licitación de radioterapia del IPS": ["dncp_ips"], "DNCP, licitação de radioterapia do IPS": ["dncp_ips"],
   "OMS, Cancer Country Profile Paraguay 2020": ["oms_perfil_2020"], "DGVS/MSPBS, 05/02/2024": ["dgvs_2024"],
   "ABC Color, 13/02/2022": ["abc_tabaco_2022"], "ABC Color, 03/05/2023": ["abc_incan_2023"], "La Nación, 13/04/2023": ["lanacion_bid_2023"],
-  "Ley N° 2969/2006": ["ley_2969"], "Censo 2022 (INE)": ["ine_censo"], "Res. S.G. N° 752 (MSPBS, 2024)": ["mspbs_registro_unico"],
+  "Ley N° 2969/2006": ["ley_2969"], "Censo 2022 (INE)": ["ine_censo"], "geoBoundaries": ["geoboundaries"], "Res. S.G. N° 752 (MSPBS, 2024)": ["mspbs_registro_unico"],
   "OPS/OMS, 12/02/2024": ["ops_vph_2024"], "OPAS/OMS, 12/02/2024": ["ops_vph_2024"], "IARC, GLOBOCAN 2022": ["globocan_2022"],
   "WHA73.2, 2020": ["oms_colo_2020"], "Alma-Ata, OMS/UNICEF, 1978": ["alma_ata"], "OPS, 14/07/2026": ["ops_riiss_2026"], "OPAS, 14/07/2026": ["ops_riiss_2026"],
 };
@@ -1139,7 +1286,7 @@ function novoEstado(pers = "bob") {
     mod: {}, modProx: {}, cupons: [], regiao: null, descTrat: null, comp: [], usadas: [], aleatUsados: [], evAleat: null, demanda: null,
     sel: "central", modo: "cob", fase: "evento", pausa: false, gasto: { P: 0, D: 0, T: 0, X: 0 },
     tot: novoInd(), licoesVistas: [], log: [], compradasAno: [], fechadasAno: [], fim: false,
-    mis: { fila, ativas: fila.slice(0, 3), feitas: [], prox: 3 }, quiz: { ordem: embaralhar(QUIZ.map((q, i) => i)), i: 0, racha: 0, acertos: 0, feitos: 0 },
+    mis: { fila, ativas: fila.slice(0, 3), feitas: [], prox: 3 }, quiz: { ordem: ordemQuiz(), i: 0, racha: 0, acertos: 0, feitos: 0 },
     quizAno: -1, quizResp: null, quizOk: null, quizDepois: false, multAno: 1, cons: null, consUsadas: [], logrosPartida: [],
     recordeAntes: ler("epidemia-py-recorde") || 0, recordeBatido: false,
   };
@@ -1794,7 +1941,7 @@ function mostrarFim() {
   };
   const linhas = [...t("resLinhas")(x), t("resMis")(S.mis.feitas.length, S.mis.fila.length), t("resQuiz")(S.quiz.acertos, S.quiz.feitos), t("resPrest")(S.prest), t("resHab")(S.hab.map((id) => HAB[id][lang][0]).join(", ") || "—"),
     t("resComp")(S.comp.filter((c) => c.estado === "cumprido").length, S.comp.length), t("resTot")(fmtInt(S.tot.casos), fmtInt(S.tot.mortes), fmtInt(S.tot.curas))];
-  const cargo = t("cargos")[Math.max(0, RANKS.filter((p) => S.pontos >= p).length - 1)], P = PERSONAGENS[S.pers];
+  const cargo = t("cargos")[Math.max(0, RANKS.filter((p) => carreira() >= p).length - 1)], P = PERSONAGENS[S.pers];
   const nL = LOGROS.filter((l) => logros[l.id]).length;
   $("#tela-fim").innerHTML = `
     <h1>${esc(t("resTit"))}</h1>
@@ -1892,37 +2039,54 @@ function cobrarManutencao() {
 }
 
 /* ---------- cargos e árvore de habilidades ---------- */
-const cargoAtual = () => RANKS.filter((p) => S.pontos + S.ptsAno >= p).length - 1;
+/* Carreira (beta11, pedido do Gi em 27/10/2026): pontos + méritos. Cada missão cumprida vale ⭐ 500 e cada desafio acertado ⭐ 250,
+   só para subir de cargo (os pontos do ranking não mudam). */
+const MERITO = { mis: 500, quiz: 250 };
+const carreira = () => S.pontos + S.ptsAno + MERITO.mis * S.mis.feitas.length + MERITO.quiz * S.quiz.acertos;
+const cargoAtual = () => RANKS.filter((p) => carreira() >= p).length - 1;
 const pendentes = () => Math.min(4, cargoAtual()) - S.hab.length;
 function talvezAbrirArvore() {
   if (S && !S.fim && S.abrirArvore && S.fase === "jogando" && $("#modal").hidden) { S.abrirArvore = false; mostrarArvore(); }
 }
+/* Árvore assimétrica (beta11, pedido do Gi em 28/10/2026): arvore[ramo][nível], ramos de 4, 3 e 3 habilidades.
+   Um nível só abre depois do anterior do mesmo ramo; o 1.º de cada ramo está sempre aberto. Uma escolha por cargo:
+   quem se especializa chega ao 4.º nível do ramo principal; quem espalha ganha amplitude. Habilidades de versões anteriores
+   que saíram da árvore continuam valendo nas partidas salvas (HAB as mantém). */
+const ramoDe = (P, id) => P.arvore.findIndex((r) => r.includes(id));
+const progressoRamo = (P, r) => P.arvore[r].filter((x) => S.hab.includes(x)).length;
+function podeHab(id) {
+  const P = PERSONAGENS[S.pers], r = ramoDe(P, id);
+  return pendentes() > 0 && r >= 0 && !S.hab.includes(id) && P.arvore[r].indexOf(id) === progressoRamo(P, r);
+}
+const opcoesHab = () => PERSONAGENS[S.pers].arvore.flat().filter(podeHab);
 function mostrarArvore() {
   janela = "arvore";
   const P = PERSONAGENS[S.pers], tx = P[lang], cargo = cargoAtual(), pend = pendentes(), col = S.hab.length, sel = S.habSel;
-  const pts = S.pontos + S.ptsAno, topo = cargo >= RANKS.length - 1;
+  const pts = carreira(), topo = cargo >= RANKS.length - 1;
   const pct = topo ? 100 : Math.max(0, Math.min(100, Math.round(100 * (pts - RANKS[cargo]) / (RANKS[cargo + 1] - RANKS[cargo]))));
   const celula = (r, c) => {
-    const id = P.arvore[c][r], h = HAB[id];
-    const estado = S.hab.includes(id) ? "escolhida" : c < col ? "perdida" : c === col && pend > 0 ? "opcao" : "bloqueada";
+    const id = P.arvore[r][c];
+    if (!id) return `<span class="hab vazia" aria-hidden="true"></span>`;   // ramo mais curto
+    const h = HAB[id];
+    const estado = S.hab.includes(id) ? "escolhida" : podeHab(id) ? "opcao" : "bloqueada";
     return `<button type="button" class="hab ${estado}${sel === id ? " sel" : ""}" data-hab="${id}"><span class="hab-ico" aria-hidden="true">${ico(HAB_ICO[id])}</span><small>${esc(h[lang][0])}</small></button>`;
   };
   const ramos = tx.ramos.map((ramo, r) => `<div class="ramo"><p class="ramo-tit" style="--cor:${P.cor}">${esc(semEmoji(ramo))}</p><div class="ramo-cels">${[0, 1, 2, 3].map((c) => celula(r, c)).join("")}</div></div>`).join("");
   const h = sel && HAB[sel];
-  const pode = h && pend > 0 && P.arvore[col] && P.arvore[col].includes(sel);
+  const pode = h && podeHab(sel);
   abrirModal(`
     <div class="perfil">${avatarHTML(S.pers)}<div><h2>${esc(tx.nome)}</h2><p class="meta">${esc(tx.papel)} · <b>${esc(t("cargos")[cargo])}</b></p></div></div>
     ${pend > 0 ? `<p class="efeito">${esc(t("arvAscenso")(t("cargos")[col + 1]))}</p>` : ""}
-    <div class="prog"><i style="width:${pct}%"></i></div><p class="meta">${esc(topo ? t("arvTopo") : t("arvProx")(t("cargos")[cargo + 1], fmtInt(RANKS[cargo + 1])))}</p>
-    <div class="arvore"><div class="cargos-cab">${[1, 2, 3, 4].map((i) => `<small>${esc(t("cargos")[i])}</small>`).join("")}</div>${ramos}</div>
+    <div class="prog"><i style="width:${pct}%"></i></div><p class="meta">${esc(topo ? t("arvTopo") : t("arvProx")(t("cargos")[cargo + 1], fmtInt(Math.max(0, RANKS[cargo + 1] - pts))))}</p>
+    <p class="meta">${esc(t("arvCarreira")(fmtInt(pts), fmtInt(S.pontos + S.ptsAno), S.mis.feitas.length, S.quiz.acertos))}</p>
+    <div class="arvore"><div class="cargos-cab">${[1, 2, 3, 4].map((i) => `<small>${esc(t("nivelHab")(i))}</small>`).join("")}</div>${ramos}</div>
     ${h ? `<div class="hab-desc"><b>${ico(HAB_ICO[sel])} ${esc(h[lang][0])}</b><p>${esc(h[lang][1])}</p>${pode ? `<button class="btn" type="button" data-hab-ok="${sel}">${esc(t("arvEscolher"))}</button>` : `<p class="meta">${esc(S.hab.includes(sel) ? t("arvEscolhida") : t("arvBloq"))}</p>`}</div>` : ""}
     <div class="cartao mini-lista"><b>${esc(t("pers").passiva)}</b><ul class="linhas">${tx.tracos.map((x) => `<li>${esc(semEmoji(x))}</li>`).join("")}</ul><p class="meta">${esc(t("pers").lado)}: ${esc(tx.lado)}</p></div>
     <div class="btns"><button class="btn sec" type="button" data-abrir="missoes">${ico("alvo")} ${esc(t("missoesTit"))}</button><button class="btn sec" type="button" data-abrir="ajuda">${esc(t("ajuda"))}</button></div>
     <button class="btn" type="button" data-fechar>${esc(t("voltar"))}</button>`);
 }
 function escolherHab(id) {
-  const P = PERSONAGENS[S.pers], col = S.hab.length;
-  if (pendentes() <= 0 || !P.arvore[col] || !P.arvore[col].includes(id)) return;
+  if (!podeHab(id)) return;
   S.hab.push(id);
   S.habSel = null;
   const h = HAB[id];
@@ -2026,6 +2190,7 @@ function verificar() {
   }
   if (cargoAtual() > S.cargoAvisado) {   // promoção: faixa, confete e a árvore abre no próximo momento livre
     S.cargoAvisado = cargoAtual();
+    S.orc += BONUS_CARGO; mudou = true;   // bônus do cargo (beta11)
     faixa("🎖️", t("ascensoFaixa")(t("cargos")[S.cargoAvisado]), t("ascensoTxt"), "ouro");
     confete();
     vibrar();
@@ -2451,28 +2616,28 @@ function mostrarMissoes() {
     <button class="btn" type="button" data-fechar>${esc(t("voltar"))}</button>`);
 }
 
-/* Desafio relâmpago: o relógio para; acertar dá 💰 2 e sequências de 3 dão 👍 5 */
-function abrirQuiz() { S.fase = "quiz"; S.quizResp = null; salvar(); renderVivo(); mostrarQuiz(); }
+/* Desafio relâmpago: acertar dá ⭐ BONUS_QUIZ, 💰 QUIZ_ORC e 🎖️ 1; sequências de 3 dão 🎖️ 2. Perguntas fixas (fatos citados no jogo e nos recortes) e geradas dos dados (QUIZ_GEN). */
+function abrirQuiz() { S.fase = "quiz"; S.quizResp = null; S.quizGer = null; perguntaAtual(); salvar(); renderVivo(); mostrarQuiz(); }
 function mostrarQuiz() {
   janela = "quiz";
-  const q = QUIZ[S.quiz.ordem[S.quiz.i % QUIZ.length]], [frase, expl] = q[lang], r = S.quizResp;
+  const q = perguntaAtual(), [frase, expl] = q[lang], r = S.quizResp;
   abrirModal(`
     <p class="ano">⚡ ${esc(t("quizTit"))}</p>
     <h2>${esc(t("quizSub"))}</h2>
     <p class="quiz-frase">${esc(frase)}</p>
     ${r == null ? `<div class="quiz-op"><button type="button" class="btn sec" data-quiz="1">${esc(t("verdadeiro"))}</button><button type="button" class="btn sec" data-quiz="0">${esc(t("falso"))}</button></div>`
-      : `<div class="quiz-res ${r === q.v ? "ok" : "erro"}"><b>${esc(r === q.v ? t("quizCerto")(2 + num("quizOrc")) : t("quizErrado"))}</b> ${esc(q.v ? t("verdadeiro") : t("falso"))}: ${esc(expl)}</div>
+      : `<div class="quiz-res ${r === q.v ? "ok" : "erro"}"><b>${esc(r === q.v ? t("quizCerto")(QUIZ_ORC + num("quizOrc")) : t("quizErrado"))}</b> ${esc(q.v ? t("verdadeiro") : t("falso"))}: ${esc(expl)}</div>
       ${r === q.v && S.quiz.racha >= 2 ? `<p class="meta">${esc(t("racha")(S.quiz.racha))}</p>` : ""}
       <p class="fonte">${esc(t("fonte"))}: ${fonteHTML(q.fonte)}</p>
       <button class="btn" type="button" data-quiz-seguir>${esc(t("quizSeguir"))}</button>`}`);
 }
 function responderQuiz(v) {
-  const q = QUIZ[S.quiz.ordem[S.quiz.i % QUIZ.length]];
+  const q = perguntaAtual();
   S.quizResp = v;
   S.quizOk = v === q.v;
   S.quiz.feitos++;
   if (S.quizOk) {
-    S.orc += 2 + num("quizOrc"); ganharPrest(1); S.quiz.acertos++; S.quiz.racha++;
+    S.orc += QUIZ_ORC + num("quizOrc"); ganharPrest(1); S.quiz.acertos++; S.quiz.racha++;
     if (S.quiz.racha % 3 === 0) { ganharPrest(2); faixa("🔥", t("racha")(S.quiz.racha), t("rachaPremio"), "ouro"); }
     confete();
     vibrar();
@@ -2534,6 +2699,7 @@ function mostrarModalDaFase() {
 function continuar() {
   S = ler(CHAVE);
   if (!S || S.fim) return novoJogo();
+  migrar(S);   // partidas salvas por versões anteriores
   render();
   mostrarModalDaFase();
 }

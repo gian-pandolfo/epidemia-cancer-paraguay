@@ -2,7 +2,7 @@
 
 Juego educativo para celular sobre la epidemiología del cáncer en Paraguay. El jugador conduce el control del cáncer de 2015 a 2024: cada año recibe un presupuesto y elige acciones de **prevención**, **diagnóstico** y **tratamiento** en los 18 departamentos.
 
-El jugador elige un personaje: **Bob** (estudiante de Medicina, tecnología e IA), **Don Patrón** (empresario, alianzas público-privadas) o la **Dra. Beatriz** (médica). Cada uno tiene ventajas propias y un árbol de habilidades al estilo de XCOM 2: al subir de cargo con sus puntos, elige una nueva habilidad (3 especializaciones × 4 cargos).
+El jugador elige un personaje: **Bob** (estudiante de Medicina, tecnología e IA), **Don Patrón** (empresario, alianzas público-privadas) o la **Dra. Beatriz** (médica). Cada uno tiene ventajas propias y un árbol de habilidades al estilo de XCOM 2: al subir de cargo con sus puntos, elige una nueva habilidad (3 ramas con 4, 3 y 3 habilidades; cada nivel pide el anterior de su rama).
 
 Cada año se juega con calma y se cierra con un toque. En enero llega el presupuesto y se paga el mantenimiento de todo lo implementado; sin dinero, lo más caro se cierra. Implementar cuesta dinero y **prestigio**, que se gana con metas, misiones y respuestas a la sociedad. Cada acción tiene su nivel de atención (1.ª primaria, 2.ª secundaria, 3.ª terciaria): la secundaria necesita atención primaria en el departamento y la terciaria, secundaria cerca (derivación). Algunas acciones se habilitan solo a partir de cierto año. Los convenios no tienen compra ni prestigio, pero se pagan todos los años.
 
@@ -100,3 +100,14 @@ Pedido do Gi: revisar o código e jogar 10 partidas como uma pessoa no celular, 
 - **Topo:** numa linha só também dentro da moldura do tablet.
 - **Defeitos corrigidos:** vidas salvas contadas em dobro no resumo; trocar o idioma com «Compartir» aberto abria a ajuda; faixas em fila passam mais rápido.
 - Partidas salvas na beta8 e na beta9 continuam na beta10 (mesma chave `epidemia-py-v4`; testado).
+
+## Economia, desafios, carreira e árvore (beta11, 28/10/2026)
+
+Pedidos do Gi na noite de 27/10, com os colegas já testando: «os jogadores estão ficando sem dinheiro», «os campos demoram a habilitar», «mais moedas nos desafios», «perguntas baseadas nos tabloides», «assimetria nas habilidades» e «dopamina».
+
+- **Manutenção = 20% do custo** (era de 25% a 50%): vacina 0,4 · antitabaco 0,2 · hábitos 0,2 · teste de HPV 0,4 · mamógrafo 0,6 · registro 0,2 · Hospital Día 0,8 · acelerador 1,6 · paliativos 0,4 · centro de pesquisa 1,0 por ano. As habilidades que dividem a manutenção continuam valendo em cima.
+- **Desafío relámpago:** 💰 4 por acerto (era 2), além de ⭐ 100 e 🎖️ 1. **27 perguntas novas:** 19 fixas, para interpretar os dados dos recortes de imprensa e do Atlas (impostos do tabaco, Hospital Día, INCAN, teste de HPV, ENFR, BID, registro…), e 8 **geradas dos dados** a cada partida: população (Censo 2022), taxa padronizada, óbitos, 1.ª causa por sexo, vizinhos no mapa, Chaco e causas mal definidas. Cada partida alterna pergunta fixa e gerada. Partidas salvas recebem as perguntas novas a partir do próximo desafio.
+- **Carreira:** o cargo sobe por ⭐ pontos + 🎯 500 por missão cumprida + ⚡ 250 por desafio acertado; cargos em 1.000 / 3.000 / 6.000 / 9.000 (eram 1.200 / 4.000 / 7.500 / 11.000, só por pontos). O ranking não muda. Cada promoção dá 💰 2.
+- **Árvore 4/3/3:** cada personagem tem um ramo principal com 4 habilidades e dois com 3; um nível só abre depois do anterior do mesmo ramo (uma escolha por cargo). Quem se especializa chega ao 4.º nível (Predicción con IA, Gran alianza, Centro oncológico regional); quem espalha ganha amplitude. Saíram da árvore (mas valem nas partidas salvas): Publicación internacional, APS 4.0, Mecenas, Polo regional, Liderazgo médico, Excelencia científica.
+- **Ranking:** abaixo do QR, botões «Abrir el juego» e «Copiar enlace» (também no modo `#estande`).
+- Partidas salvas na beta8, beta9 e beta10 continuam na beta11 (mesma chave `epidemia-py-v4`; testado).
