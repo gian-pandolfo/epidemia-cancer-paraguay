@@ -36,10 +36,27 @@ function textos() {
   $("#abrir-jogo").href = urlJogo();
 }
 const urlJogo = () => cfg().jogoUrl || location.href.replace(/ranking\.html.*$/, "");
-/* Copiar o link do jogo (beta11): área de transferência; se o navegador não deixar, mostra o aviso */
+/* Copiar o link do jogo (beta11): área de transferência; se o navegador não deixar, tenta o jeito antigo (execCommand)
+   e, se nem assim, deixa o endereço selecionado para copiar à mão */
+function copiarAntigo(txt) {
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = txt; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, txt.length);
+    const ok = document.execCommand("copy");
+    ta.remove();
+    return ok;
+  } catch (e) { return false; }
+}
+function selecionarUrl() {
+  try { const r = document.createRange(); r.selectNodeContents($("#url")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) { /* sem seleção */ }
+}
 async function copiarLink() {
-  const b = $("#t-copiar");
-  try { await navigator.clipboard.writeText(urlJogo()); b.textContent = t("copiado"); } catch (e) { b.textContent = t("semCopia"); }
+  const b = $("#t-copiar"), url = urlJogo();
+  let ok = false;
+  try { await navigator.clipboard.writeText(url); ok = true; } catch (e) { ok = copiarAntigo(url); }
+  b.textContent = ok ? t("copiado") : t("semCopia");
+  if (!ok) selecionarUrl();
   setTimeout(() => { b.textContent = t("copiar"); }, 2000);
 }
 $("#copiar").addEventListener("click", copiarLink);
