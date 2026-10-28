@@ -6,5 +6,5 @@ window.EPIDEMIA_CONFIG = {
   fimDadosPessoais: "2026-10-31T00:00:00-03:00",
   // contato dos termos (decisão do Gi, 27/10/2026); em partes, para robôs que colhem e-mails não acharem inteiro
   contato: ["gapandolfo", "gmail.com"],
-  versao: "beta11",
+  versao: "beta12",
 };
