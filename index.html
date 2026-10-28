@@ -55,7 +55,7 @@ main { max-width: 640px; margin: 0 auto; }
 .hud .marca { font: 800 1rem var(--f-display); margin-right: auto; line-height: 1.1; }
 .hud .marca small { display: block; font: 400 .72rem var(--f-body); color: var(--muted); }
 .hud .marca[hidden] + .chip { margin-right: auto; }
-.chip { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; min-height: 32px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .chip.dinheiro { color: var(--ink); }
 /* O chip da data também é o botão de pausa */
 .chip.ano { cursor: pointer; color: var(--ink); }
@@ -69,7 +69,7 @@ main { max-width: 640px; margin: 0 auto; }
 .inicio .sub { margin: 0; color: var(--muted); }
 .passos { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
 /* Regras na tela inicial: fechadas; um toque abre */
-.regras summary { cursor: pointer; font: 800 1.05rem var(--f-display); list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 28px; }
+.regras summary { cursor: pointer; font: 800 1.05rem var(--f-display); list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; }
 .regras summary::-webkit-details-marker { display: none; }
 .regras summary::after { content: "+"; font: 800 1.4rem/1 var(--f-body); color: var(--accent); }
 .regras[open] summary::after { content: "−"; }
@@ -93,7 +93,7 @@ main { max-width: 640px; margin: 0 auto; }
 .dep { stroke: var(--map-stroke); stroke-width: 3; stroke-linejoin: round; cursor: pointer; transition: fill .35s ease; }
 .dep.sel { stroke: var(--accent); stroke-width: 10; }
 .dep-marker { stroke-width: 5; }
-.lbl { font: 700 44px var(--f-body); fill: var(--map-label); stroke: var(--map-halo); stroke-width: 9px; paint-order: stroke; pointer-events: none; }
+.lbl { font: 700 44px var(--f-body); fill: var(--map-label); stroke: var(--map-halo); stroke-width: 9px; paint-order: stroke; cursor: pointer; }   /* tocar no nome escolhe o departamento (27/10/2026) */
 .lbl.sel { font-size: 52px; }
 .alerta circle { fill: var(--accent); stroke: var(--map-stroke); stroke-width: 5; }
 .alerta text { font: 800 46px var(--f-body); fill: var(--accent-ink); text-anchor: middle; pointer-events: none; }
@@ -102,7 +102,7 @@ main { max-width: 640px; margin: 0 auto; }
 .seg button { border: 0; background: transparent; border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: .88rem; cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 .seg.mini { display: grid; grid-template-columns: 1fr 1fr; border-radius: 10px; padding: 2px; }
-.seg.mini button { padding: 4px 2px; font-size: .68rem; border-radius: 8px; }
+.seg.mini button { padding: 6px 2px; font-size: .68rem; border-radius: 8px; }   /* um pouco mais alto que antes, sem a caixa do canto cobrir «Concepción» */
 .legenda { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; font-size: .64rem; color: var(--muted); padding: 4px 6px; border-radius: 8px; background: color-mix(in srgb, var(--bg) 80%, transparent); }
 .legenda .leg-tit { grid-column: 1 / -1; font-weight: 700; color: var(--ink); line-height: 1.2; white-space: normal; }
 .legenda span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
@@ -131,9 +131,10 @@ main { max-width: 640px; margin: 0 auto; }
 }
 .painel-acoes { grid-column: 1 / -1; grid-row: 3; display: grid; gap: 6px; margin-top: 8px; }
 .dep-tit {
-  width: 100%; border: 0; color: var(--ink); font: 800 1.02rem var(--f-display); padding: 0 16px 0 0; cursor: pointer; -webkit-appearance: none; appearance: none;
-  background: transparent linear-gradient(45deg, transparent 50%, var(--muted) 50%) no-repeat calc(100% - 7px) 55% / 5px 5px,
-              transparent linear-gradient(135deg, var(--muted) 50%, transparent 50%) no-repeat calc(100% - 2px) 55% / 5px 5px;
+  width: auto; max-width: 100%; border: 0; color: var(--ink); font: 800 1.02rem var(--f-display); padding: 0 20px 0 0; cursor: pointer; -webkit-appearance: none; appearance: none;
+  /* setinha da lista de departamentos: maior e na cor de destaque, colada ao nome (27/10/2026) */
+  background: transparent linear-gradient(45deg, transparent 50%, var(--accent) 50%) no-repeat calc(100% - 9px) 55% / 7px 7px,
+              transparent linear-gradient(135deg, var(--accent) 50%, transparent 50%) no-repeat calc(100% - 2px) 55% / 7px 7px;
 }
 .info { margin: 0; color: var(--muted); display: grid; gap: 2px; }
 .info b { color: var(--ink); font-variant-numeric: tabular-nums; }
@@ -184,13 +185,15 @@ main { max-width: 640px; margin: 0 auto; }
 .imprevisto h3 { font-size: 1.1rem; }
 .opcoes { display: grid; gap: 8px; }
 .opcoes button { display: grid; gap: 2px; text-align: left; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); font-weight: 700; cursor: pointer; }
-.opcoes small { font-weight: 400; font-size: .8rem; color: var(--muted); }
+.opcoes small { font-weight: 400; font-size: .8rem; color: var(--muted); white-space: pre-line; line-height: 1.45; }   /* promessa: prêmio, pena e requisito em linhas separadas */
 .opcoes button:disabled { opacity: .5; cursor: not-allowed; }
 .licao { border-left: 4px solid var(--nv-d); padding: 6px 10px; background: var(--surface-2); border-radius: 0 10px 10px 0; }
 .linhas { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
 .placar { font: 800 clamp(2.6rem, 12vw, 3.6rem) var(--f-display); line-height: 1; font-variant-numeric: tabular-nums; }
 .fontes { margin: 0; padding-left: 18px; font-size: .78rem; color: var(--muted); display: grid; gap: 4px; }
-.toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: .9rem; max-width: 92vw; text-align: center; }
+.toast { position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: .9rem; max-width: 92vw; text-align: center; pointer-events: none; }
+/* com uma janela aberta, o aviso sobe para baixo do topo: nunca fica em cima dos botões da janela (27/10/2026) */
+#modal:not([hidden]) + .toast { bottom: auto; top: calc(62px + env(safe-area-inset-top, 0px)); }
 /* v3: missão no rodapé, faixa de prêmio, confete, +pontos, estrelas, missões, conquistas e desafio relâmpago */
 .missao-mini { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 6px; width: 100%; padding: 4px 8px 5px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); text-align: left; cursor: pointer; }
 .missao-mini .m-tit { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; font-size: .74rem; color: var(--ink); }
@@ -198,6 +201,7 @@ main { max-width: 640px; margin: 0 auto; }
 .missao-mini .m-barra { grid-column: 1 / -1; display: block; height: 4px; border-radius: 4px; background: var(--line); overflow: hidden; }
 .missao-mini .m-barra i { display: block; height: 100%; border-radius: 4px; background: var(--ouro); transition: width .5s ease; }
 #dica-txt { font-variant-numeric: tabular-nums; }
+#dica-txt.alerta { color: var(--warn); font-weight: 700; }
 .faixa { position: fixed; left: 50%; top: calc(54px + env(safe-area-inset-top, 0px)); z-index: 70; display: flex; gap: 10px; align-items: center; width: min(370px, calc(100% - 24px)); padding: 10px 14px; border-radius: 16px; background: var(--surface); border: 2px solid var(--accent); box-shadow: 0 12px 30px rgba(0, 0, 0, .35); transform: translate(-50%, -170%); transition: transform .4s cubic-bezier(.2, 1.3, .4, 1); pointer-events: none; }
 .faixa.on { transform: translate(-50%, 0); }
 .faixa.ouro { border-color: var(--ouro); background: var(--ouro-bg); }
@@ -289,8 +293,10 @@ main { max-width: 640px; margin: 0 auto; }
 .ficha-custos b { font: 800 1rem var(--f-display); }
 .ficha-btns { display: grid; gap: 8px; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.lk { color: var(--accent); font-weight: 800; text-decoration: none; white-space: nowrap; }
-.lk:hover, .lk:focus-visible { text-decoration: underline; }
+/* link da fonte como botão pequeno (pedido do Gi, 27/10/2026: um pouco mais evidente) */
+.lk { display: inline-block; margin-left: 4px; padding: 0 8px; border: 1px solid currentColor; border-radius: 999px; color: var(--accent);
+  background: color-mix(in srgb, currentColor 14%, transparent); font-weight: 800; font-size: .92em; line-height: 1.6; text-decoration: none; white-space: nowrap; }
+.lk:hover, .lk:focus-visible { background: color-mix(in srgb, currentColor 28%, transparent); }
 /* Dados do jogador antes de começar (ranking) */
 .form-rank { display: grid; gap: 10px; }
 .form-rank label { display: grid; gap: 4px; font-weight: 700; font-size: .9rem; }
@@ -302,7 +308,8 @@ main { max-width: 640px; margin: 0 auto; }
 .termos ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 4px; }
 .janela.dados .btn { width: 100%; justify-content: center; }
 .form-rank .consent { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; font-size: .84rem; color: var(--muted); }
-.form-rank .consent input { width: 22px; height: 22px; flex: none; margin-top: 2px; accent-color: var(--accent); }
+.form-rank .consent input { width: 26px; height: 26px; flex: none; margin-top: 0; accent-color: var(--accent); }
+.form-rank .consent { min-height: 44px; align-items: center; }
 .msg-rank { margin: 0; font-weight: 700; }
 .msg-rank.ok { color: var(--ok); }
 .msg-rank.erro { color: var(--warn); }
@@ -322,6 +329,13 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .hud { gap: 5px; }
   .chip { padding: 4px 8px; font-size: .9rem; }
   .btn-ico { min-width: 34px; height: 34px; padding: 0 8px; }
+  /* a moldura tem a largura de um celular de 390 px: o topo usa as medidas do degrau de 400 px (tablet do estande, 27/10/2026) */
+  .hud { gap: 2px; }
+  .hud .chip { padding: 3px 4px; gap: 2px; }
+  .hud .btn-ico { min-width: 28px; padding: 0 4px; }
+  .hud #btn-som { min-width: 24px; padding: 0 2px; }
+  .hud #btn-ajuda.retrato { width: 34px; min-width: 34px; height: 34px; }
+  .hud #h-ano svg { display: none; }
 }
 @media (max-width: 400px) {
   .hud { gap: 5px; }
@@ -330,12 +344,27 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .acao { min-height: 40px; padding: 5px; }
   .painel-acoes { gap: 5px; margin-top: 6px; }
   .barra .btn { padding: 10px 16px; min-height: 46px; font-size: 1rem; }
-  .legenda { font-size: .6rem; }
+  .legenda { font-size: .6rem; padding: 3px 6px; row-gap: 1px; }   /* a caixa do canto não cobre «Concepción» em 375 px */
+}
+/* celulares até 440 px: o topo continua numa linha só com o botão de som, mesmo com o placar do fim do jogo (27/10/2026).
+   ".hud" na frente porque regras do tema, mais abaixo, também mexem em chip e retrato */
+@media (max-width: 440px) {
+  .hud { gap: 4px; }
+  .hud .chip { padding: 4px 6px; gap: 3px; }
+  .hud .btn-ico { min-width: 30px; padding: 0 5px; }
+  .hud #btn-som { min-width: 28px; padding: 0 3px; }
+  .hud #h-ano svg { display: none; }   /* o ano já se lê sozinho */
+}
+@media (max-width: 400px) {
+  .hud { gap: 2px; }
+  .hud .chip { padding: 3px 4px; gap: 2px; }
+  .hud .btn-ico { min-width: 28px; padding: 0 4px; }
+  .hud #btn-som { min-width: 24px; padding: 0 2px; }
+  .hud #btn-ajuda.retrato { width: 34px; min-width: 34px; height: 34px; }
 }
 @media (max-width: 370px) {
-  .hud { gap: 4px; }
-  .chip { padding: 3px 6px; font-size: .84rem; }
-  .btn-ico { min-width: 30px; height: 32px; padding: 0 6px; }
+  .hud .chip { font-size: .84rem; }
+  .hud .btn-ico { height: 32px; }
   .painel-info { font-size: .64rem; }
   .legenda { font-size: .58rem; }
   .barra .dica { font-size: .74rem; }
@@ -536,6 +565,7 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
   <button type="button" class="chip dinheiro" id="h-dinheiro" hidden></button>
   <button type="button" class="chip prest" id="h-prest" hidden></button>
   <span class="chip" id="h-pontos" hidden></span>
+  <button class="btn-ico" id="btn-som" type="button" aria-label="Música" aria-pressed="false">🔇</button>
   <button class="btn-ico" id="btn-ajuda" type="button" aria-label="Ayuda">?</button>
   <button class="btn-ico" id="btn-idioma" type="button">PT</button>
 </header>
@@ -573,10 +603,11 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
 <div id="faixa" class="faixa" role="status" aria-live="polite" hidden></div>
 </div>
 
-<script src="config.js?v=8"></script>
-<script src="dados.js?v=8"></script>
-<script src="links.js?v=8"></script>
-<script src="icones.js?v=8"></script>
-<script src="jogo.js?v=8"></script>
+<script src="config.js?v=10"></script>
+<script src="dados.js?v=10"></script>
+<script src="links.js?v=10"></script>
+<script src="icones.js?v=10"></script>
+<script src="jogo.js?v=10"></script>
+<script src="musica.js?v=10"></script>
 </body>
 </html>

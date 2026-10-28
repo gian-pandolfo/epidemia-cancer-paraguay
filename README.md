@@ -42,6 +42,7 @@ Mapa: límites de [geoBoundaries](https://www.geoboundaries.org) (CC BY 4.0; Run
 - `dados.js`: mapa y datos de los departamentos. Lo genera un script del proyecto a partir de la página del mapa del congreso; no editar a mano.
 - `links.js`: enlaces de las fuentes (página original y copia del Internet Archive).
 - `icones.js`: íconos de trazo de la interfaz (acciones, marcador, árbol de habilidades).
+- `musica.js`: música de fondo original, generada en el propio celular (Web Audio); sin archivos de audio ni obras de terceros. Botón 🔊/🔇.
 - `arte/`: ilustraciones en SVG (cena principal, emblema, retratos y escenas). Las genera un script del proyecto; no editar a mano.
 - `ranking.html`: ranking en vivo para la tablet del stand (se actualiza cada 5 s, con el QR del juego).
 - `config.js`: dirección del ranking (`rankingUrl`) y del juego.
@@ -74,3 +75,28 @@ Pedido do Gi: sem login. Ao tocar em Comenzar, a janela **Antes de empezar** ped
 - `apps-script/Codigo.gs` (versão 2): aba **Partidas** (uma linha por partida), ranking com a melhor partida de cada e-mail, aba **Resumo** pelo menu, apagar nome e e-mail em 30/11/2026. Aceita também o envio da versão 1 do jogo.
 - Sem o `rankingUrl` (ranking desligado) ou depois de 31/10/2026, a janela não aparece e ninguém dá dados.
 
+
+## Pontos pelo resultado, demandas com risco e música (beta9, 27/10/2026)
+
+Pedidos do Gi depois de jogar: muitos pontos sem jogar bem; a demanda precisava de prêmio e de pena; música de fundo.
+
+- **Pontos do ano** (`partesAno` e `totalAno` em `jogo.js`): ¼ da estrutura + 1 por vida salva + ½ por caso evitado − ½ por óbito sem diagnóstico (modelo do jogo, comparado com não fazer nada). Os bônus do departamento (pesquisa, fila, equilíbrio com o Polo regional) valem também sobre vidas e casos evitados; a missão de ⭐× multiplica o ano inteiro. O ano fica entre 0 e 3.000 (+100 do desafio relâmpago), o mesmo limite que o servidor confere. O resumo do ano mostra a conta parte por parte.
+- **Demanda do ano:** cumprir dá ⭐ (50 por 💰 de valor da proposta) e 🎖️; recusar custa só 🎖️ 1; prometer e não cumprir no prazo tira 1,5 vez o prêmio em ⭐ e mais 🎖️. A proposta maior vale mais e pune mais. Aceitar o terreno do mamógrafo virou compromisso de construí-lo no mesmo ano.
+- Calibrado com 42 partidas automáticas (7 estratégias × 3 personagens × 2 sorteios): não fazer nada ≈ 600 (só o desafio), só tratamento ≈ 900, ao acaso ≈ 4.900, só diagnóstico ≈ 5.400, só prevenção ≈ 7.200, equilibrado ≈ 10.100, construir tudo nos departamentos maiores ≈ 15.100.
+- **Fontes:** o link de cada fonte virou um botão «ver ↗».
+- **Música** (`musica.js`): composição original tocada pelo próprio celular (Web Audio): violão de cordas duplas, como o ronroco, em ré menor, no clima de *The Last of Us*, sem copiar melodia. Sem arquivo de áudio nem obra de terceiros. Botão 🔊/🔇 no topo; começa no primeiro toque e para quando o jogo sai da tela.
+- Partidas salvas na beta8 continuam na beta9 (mesma chave `epidemia-py-v4`; testado).
+
+## Revisão com 10 partidas no celular (beta10, 27/10/2026)
+
+Pedido do Gi: revisar o código e jogar 10 partidas como uma pessoa no celular, melhorando um pouco a cada partida, sem nada drástico. Um «jogador» automático tocou nos botões pelas coordenadas (como um dedo), em 390×844, 360×740 e no tablet do estande (1280×800), em espanhol e em português.
+
+- **Pontos:** meta do país de menos de **400 óbitos sem diagnóstico por ano** (−½ ⭐ por óbito acima, +½ abaixo). Antes, os ~680 do começo tiravam ~340 de todo mundo e o ano ficava no piso de 0, engolindo compras, prêmios e penas. Mesma ordem das estratégias nas 42 partidas automáticas.
+- **Saldo do ano:** o rodapé mostra o saldo (pode ser negativo) e o resumo explica «= 0 (el año no baja de 0)».
+- **Promessas:** mostram o requisito que falta («⚠️ requisito: 🔒 1.ª» ou «🔒 2020»), com prêmio, pena e requisito em linhas separadas.
+- **Manutenção:** a ficha avisa quando a compra faz a manutenção de janeiro passar do orçamento; o rodapé fica laranja com ⚠️. Com pouco dinheiro em janeiro, o fato do ano lembra das finanças (💰) e do Congresso (🎖️).
+- **Toque:** o aviso de compra não rouba mais o toque do botão «Implementar»; tocar no nome do departamento o escolhe; chips do topo, «Cómo se juega», Luz/Tasas e camadas ao vivo mais altos; a lista de departamentos mostra a setinha.
+- **Ranking:** a página do ranking tem «← Volver al juego» (escondido em `#estande`).
+- **Topo:** numa linha só também dentro da moldura do tablet.
+- **Defeitos corrigidos:** vidas salvas contadas em dobro no resumo; trocar o idioma com «Compartir» aberto abria a ajuda; faixas em fila passam mais rápido.
+- Partidas salvas na beta8 e na beta9 continuam na beta10 (mesma chave `epidemia-py-v4`; testado).
