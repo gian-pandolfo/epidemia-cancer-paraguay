@@ -65,6 +65,7 @@ const T = {
     creditosTit: "Créditos", dicaFin: "💡 Poco dinero: toca 💰 arriba para conseguir más (impuesto al tabaco, préstamo…) o 🎖️ para pedir una ampliación al Congreso.",
     creditos: [
       "<b>Desarrollo:</b> Gianmarlon Pandolfo, estudiante de Medicina (UNINTER Tres Fronteras).",
+      "© 2026 Gianmarlon Pandolfo. Todos los derechos reservados: no se permite copiar ni reutilizar el código ni el material sin autorización.",
       "<b>Trabajo base:</b> Silva GIS, Pandolfo GA, et al. <i>Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control</i>. Revisión sistemática, 2026.",
       "<b>Coautoría:</b> Claude Opus 5.5 (Anthropic), en el diseño del juego, la programación y la verificación de las fuentes.",
       "<b>Arte:</b> ilustraciones vectoriales hechas para el juego (estilo «luz contra la niebla»). Tipografías Big Shoulders Display y Atkinson Hyperlegible (licencia OFL).",
@@ -293,6 +294,7 @@ const T = {
     creditosTit: "Créditos", dicaFin: "💡 Pouco dinheiro: toque 💰 no alto para conseguir mais (imposto sobre o tabaco, empréstimo…) ou 🎖️ para pedir uma ampliação ao Congresso.",
     creditos: [
       "<b>Desenvolvimento:</b> Gianmarlon Pandolfo, estudante de Medicina (UNINTER Tres Fronteras).",
+      "© 2026 Gianmarlon Pandolfo. Todos os direitos reservados: não é permitido copiar nem reutilizar o código nem o material sem autorização.",
       "<b>Trabalho base:</b> Silva GIS, Pandolfo GA, et al. <i>Mortalidad por Cáncer en Paraguay: Análisis Epidemiológico, Disparidades Geográficas y Desafíos para el Control</i>. Revisão sistemática, 2026.",
       "<b>Coautoria:</b> Claude Opus 5.5 (Anthropic), no desenho do jogo, na programação e na conferência das fontes.",
       "<b>Arte:</b> ilustrações vetoriais feitas para o jogo (estilo «luz contra a névoa»). Tipografias Big Shoulders Display e Atkinson Hyperlegible (licença OFL).",

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-UhuPC32zy8hIGUiJYkpGCorEhgv6pQDklaIPIl9s9dQ=' 'sha256-ERHcHRbwXJrKFAStn3ehEjW14uSucAxm5Mp8tOAXvDs='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-itEAmKdZl6c7WYHQEgmVLNZPssKRglQpyePitVGp/KA=' 'sha256-ERHcHRbwXJrKFAStn3ehEjW14uSucAxm5Mp8tOAXvDs='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>:root { color-scheme: light; } body { margin: 0; font: 14px system-ui, sans-serif; } img { max-width: 100%; } [hidden] { display: none !important; }</style>
 </head>
@@ -596,6 +596,7 @@ const TXT = {
       "Radioterapia pública: un único lugar para todo el país, el INCAN, en Capiatá.",
       "Cerca de 1 de cada 4 muertes no entraba en las estadísticas (subregistro de 26,2% en 2017).",
     ],
+    direitos: "© 2026 Gianmarlon Pandolfo. Todos los derechos reservados.",
     fonte_pais: "Fuentes: [[globocan_2022|GLOBOCAN 2022 (IARC)]]; [[atlas|Atlas de Mortalidad por Cáncer 2015–2019 (MSPBS/DVENT)]]; [[ine_ods|INE (ODS 3.4.1)]]; [[torres_2022|Torres-Roman et al. 2022]]; [[ine_censo|Censo 2022 (INE)]].",
     placeholder: "Pregunte o diga un departamento…", enviar: "Preguntar", parar: "Detener", fechar: "Cerrar", pensando: "Pensando…",
     dica: "Toque el micrófono y use el dictado del teclado. Puede decir una pregunta o el nombre de un departamento.",
@@ -679,6 +680,7 @@ const TXT = {
       "Radioterapia pública: um único endereço para o país inteiro, o INCAN, em Capiatá.",
       "Cerca de 1 em cada 4 mortes não entrava nas estatísticas (sub-registro de 26,2% em 2017).",
     ],
+    direitos: "© 2026 Gianmarlon Pandolfo. Todos os direitos reservados.",
     fonte_pais: "Fontes: [[globocan_2022|GLOBOCAN 2022 (IARC)]]; [[atlas|Atlas de Mortalidad por Cáncer 2015–2019 (MSPBS/DVENT)]]; [[ine_ods|INE (ODS 3.4.1)]]; [[torres_2022|Torres-Roman et al. 2022]]; [[ine_censo|Censo 2022 (INE)]].",
     placeholder: "Pergunte ou diga um departamento…", enviar: "Perguntar", parar: "Parar", fechar: "Fechar", pensando: "Pensando…",
     dica: "Toque no microfone e use o ditado do teclado. Pode dizer uma pergunta ou o nome de um departamento.",
@@ -772,6 +774,9 @@ function legenda() {
 function setCapa(c) { capa = c; pintarMapa(); }
 
 /* Escolher região ou câncer não rola a tela: ela fica parada até a pessoa descer até o painel */
+/* Direitos autorais no fim do painel (28/10/2026, decisão do Gi) */
+const direitos = () => `<p class="fonte direitos">${esc(t("direitos"))}</p>`;
+
 function selecionar(id) {
   selecionado = id && porId[id] ? id : null;
   $("#btn-pais").setAttribute("aria-pressed", String(!selecionado));
@@ -960,7 +965,7 @@ function renderPainel() {
       <div class="sec"><h3>${esc(t("sec_msgs"))}</h3><ul class="msgs">${t("msgs").map((m) => `<li>${citar(esc(m))}</li>`).join("")}</ul></div>
       <div class="sec"><h3>${esc(t("sec_linha"))}</h3><p class="cap">${comFontes(esc(t("cap_linha")))}</p>${linhaNacional()}</div>
       <div class="sec"><h3>${esc(t("sec_rank"))}</h3><p class="cap">${esc(t("cap_rank"))}</p>${ranking()}</div>
-      <p class="fonte">${comFontes(esc(t("fonte_pais")))}</p>`;
+      <p class="fonte">${comFontes(esc(t("fonte_pais")))}</p>${direitos()}`;
     return;
   }
   const d = porId[selecionado];
@@ -989,7 +994,7 @@ function renderPainel() {
       <p class="qual-item">${esc(t("q_utero"))}: <b>${fmt(d.utero)}%</b> <small>(${esc(t("q_pais")(fmt(PAIS.utero)))})</small></p></div></div>
     <div class="sec"><h3>${esc(t("sec_serv"))}</h3>${serv}</div>
     <div class="sec"><h3>${esc(t("sec_rank"))}</h3><p class="cap">${esc(t("cap_rank"))}</p>${ranking()}</div>
-    <p class="fonte">${comFontes(esc(t("fonte_dep")(d.pag)))}</p>`;
+    <p class="fonte">${comFontes(esc(t("fonte_dep")(d.pag)))}</p>${direitos()}`;
 }
 
 /* ---------- mapa dos cânceres: órgãos por sexo ---------- */
