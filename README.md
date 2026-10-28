@@ -86,3 +86,17 @@ Pedidos do Gi depois de jogar: muitos pontos sem jogar bem; a demanda precisava 
 - **Fontes:** o link de cada fonte virou um botão «ver ↗».
 - **Música** (`musica.js`): composição original tocada pelo próprio celular (Web Audio): violão de cordas duplas, como o ronroco, em ré menor, no clima de *The Last of Us*, sem copiar melodia. Sem arquivo de áudio nem obra de terceiros. Botão 🔊/🔇 no topo; começa no primeiro toque e para quando o jogo sai da tela.
 - Partidas salvas na beta8 continuam na beta9 (mesma chave `epidemia-py-v4`; testado).
+
+## Revisão com 10 partidas no celular (beta10, 27/10/2026)
+
+Pedido do Gi: revisar o código e jogar 10 partidas como uma pessoa no celular, melhorando um pouco a cada partida, sem nada drástico. Um «jogador» automático tocou nos botões pelas coordenadas (como um dedo), em 390×844, 360×740 e no tablet do estande (1280×800), em espanhol e em português.
+
+- **Pontos:** meta do país de menos de **400 óbitos sem diagnóstico por ano** (−½ ⭐ por óbito acima, +½ abaixo). Antes, os ~680 do começo tiravam ~340 de todo mundo e o ano ficava no piso de 0, engolindo compras, prêmios e penas. Mesma ordem das estratégias nas 42 partidas automáticas.
+- **Saldo do ano:** o rodapé mostra o saldo (pode ser negativo) e o resumo explica «= 0 (el año no baja de 0)».
+- **Promessas:** mostram o requisito que falta («⚠️ requisito: 🔒 1.ª» ou «🔒 2020»), com prêmio, pena e requisito em linhas separadas.
+- **Manutenção:** a ficha avisa quando a compra faz a manutenção de janeiro passar do orçamento; o rodapé fica laranja com ⚠️. Com pouco dinheiro em janeiro, o fato do ano lembra das finanças (💰) e do Congresso (🎖️).
+- **Toque:** o aviso de compra não rouba mais o toque do botão «Implementar»; tocar no nome do departamento o escolhe; chips do topo, «Cómo se juega», Luz/Tasas e camadas ao vivo mais altos; a lista de departamentos mostra a setinha.
+- **Ranking:** a página do ranking tem «← Volver al juego» (escondido em `#estande`).
+- **Topo:** numa linha só também dentro da moldura do tablet.
+- **Defeitos corrigidos:** vidas salvas contadas em dobro no resumo; trocar o idioma com «Compartir» aberto abria a ajuda; faixas em fila passam mais rápido.
+- Partidas salvas na beta8 e na beta9 continuam na beta10 (mesma chave `epidemia-py-v4`; testado).
