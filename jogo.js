@@ -175,6 +175,7 @@ const T = {
       "Puedes pedir ver, corregir o borrar tus datos escribiendo al contacto.",
       "En tu celular: el juego recuerda tus datos para la próxima partida; se borran solos el 31/10/2026.",
       "Sin datos: de toda partida registramos, sin identificarte, la hora de inicio y de fin, la puntuación y el idioma.",
+      "Para saber cuántas personas usan el juego, cada celular avisa una sola vez que lo abrió y que jugó; ese aviso no lleva ningún dato tuyo ni identificador.",
     ],
     ultimo: "Ver mi último resultado",
     shareTxt: "Juega Epidemia: Paraguay contra el cáncer",
@@ -404,6 +405,7 @@ const T = {
       "Você pode pedir para ver, corrigir ou apagar seus dados escrevendo para o contato.",
       "No seu celular: o jogo lembra seus dados para a próxima partida; eles se apagam sozinhos em 31/10/2026.",
       "Sem dados: de toda partida registramos, sem identificar você, a hora de início e de fim, a pontuação e o idioma.",
+      "Para saber quantas pessoas usam o jogo, cada celular avisa uma única vez que abriu e que jogou; esse aviso não leva nenhum dado seu nem identificador.",
     ],
     ultimo: "Ver meu último resultado",
     shareTxt: "Jogue Epidemia: Paraguai contra o câncer",
@@ -2476,7 +2478,7 @@ const CFG = window.EPIDEMIA_CONFIG || {};
 const rankingEncerrado = () => CFG.fimDadosPessoais && new Date() >= new Date(CFG.fimDadosPessoais);
 const pedeDados = () => !!CFG.rankingUrl && !rankingEncerrado();
 const contato = () => (Array.isArray(CFG.contato) ? CFG.contato.join("@") : CFG.contato || "—");
-const TERMOS = "2026-10-27";   // versão dos termos aceitos: mudar quando o texto dos termos mudar
+const TERMOS = "2026-10-29";   // versão dos termos aceitos: mudar quando o texto dos termos mudar
 const emailOk = (e) => e.length <= 254 && /^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/.test(e);   // a mesma regra do Codigo.gs
 let jogadorEscolhido = null;   // dados confirmados em "Antes de empezar", para a partida que vai começar
 
@@ -2527,6 +2529,20 @@ function confirmarDados() {
    Sem conexão, ou com a planilha no teto, o jogo não trava: a fila tenta de novo em 30 s e quando a conexão volta. */
 const FILA = "epidemia-py-fila";
 let enviandoFila = false, filaParada = false, esperaFila = null;
+/* Pessoas diferentes (beta14, pedido do Gi em 29/10/2026): o aparelho avisa uma vez que abriu o jogo e marca a 1.ª partida
+   (e a 1.ª sem dados). No celular fica só o que já foi contado; nada identifica a pessoa. «edicao» (config.js) recomeça a conta. */
+const CONTAGEM = "epidemia-py-contagem";
+const marcas = () => { const m = ler(CONTAGEM); return m && m.edicao === (CFG.edicao || "") ? m : { edicao: CFG.edicao || "" }; };
+const marcar = (x) => guardar(CONTAGEM, Object.assign(marcas(), x));
+async function avisarVisita() {
+  if (!CFG.rankingUrl || marcas().visita) return;
+  try {
+    const r = await fetch(CFG.rankingUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ acao: "visita", idioma: lang, versao: CFG.versao || "" }) });
+    const d = await r.json();
+    if (d.ok && d.contado) marcar({ visita: true });   // planilha antiga ou ocupada: tenta de novo na próxima vez que abrir
+  } catch (e) { /* sem conexão: tenta de novo na próxima vez */ }
+}
 function avisar(acao) {
   if (!CFG.rankingUrl || !S) return;
   const ev = { acao, id: S.id, idioma: lang, versao: CFG.versao || "" };
@@ -2543,13 +2559,15 @@ async function enviarFila() {
   clearTimeout(esperaFila);
   let fila = ler(FILA) || [];
   while (fila.length) {
-    const ev = fila[0];
+    const ev = fila[0], m = marcas();
+    const env = Object.assign({}, ev, { novo: !m.jogou, novoSemDados: !ev.dados && !m.semDados });   // decidido na hora de enviar
     let d;
     try {
-      const r = await fetch(CFG.rankingUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(ev) });
+      const r = await fetch(CFG.rankingUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(env) });
       d = await r.json();
     } catch (e) { d = { ok: false, erro: "rede" }; }
     if (!d.ok && ["rede", "limite", "servidor"].includes(d.erro)) { filaParada = true; break; }   // passageiro: tenta depois
+    if (d.ok && d.contado) marcar({ jogou: m.jogou || env.novo, semDados: m.semDados || env.novoSemDados });   // a planilha (versão 3) contou
     fila = (ler(FILA) || []).filter((x) => !(x.acao === ev.acao && x.id === ev.id));   // relê: pode ter entrado aviso novo
     guardar(FILA, fila);
     if (ev.acao === "fim" && S && S.id === ev.id) { S.enviado = d.ok ? { posicao: d.posicao || null } : { erro: d.erro || "erro" }; salvar(); }
@@ -2959,3 +2977,4 @@ montarMapa();
 calcularLimites();
 telaInicio();
 enviarFila();   // avisos que ficaram na fila (sem conexão da última vez)
+avisarVisita();   // uma vez por aparelho: quantas pessoas diferentes abriram o jogo
