@@ -2,7 +2,7 @@
 // A linha acima limita o script a esta planilha (não pede acesso às outras planilhas da conta).
 
 /**
- * Ranking e registro das partidas do jogo "Epidemia: Paraguay contra el cáncer" (congresso, 28/10/2026). Versão 2.
+ * Ranking e registro das partidas do jogo "Epidemia: Paraguay contra el cáncer" (congresso, 28/10/2026). Versão 3 (29/10/2026).
  *
  * Fica numa planilha do Google e é publicado como "App da Web" (executar como: eu; quem pode acessar: qualquer pessoa).
  * O jogo avisa quando uma partida começa e quando termina (POST); a página do ranking lê o top 20 (GET).
@@ -15,12 +15,20 @@
  * - em 30/11/2026 o menu "Ranking do jogo" apaga nome e e-mail (ficam os totais e as médias por faculdade e turma).
  *
  * Aceita também o envio da versão 1 do jogo (no fim da partida, sem "acao"): vira uma partida concluída, sem e-mail.
+ *
+ * Versão 3 (pedido do Gi, 29/10/2026):
+ * - pessoas diferentes: cada aparelho avisa uma vez que abriu o jogo (aba Visitas: só data, idioma e versão) e marca
+ *   a primeira partida dele (colunas aparelho_novo e aparelho_novo_sem_dados); nenhum identificador é guardado;
+ * - menu «Zerar ranking»: as abas Partidas e Visitas vão para abas de arquivo e recomeçam vazias (nada é apagado).
  */
 const ABA = "Partidas";
-const CABECALHO = ["id", "inicio", "fim", "com_dados", "nome", "email", "faculdade", "turma", "pontos", "pontos_por_ano", "idioma", "versao", "termos"];
+const CABECALHO = ["id", "inicio", "fim", "com_dados", "nome", "email", "faculdade", "turma", "pontos", "pontos_por_ano", "idioma", "versao", "termos",
+  "aparelho_novo", "aparelho_novo_sem_dados"];   // as duas últimas: versão 3 (1ª partida deste aparelho; 1ª sem dados)
 const C = {};
 CABECALHO.forEach((c, i) => { C[c] = i; });   // posição de cada coluna numa linha (0 = primeira)
 const ABA_RESUMO = "Resumo";
+const ABA_VISITAS = "Visitas";       // um aviso por aparelho que abre o jogo (versão 3)
+const SERVIDOR = 3;                   // versão deste código (aparece no GET, para conferir a implantação)
 const MAX_POR_ANO = 3100;            // teto de um ano no jogo (3.000) + 100 do acerto no Desafío relámpago
 const MAX_PONTOS = 10 * MAX_POR_ANO;
 const FIM_RANKING = new Date("2026-10-31T00:00:00-03:00");   // ranking público sem nomes; o app não grava mais dados pessoais
@@ -30,6 +38,7 @@ const TOP = 20;
 // Proteção contra congestionamento e abuso (decisão do Gi, 27/10/2026)
 const TETO_POR_MINUTO = 60;           // avisos de início e de fim aceitos por minuto (cada um), somando todos os jogadores
 const MAX_LINHAS = 3000;              // partidas guardadas; acima disso: "cheio"
+const MAX_VISITAS = 20000;            // aparelhos que abriram o jogo; acima disso: "cheio"
 const MAX_BYTES = 2000;               // um aviso legítimo tem uns 400 bytes
 const CACHE_LISTA_S = 10;             // a lista do ranking é montada no máximo a cada 10 s, por mais gente que consulte
 const EMAIL = /^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/;
@@ -42,9 +51,51 @@ function aba_() {
     aba.appendRow(CABECALHO);
     aba.setFrozenRows(1);
     // texto puro: a planilha não transforma id, turma ou pontos por ano em número nem em fórmula
-    ["A:A", "D:H", "J:M"].forEach((faixa) => aba.getRange(faixa).setNumberFormat("@"));
+    ["A:A", "D:H", "J:O"].forEach((faixa) => aba.getRange(faixa).setNumberFormat("@"));
+  }
+  if (aba.getLastColumn() < CABECALHO.length) {   // planilha da versão 2: acrescenta as colunas novas ao cabeçalho
+    aba.getRange(1, 1, 1, CABECALHO.length).setValues([CABECALHO]);
+    aba.getRange("N:O").setNumberFormat("@");
   }
   return aba;
+}
+
+function visitas_() {
+  const planilha = SpreadsheetApp.getActiveSpreadsheet();
+  let aba = planilha.getSheetByName(ABA_VISITAS);
+  if (!aba) {
+    aba = planilha.insertSheet(ABA_VISITAS);
+    aba.appendRow(["quando", "idioma", "versao"]);
+    aba.setFrozenRows(1);
+  }
+  return aba;
+}
+
+/* Marca de aparelho novo (versão 3): «sim» na 1ª partida do aparelho e na 1ª sem dados; devolve true se mudou a linha */
+function marcar_(l, novo, novoSem) {
+  let mudou = false;
+  if (novo && l[C.aparelho_novo] !== "sim") { l[C.aparelho_novo] = "sim"; mudou = true; }
+  if (novoSem && l[C.com_dados] !== "sim" && l[C.aparelho_novo_sem_dados] !== "sim") { l[C.aparelho_novo_sem_dados] = "sim"; mudou = true; }
+  return mudou;
+}
+
+/* Um aparelho avisa que abriu o jogo pela primeira vez: só data, idioma e versão (nada que identifique a pessoa) */
+function visita_(d) {
+  const cache = CacheService.getScriptCache();
+  const minuto = "min_v" + Utilities.formatDate(new Date(), FUSO, "yyyyMMddHHmm");
+  const trava = LockService.getScriptLock();
+  trava.waitLock(10000);
+  try {
+    const noMinuto = Number(cache.get(minuto) || 0);
+    if (noMinuto >= TETO_POR_MINUTO) return json_({ ok: false, erro: "limite" });
+    const aba = visitas_();
+    if (aba.getLastRow() - 1 >= MAX_VISITAS) return json_({ ok: false, erro: "cheio" });
+    aba.appendRow([new Date(), texto_(d.idioma, 5), texto_(d.versao, 20)]);
+    cache.put(minuto, String(noMinuto + 1), 120);
+    return json_({ ok: true, contado: true });
+  } finally {
+    trava.releaseLock();
+  }
 }
 
 function linhas_(aba) {
@@ -120,6 +171,7 @@ function doPost(e) {
   try {
     if (!e.postData || String(e.postData.contents).length > MAX_BYTES) return json_({ ok: false, erro: "campos" });
     const d = JSON.parse(e.postData.contents);
+    if (d.acao === "visita") return visita_(d);   // versão 3: um aparelho abriu o jogo
     const acao = d.acao === "inicio" || d.acao === "fim" ? d.acao : "v1";
     if (acao === "v1" && new Date() >= FIM_RANKING) return json_({ ok: false, erro: "encerrado" });
     const id = /^[A-Za-z0-9_-]{4,40}$/.test(String(d.id || "")) ? String(d.id) : "";   // o jogo manda letras e números
@@ -148,8 +200,10 @@ function doPost(e) {
       const linha = linhaDoId_(aba, id);   // dentro da trava: dois reenvios juntos não gravam em dobro
       const faixa = linha ? aba.getRange(linha, 1, 1, CABECALHO.length) : null;
       const atual = faixa ? faixa.getValues()[0] : null;
+      const novo = d.novo === true, novoSem = d.novoSemDados === true;   // versão 3: 1ª partida deste aparelho
       if (atual && (acao === "inicio" || atual[C.fim] !== "")) {   // aviso repetido: responde como da primeira vez
-        return json_({ ok: true, repetido: true, posicao: acao !== "inicio" && atual[C.com_dados] === "sim" ? posicao_(aba, atual) : null });
+        if (marcar_(atual, novo, novoSem)) faixa.setValues([atual]);   // ...mas guarda a marca de aparelho novo, se ela veio agora
+        return json_({ ok: true, repetido: true, contado: true, posicao: acao !== "inicio" && atual[C.com_dados] === "sim" ? posicao_(aba, atual) : null });
       }
       const noMinuto = Number(cache.get(minuto) || 0);
       if (noMinuto >= TETO_POR_MINUTO) return json_({ ok: false, erro: "limite" });   // teto de avisos por minuto
@@ -161,6 +215,7 @@ function doPost(e) {
         registro[C.fim] = agora;
         registro[C.pontos] = pts.pontos;
         registro[C.pontos_por_ano] = pts.anos.join(" ");
+        marcar_(registro, novo, novoSem);
         faixa.setValues([registro]);
       } else {       // começo, ou fim sem começo registrado (sem conexão no começo, ou versão 1 do jogo)
         registro = CABECALHO.map(() => "");
@@ -174,12 +229,13 @@ function doPost(e) {
         if (pts) { registro[C.pontos] = pts.pontos; registro[C.pontos_por_ano] = pts.anos.join(" "); }
         registro[C.idioma] = texto_(d.idioma, 5);
         registro[C.versao] = texto_(d.versao, 20);
+        marcar_(registro, novo, novoSem);
         aba.appendRow(registro);
       }
       cache.put(minuto, String(noMinuto + 1), 120);
-      if (acao === "inicio") return json_({ ok: true });
+      if (acao === "inicio") return json_({ ok: true, contado: true });
       cache.remove("ranking");
-      return json_({ ok: true, posicao: registro[C.com_dados] === "sim" ? posicao_(aba, registro) : null });
+      return json_({ ok: true, contado: true, posicao: registro[C.com_dados] === "sim" ? posicao_(aba, registro) : null });
     } finally {
       trava.releaseLock();
     }
@@ -202,7 +258,7 @@ function doGet() {
     hora: Utilities.formatDate(new Date(l[C.fim]), FUSO, "dd/MM HH:mm"),
   }));
   const concluidas = linhas.filter((l) => l[C.fim] !== "").length;
-  const texto = JSON.stringify({ ok: true, partidas: concluidas, top, encerrado, atualizado: Utilities.formatDate(new Date(), FUSO, "HH:mm:ss") });
+  const texto = JSON.stringify({ ok: true, servidor: SERVIDOR, partidas: concluidas, top, encerrado, atualizado: Utilities.formatDate(new Date(), FUSO, "HH:mm:ss") });
   cache.put("ranking", texto, CACHE_LISTA_S);
   return ContentService.createTextOutput(texto).setMimeType(ContentService.MimeType.JSON);
 }
@@ -213,6 +269,8 @@ function onOpen() {
     .createMenu("Ranking do jogo")
     .addItem("Atualizar resumo", "atualizarResumo")
     .addItem("Trazer as partidas da versão 1", "trazerVersao1")
+    .addSeparator()
+    .addItem("Zerar ranking (guarda tudo numa aba de arquivo)", "zerarRanking")
     .addSeparator()
     .addItem("Apagar nome e e-mail (LGPD, " + APAGAR_EM + ")", "apagarDadosPessoais")
     .addToUi();
@@ -256,6 +314,11 @@ function atualizarResumo() {
       ["Concluídas", conta(fim), conta((l) => fim(l) && com(l)), conta((l) => fim(l) && !com(l))]],
     [["Jogadores com dados (e-mails diferentes)", jogadores(() => true)],
       ["... que concluíram ao menos uma partida", jogadores(fim)]],
+    [["Pessoas diferentes (aparelhos; ninguém é identificado)", "Total"],
+      ["Abriram o jogo", Math.max(0, visitas_().getLastRow() - 1)],
+      ["Jogaram ao menos uma partida", conta((l) => l[C.aparelho_novo] === "sim")],
+      ["... das quais ao menos uma sem dados", conta((l) => l[C.aparelho_novo_sem_dados] === "sim")],
+      ["Aparelho = celular ou navegador; quem limpa os dados do navegador ou troca de aparelho conta de novo. Desde a versão 3 (29/10/2026).", ""]],
     [["Faculdade"].concat(colunas)].concat(grupos_(linhas, ["faculdade"])),
     [["Faculdade", "Turma"].concat(colunas)].concat(grupos_(linhas, ["faculdade", "turma"])),
   ];
@@ -296,21 +359,46 @@ function apagarDadosPessoais() {
   const resp = ui.alert("Apagar nome e e-mail de todas as partidas?",
     "Cada e-mail vira um número (J1, J2…) e o nome vira \"—\". Faculdade, turma e pontos ficam. Não dá para desfazer.", ui.ButtonSet.YES_NO);
   if (resp !== ui.Button.YES) return;
-  const aba = aba_();
-  const n = aba.getLastRow() - 1;
-  if (n > 0) {
-    const faixa = aba.getRange(2, C.nome + 1, n, 2);   // colunas nome e email, lado a lado
-    const valores = faixa.getValues();
-    const numero = {};
-    // se o menu já rodou antes, continua a numeração de onde parou
-    let prox = 1 + Math.max.apply(null, [0].concat(valores.map((l) => Number((/^J(\d+)$/.exec(String(l[1])) || [0, 0])[1]))));
-    faixa.setValues(valores.map((l) => {
-      const e = String(l[1]);
-      if (!e.includes("@")) return ["—", e];          // sem e-mail ou já apagado
-      if (!numero[e]) numero[e] = "J" + prox++;
-      return ["—", numero[e]];
-    }));
-  }
+  aba_();
+  // a aba atual e as de arquivo (versão 3: «Zerar ranking»); o mesmo e-mail vira o mesmo número em todas
+  const abas = SpreadsheetApp.getActiveSpreadsheet().getSheets().filter((a) => a.getName() === ABA || a.getName().indexOf(ABA + " - arquivo") === 0);
+  const faixas = abas.filter((a) => a.getLastRow() > 1).map((a) => a.getRange(2, C.nome + 1, a.getLastRow() - 1, 2));   // colunas nome e email, lado a lado
+  const valores = faixas.map((f) => f.getValues());
+  const numero = {};
+  // se o menu já rodou antes, continua a numeração de onde parou
+  let prox = 1 + Math.max.apply(null, [0].concat(...valores.map((v) => v.map((l) => Number((/^J(\d+)$/.exec(String(l[1])) || [0, 0])[1])))));
+  faixas.forEach((faixa, i) => faixa.setValues(valores[i].map((l) => {
+    const e = String(l[1]);
+    if (!e.includes("@")) return ["—", e];          // sem e-mail ou já apagado
+    if (!numero[e]) numero[e] = "J" + prox++;
+    return ["—", numero[e]];
+  })));
   CacheService.getScriptCache().remove("ranking");
+  atualizarResumo();
+}
+
+/* Zerar ranking (versão 3, pedido do Gi em 29/10/2026): nada é apagado. «Partidas» e «Visitas» ganham o nome
+   «… - arquivo AAAA.MM.DD HH.mm.ss» e abas novas, vazias, recomeçam o ranking e as contagens.
+   Para os aparelhos contarem de novo num evento novo, mudar também «edicao» no config.js do jogo. */
+function zerarRanking() {
+  const ui = SpreadsheetApp.getUi();
+  const resp = ui.alert("Zerar o ranking?",
+    "As abas Partidas e Visitas vão para abas de arquivo (nada é apagado). O ranking e as contagens recomeçam do zero.", ui.ButtonSet.YES_NO);
+  if (resp !== ui.Button.YES) return;
+  const trava = LockService.getScriptLock();
+  trava.waitLock(30000);
+  try {
+    const planilha = SpreadsheetApp.getActiveSpreadsheet();
+    const quando = Utilities.formatDate(new Date(), FUSO, "yyyy.MM.dd HH.mm.ss");
+    [ABA, ABA_VISITAS].forEach((nome) => {
+      const aba = planilha.getSheetByName(nome);
+      if (aba) aba.setName(nome + " - arquivo " + quando);
+    });
+    aba_();
+    visitas_();
+    CacheService.getScriptCache().remove("ranking");
+  } finally {
+    trava.releaseLock();
+  }
   atualizarResumo();
 }

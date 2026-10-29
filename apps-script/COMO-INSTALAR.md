@@ -26,13 +26,24 @@ Se a planilha já roda a versão 1:
 2. **Implantar → Gerenciar implantações** → lápis (editar) → **Versão: Nova versão** → **Implantar**. O link `/exec` continua o mesmo.
 3. Recarregue a planilha (F5): aparece o menu **Ranking do jogo**. Clique em **Trazer as partidas da versão 1** (copia o que já estava na aba "Ranking").
 
+## Passar para a versão 3 sem mudar o link (29/10/2026)
+
+A versão 3 conta pessoas diferentes (aparelhos), também quem joga sem dados, e traz o menu **Zerar ranking**.
+
+1. Na planilha, **Extensões → Apps Script**: apague o código, cole o `Codigo.gs` novo e clique em **Salvar**.
+2. **Implantar → Gerenciar implantações** → lápis (editar) → **Versão: Nova versão** → **Implantar**. O link `/exec` continua o mesmo, e não pede autorização nova.
+3. Recarregue a planilha (F5). Para começar do zero: **Ranking do jogo → Zerar ranking**. As abas Partidas e Visitas viram «… - arquivo AAAA.MM.DD HH.mm.ss» (nada é apagado) e abas novas recomeçam vazias.
+4. Para um evento novo, mude também `edicao` no `config.js` do jogo: assim os aparelhos que já tinham aberto o jogo contam de novo.
+
 ## O que fica na planilha
 
 - Aba **Partidas**: uma linha por partida, com começo, fim, com ou sem dados, nome, e-mail, faculdade, turma, pontos, idioma, versão do jogo e versão dos termos aceitos.
-- Aba **Resumo** (menu **Ranking do jogo → Atualizar resumo**): partidas iniciadas e concluídas, com e sem dados; jogadores (e-mails diferentes); e, por faculdade e por turma, jogadores, partidas, média e melhor pontuação.
+- Aba **Visitas** (versão 3): uma linha por aparelho que abriu o jogo, só com data, idioma e versão. Nenhum identificador: o celular só guarda que já avisou.
+- Colunas **aparelho_novo** e **aparelho_novo_sem_dados** (versão 3): «sim» na primeira partida de cada aparelho e na primeira sem dados.
+- Aba **Resumo** (menu **Ranking do jogo → Atualizar resumo**): partidas iniciadas e concluídas, com e sem dados; jogadores (e-mails diferentes); pessoas diferentes (aparelhos que abriram o jogo, que jogaram e que jogaram sem dados); e, por faculdade e por turma, jogadores, partidas, média e melhor pontuação.
 
 ## Cuidados (LGPD)
 
 - Não compartilhe a planilha: só o app da Web é público, e ele só mostra o top 20 (nome, faculdade, turma e pontos; nunca o e-mail).
 - A partir de 31/10/2026 o ranking não mostra nomes e o app não grava mais dados pessoais. As partidas continuam contadas, sem dados.
-- Em **30/11/2026**, na planilha, use o menu **Ranking do jogo → Apagar nome e e-mail (LGPD, 30/11/2026)**. O nome vira "—" e cada e-mail vira um número (J1, J2…), para os totais e as médias por faculdade e turma continuarem certos.
+- Em **30/11/2026**, na planilha, use o menu **Ranking do jogo → Apagar nome e e-mail (LGPD, 30/11/2026)**. O nome vira "—" e cada e-mail vira um número (J1, J2…), para os totais e as médias por faculdade e turma continuarem certos. Na versão 3, isso vale também para as abas de arquivo do «Zerar ranking».

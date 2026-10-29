@@ -126,3 +126,12 @@ Pedidos do Gi na manhã do congresso: «os cenários aleatórios precisam ter ba
 
 - **No jogo:** 🏆 discreto na barra de baixo, em qualquer fase, e «🏆 Ranking» na tela de início; a partida fica salva e o ranking tem «Volver al juego».
 - **No ranking:** botão «Mapa del cáncer», que abre o mapa público do congresso (`/mapa/`), ao lado de «Abrir el juego» e «Copiar enlace».
+
+## Pessoas diferentes e «Zerar ranking» (beta14 + planilha versão 3, 29/10/2026)
+
+Pedido do Gi: «zerar o ranking» e «contar o jogador que acessa sem logar, para sabermos quantas pessoas diferentes acessaram».
+
+- **Sem identificar ninguém:** cada aparelho avisa uma vez que abriu o jogo (aba Visitas da planilha: só data, idioma e versão) e marca a sua primeira partida e a primeira sem dados. O celular guarda só que já avisou (`epidemia-py-contagem`); nada é enviado que identifique a pessoa. O Resumo mostra: aparelhos que abriram o jogo, que jogaram e que jogaram sem dados.
+- **Zerar sem apagar:** menu «Zerar ranking» na planilha; Partidas e Visitas vão para abas de arquivo e recomeçam vazias. O menu da LGPD (30/11) apaga nome e e-mail também nessas abas.
+- **Evento novo:** mudar `edicao` no `config.js` para os aparelhos contarem de novo.
+- **Compatível:** com a planilha ainda na versão 2, o jogo continua funcionando; a visita é recusada e o aparelho tenta de novo na próxima abertura. Partidas salvas continuam (mesma chave `epidemia-py-v4`).
