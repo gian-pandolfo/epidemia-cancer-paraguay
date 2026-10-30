@@ -1,5 +1,7 @@
 # Epidemia: Paraguay contra el cáncer (beta)
 
+> **Jogo encerrado em 30/10/2026**, depois do congresso. O site mostra um aviso no lugar do jogo, do ranking e da cópia de teste; o mapa (`mapa/`) e os recortes (`recortes/`) continuam no ar. O jogo completo, como estava no fim, está no ramo `jogo-congresso-2026`.
+
 Juego educativo para celular sobre la epidemiología del cáncer en Paraguay. El jugador conduce el control del cáncer de 2015 a 2024: cada año recibe un presupuesto y elige acciones de **prevención**, **diagnóstico** y **tratamiento** en los 18 departamentos.
 
 El jugador elige un personaje: **Bob** (estudiante de Medicina, tecnología e IA), **Don Patrón** (empresario, alianzas público-privadas) o la **Dra. Beatriz** (médica). Cada uno tiene ventajas propias y un árbol de habilidades al estilo de XCOM 2: al subir de cargo con sus puntos, elige una nueva habilidad (3 ramas con 4, 3 y 3 habilidades; cada nivel pide el anterior de su rama).
