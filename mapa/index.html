@@ -312,6 +312,7 @@ table.vals-hm td:nth-child(4), table.vals-hm th.grupo-m, table.vals-hm thead tr 
 .btn-topo { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 8px 14px; min-height: 44px; cursor: pointer; font-weight: 700; }
 .btn-topo svg { width: 20px; height: 20px; flex: none; }
 .btn-topo.destaque { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn-topo:disabled { cursor: not-allowed; opacity: .45; filter: grayscale(1); }
 [hidden] { display: none !important; }  /* o atributo hidden sempre esconde, mesmo quando a classe define display */
 .overlay {
   position: fixed; inset: 0; z-index: 50; background: rgba(5, 12, 11, .62); display: flex; align-items: center; justify-content: center;
@@ -422,7 +423,8 @@ body.modo-visitante { padding-block: 18px calc(24px + env(safe-area-inset-bottom
     <p class="sub" data-t="subtitulo">Mortalidad por cáncer por departamento, 2015–2019. Toque una región o haga una pregunta abajo.</p>
   </div>
   <div class="acoes-topo">
-    <button id="btn-jogo" class="btn-topo destaque" type="button">
+    <!-- 30/10/2026, decisão do Gi: o jogo do congresso terminou; o botão fica cinza, desativado -->
+    <button id="btn-jogo" class="btn-topo" type="button" disabled aria-disabled="true" title="El juego del Congreso terminó">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="5"/><path d="M7 10v4M5 12h4"/><circle cx="16" cy="11" r="1"/><circle cx="18" cy="13.5" r="1"/></svg>
       <span id="jogo-txt">Juego</span>
     </button>
