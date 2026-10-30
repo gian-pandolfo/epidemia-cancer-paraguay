@@ -59,7 +59,7 @@ const T = {
       "Cada año trae un hecho real, a veces un imprevisto (royalties, epidemias, donaciones, recortes del Congreso) y una demanda de la sociedad. Cumplir la demanda da ⭐ y 🎖️; rechazarla cuesta 🎖️ 1; prometer y no cumplir cuesta más.",
       "🎯 Misiones, ⚡ desafíos relámpago y 🏅 logros dan premios; misiones y aciertos también suben tu cargo (⭐ 500 y ⭐ 250 de carrera). ❤️ Vidas salvadas, 🍎 casos evitados y 🕯️ muertes sin diagnóstico muestran el efecto de tus decisiones (modelo del juego, comparado con no hacer nada).",
       "Los ⭐ puntos salen sobre todo del resultado: cada vida salvada vale 1 y cada caso evitado ½. Meta del país: menos de 400 muertes sin diagnóstico al año; cada una por encima quita ½ y cada una por debajo suma ½. La estructura construida suma poco.",
-      "Donde la estadística es baja, falta diagnóstico, no cáncer: diagnosticar revela casos ocultos y la tasa registrada sube. ¡Es buena señal!",
+      "Donde la estadística es baja, falta diagnóstico, no cáncer: diagnosticar revela casos ocultos y suben las muertes registradas por 100 mil. ¡Es buena señal!",
     ],
     aviso: "Simulación educativa (beta). Los datos de partida y el hecho histórico de cada año son reales, con fuente. Los efectos de las acciones, los personajes, los números en tiempo real, los imprevistos, las demandas y los puntos son del modelo del juego.",
     creditosTit: "Créditos", dicaFin: "💡 Poco dinero: toca 💰 arriba para conseguir más (impuesto al tabaco, préstamo…) o 🎖️ para pedir una ampliación al Congreso.",
@@ -74,16 +74,16 @@ const T = {
     comecar: "Empezar", continuar: "Continuar partida", nova: "Nueva partida",
     ajuda: "Cómo se juega", fechar: "Cerrar",
     anoDe: (a, i) => `${a} · año ${i} de 10`,
-    modoCob: "Luz", modoReg: "Tasas",
+    modoCob: "Luz", modoReg: "Mortalidad",
     dicaChipsTit: "💰 Finanzas y 🎖️ favores", dicaChipsTxt: "Toca 💰 arriba para conseguir dinero (impuesto al tabaco, préstamo, ensayo clínico…) y 🎖️ para pedir favores (ampliación del Congreso, terreno, brigada…).",
     titulares: { tit: (a) => `Titulares de ${a}`, hecho: "Hecho del año", imp: "Imprevisto de este año", dem: "Demanda de la sociedad", reales: "En la prensa y en los documentos (idioma original)", dica: "Toca «ver ↗» para abrir el recorte o la fuente.", nada: "Sin titulares guardados para este año: el hecho del año tiene su fuente arriba." },
-    luz: { sub: "El mapa", tit: "¿Qué muestran Luz y Tasas?", alt: "Tres departamentos: con niebla, con diagnóstico y con luz",
-      p1t: "Niebla = casos ocultos.", p1: "Donde falta diagnóstico, el cáncer no entra en la estadística: la tasa parece baja, pero no es riesgo bajo.",
-      p2t: "Diagnóstico y registro.", p2: "Test de VPH, mamógrafo, registro e investigación revelan casos: la niebla se disipa y la tasa registrada sube. ¡Es buena señal!",
+    luz: { sub: "El mapa", tit: "¿Qué muestran Luz y Mortalidad?", alt: "Tres departamentos: con niebla, con diagnóstico y con luz",
+      p1t: "Niebla = casos ocultos.", p1: "Donde falta diagnóstico, el cáncer no entra en la estadística: la tasa de mortalidad parece baja, pero no es riesgo bajo.",
+      p2t: "Diagnóstico y registro.", p2: "Test de VPH, mamógrafo, registro e investigación revelan casos: la niebla se disipa y suben las muertes registradas por 100 mil. ¡Es buena señal!",
       p3t: "Luz = equilibrio.", p3: "Prevención, diagnóstico y tratamiento juntos. El nivel de luz (0 a 3) es el más bajo de los tres: solo las tres funciones curan más y multiplican los puntos.",
-      tasas: "Tasas: el mapa real del Atlas 2015–2019 (tasa de mortalidad por cáncer estandarizada por edad, por 100.000 habitantes).", ok: "¡Entendido!" },
+      tasas: "Mortalidad: el mapa real del Atlas 2015–2019, en muertes por cáncer por 100.000 habitantes (tasa estandarizada por edad).", ok: "¡Entendido!" },
     verMapa: "Ver en el mapa", noMapa: "En el mapa", lerNoticia: "Leer la noticia", recKicker: "Datos reales · para investigar",
-    recPoucos: "* Pocas muertes en 5 años: la tasa es inestable.", recFeito: "hecho", hab: "hab.", muertes: "muertes",
+    recPoucos: "* Pocas muertes en 5 años: la tasa de mortalidad es inestable.", recFeito: "hecho", hab: "hab.", muertes: "muertes",
     misSeguir: "Toca un departamento de la noticia para verlo en el mapa.",
     finTit: "Finanzas", finIntro: (r, m) => `En enero entran 💰 ${r} y se pagan 💰 ${m} de mantenimiento y convenios. Estas decisiones traen dinero, pero cada una tiene un costo.`,
     prestTit: "Prestigio", prestIntro: "El prestigio es tu capital político: lo ganas atendiendo demandas, cumpliendo misiones y promesas, acertando desafíos y llevando departamentos al equilibrio. Lo gastas para aprobar estructuras grandes y para pedir favores. Con 🎖️ 20 o más, el Congreso suma +💰 3 cada enero.",
@@ -92,18 +92,18 @@ const T = {
     ensOk: "Funcionó: +3% de cura en todo el país.", ensFalhou: "No funcionó: −🎖️ 3.",
     evProveedor: "Pagaste la deuda con los proveedores, con recargo: −💰 5 y −🎖️ 1 (faltaron insumos).",
     evEnsayo: { ok: "Ensayo clínico: el tratamiento funcionó. +3% de cura en todo el país (modelo del juego).", falhou: "Ensayo clínico: el tratamiento no funcionó. −🎖️ 3." },
-    legCob: "Luz = equilibrio", legReg: "Tasa estandarizada /100 mil", legNevoa: "Niebla = casos ocultos",
+    legCob: "Luz = equilibrio", legReg: "Muertes/100 mil", legNevoa: "Niebla = casos ocultos",
     capaAlt: "Anochecer en Paraguay: un hospital encendido ilumina la red de salud; a la derecha, la niebla del subregistro.",
     curtas: { vacuna: "Vacuna VPH", tabaco: "Antitabaco", habitos: "Hábitos", vph: "Test VPH", mamo: "Mamógrafo", registro: "Registro",
       quimio: "Hospital Día", radio: "Acelerador", paliativos: "Paliativos", pesquisa: "Centro de investigación" },
     infoPop: (p) => `${p} hab. (Censo 2022)`,
-    infoTaxa: (a, b) => `Tasa estandarizada /100 mil (Atlas 2015–19): <b>${a} → ${b}</b>`,
+    infoTaxa: (a, b) => `Muertes/100 mil (estand., Atlas 2015–19): <b>${a} → ${b}</b>`,
     infoOculto: (x) => `Casos ocultos: <b>${x}</b>`,
     filaCurta: "⚠ Fila: hay diagnóstico pero no tratamiento cerca; rinde la mitad.",
     compra: (ico, n, a) => `${ico} ${n} → ${a}`,
     escolher: "Elegir departamento…",
     ocultoQ: "?",
-    poucos: "Pocas muertes en 5 años: la tasa es inestable.",
+    poucos: "Pocas muertes: tasa inestable.",
     niveis: { P: "1.º Prevención", D: "2.º Diagnóstico", T: "3.º Tratamiento", X: "Investigación" },
     acoes: {
       vacuna: ["Vacuna VPH en escuelas", "cuello uterino"],
@@ -121,7 +121,7 @@ const T = {
     semOrc: "Presupuesto insuficiente", jaAtivo: "Ya está activo (de años anteriores)", desfeito: (c) => `Deshecho: vuelven 💰 ${c}`,
     evBtn: "Jugar el año", evOrc: (o) => `Presupuesto disponible: 💰 ${o}`, fonte: "Fuente",
     fimAno: (a) => `Fin de ${a}`, ptsAno: (p) => `+${p} puntos`, prox: (a) => `Siguiente: ${a}`, verRes: "Ver resultado",
-    resSubiu: (l) => `La tasa registrada subió en: ${l}. Son casos que estaban ocultos.`,
+    resSubiu: (l) => `Las muertes registradas por 100 mil subieron en: ${l}. Son casos que estaban ocultos.`,
     resFila: (l) => `Filas en: ${l}.`,
     resEquil: (n) => `Departamentos con los 3 niveles: ${n} de 18.`,
     resTit: "Tu resultado", pontos: "puntos", recorde: (r) => `Tu récord en este celular: ${r}`, novoRec: "¡Nuevo récord!",
@@ -289,7 +289,7 @@ const T = {
       "Cada ano traz um fato real, às vezes um imprevisto (royalties, epidemias, doações, cortes do Congresso) e uma demanda da sociedade. Cumprir a demanda dá ⭐ e 🎖️; recusar custa 🎖️ 1; prometer e não cumprir custa mais.",
       "🎯 Missões, ⚡ desafios relâmpago e 🏅 conquistas dão prêmios; missões e acertos também sobem o seu cargo (⭐ 500 e ⭐ 250 de carreira). ❤️ Vidas salvas, 🍎 casos evitados e 🕯️ óbitos sem diagnóstico mostram o efeito das suas decisões (modelo do jogo, comparado com não fazer nada).",
       "Os ⭐ pontos vêm sobretudo do resultado: cada vida salva vale 1 e cada caso evitado ½. Meta do país: menos de 400 óbitos sem diagnóstico por ano; cada um acima tira ½ e cada um abaixo soma ½. A estrutura construída soma pouco.",
-      "Onde a estatística é baixa, falta diagnóstico, não câncer: diagnosticar revela casos ocultos e a taxa registrada sobe. É bom sinal!",
+      "Onde a estatística é baixa, falta diagnóstico, não câncer: diagnosticar revela casos ocultos e sobem os óbitos registrados por 100 mil. É bom sinal!",
     ],
     aviso: "Simulação educativa (beta). Os dados de partida e o fato histórico de cada ano são reais, com fonte. Os efeitos das ações, os personagens, os números em tempo real, os imprevistos, as demandas e os pontos são do modelo do jogo.",
     creditosTit: "Créditos", dicaFin: "💡 Pouco dinheiro: toque 💰 no alto para conseguir mais (imposto sobre o tabaco, empréstimo…) ou 🎖️ para pedir uma ampliação ao Congresso.",
@@ -304,16 +304,16 @@ const T = {
     comecar: "Começar", continuar: "Continuar partida", nova: "Nova partida",
     ajuda: "Como se joga", fechar: "Fechar",
     anoDe: (a, i) => `${a} · ano ${i} de 10`,
-    modoCob: "Luz", modoReg: "Taxas",
+    modoCob: "Luz", modoReg: "Mortalidade",
     dicaChipsTit: "💰 Finanças e 🎖️ favores", dicaChipsTxt: "Toque 💰 no alto para conseguir dinheiro (imposto sobre o tabaco, empréstimo, ensaio clínico…) e 🎖️ para pedir favores (ampliação do Congresso, terreno, brigada…).",
     titulares: { tit: (a) => `Manchetes de ${a}`, hecho: "Fato do ano", imp: "Imprevisto deste ano", dem: "Demanda da sociedade", reales: "Na imprensa e nos documentos (idioma original)", dica: "Toque em «ver ↗» para abrir o recorte ou a fonte.", nada: "Sem manchetes guardadas para este ano: o fato do ano tem a fonte acima." },
-    luz: { sub: "O mapa", tit: "O que mostram Luz e Taxas?", alt: "Três departamentos: com névoa, com diagnóstico e com luz",
-      p1t: "Névoa = casos ocultos.", p1: "Onde falta diagnóstico, o câncer não entra na estatística: a taxa parece baixa, mas não é risco baixo.",
-      p2t: "Diagnóstico e registro.", p2: "Teste de HPV, mamógrafo, registro e pesquisa revelam casos: a névoa se dissipa e a taxa registrada sobe. É bom sinal!",
+    luz: { sub: "O mapa", tit: "O que mostram Luz e Mortalidade?", alt: "Três departamentos: com névoa, com diagnóstico e com luz",
+      p1t: "Névoa = casos ocultos.", p1: "Onde falta diagnóstico, o câncer não entra na estatística: a taxa de mortalidade parece baixa, mas não é risco baixo.",
+      p2t: "Diagnóstico e registro.", p2: "Teste de HPV, mamógrafo, registro e pesquisa revelam casos: a névoa se dissipa e sobem os óbitos registrados por 100 mil. É bom sinal!",
       p3t: "Luz = equilíbrio.", p3: "Prevenção, diagnóstico e tratamento juntos. O nível de luz (0 a 3) é o mais baixo dos três: só as três funções curam mais e multiplicam os pontos.",
-      tasas: "Taxas: o mapa real do Atlas 2015–2019 (taxa de mortalidade por câncer padronizada por idade, por 100.000 habitantes).", ok: "Entendi!" },
+      tasas: "Mortalidade: o mapa real do Atlas 2015–2019, em óbitos por câncer por 100.000 habitantes (taxa padronizada por idade).", ok: "Entendi!" },
     verMapa: "Ver no mapa", noMapa: "No mapa", lerNoticia: "Ler a notícia", recKicker: "Dados reais · para investigar",
-    recPoucos: "* Poucos óbitos em 5 anos: a taxa é instável.", recFeito: "feito", hab: "hab.", muertes: "óbitos",
+    recPoucos: "* Poucos óbitos em 5 anos: a taxa de mortalidade é instável.", recFeito: "feito", hab: "hab.", muertes: "óbitos",
     misSeguir: "Toque num departamento da notícia para vê-lo no mapa.",
     finTit: "Finanças", finIntro: (r, m) => `Em janeiro entram 💰 ${r} e se pagam 💰 ${m} de manutenção e convênios. Estas decisões trazem dinheiro, mas cada uma tem um custo.`,
     prestTit: "Prestígio", prestIntro: "O prestígio é o seu capital político: você o ganha atendendo demandas, cumprindo missões e promessas, acertando desafios e levando departamentos ao equilíbrio. Ele serve para aprovar estruturas grandes e para pedir favores. Com 🎖️ 20 ou mais, o Congresso soma +💰 3 todo janeiro.",
@@ -322,18 +322,18 @@ const T = {
     ensOk: "Funcionou: +3% de cura no país inteiro.", ensFalhou: "Não funcionou: −🎖️ 3.",
     evProveedor: "Você pagou a dívida com os fornecedores, com acréscimo: −💰 5 e −🎖️ 1 (faltaram insumos).",
     evEnsayo: { ok: "Ensaio clínico: o tratamento funcionou. +3% de cura no país inteiro (modelo do jogo).", falhou: "Ensaio clínico: o tratamento não funcionou. −🎖️ 3." },
-    legCob: "Luz = equilíbrio", legReg: "Taxa padronizada /100 mil", legNevoa: "Névoa = casos ocultos",
+    legCob: "Luz = equilíbrio", legReg: "Óbitos/100 mil", legNevoa: "Névoa = casos ocultos",
     capaAlt: "Entardecer no Paraguai: um hospital aceso ilumina a rede de saúde; à direita, a névoa do sub-registro.",
     curtas: { vacuna: "Vacina HPV", tabaco: "Antitabaco", habitos: "Hábitos", vph: "Teste HPV", mamo: "Mamógrafo", registro: "Registro",
       quimio: "Hospital Día", radio: "Acelerador", paliativos: "Paliativos", pesquisa: "Centro de pesquisa" },
     infoPop: (p) => `${p} hab. (Censo 2022)`,
-    infoTaxa: (a, b) => `Taxa padronizada /100 mil (Atlas 2015–19): <b>${a} → ${b}</b>`,
+    infoTaxa: (a, b) => `Óbitos/100 mil (padronizada, Atlas 2015–19): <b>${a} → ${b}</b>`,
     infoOculto: (x) => `Casos ocultos: <b>${x}</b>`,
     filaCurta: "⚠ Fila: há diagnóstico mas não há tratamento perto; rende a metade.",
     compra: (ico, n, a) => `${ico} ${n} → ${a}`,
     escolher: "Escolher departamento…",
     ocultoQ: "?",
-    poucos: "Poucos óbitos em 5 anos: a taxa é instável.",
+    poucos: "Poucos óbitos: taxa instável.",
     niveis: { P: "1º Prevenção", D: "2º Diagnóstico", T: "3º Tratamento", X: "Pesquisa" },
     acoes: {
       vacuna: ["Vacina HPV nas escolas", "colo do útero"],
@@ -351,7 +351,7 @@ const T = {
     semOrc: "Orçamento insuficiente", jaAtivo: "Já está ativo (de anos anteriores)", desfeito: (c) => `Desfeito: voltam 💰 ${c}`,
     evBtn: "Jogar o ano", evOrc: (o) => `Orçamento disponível: 💰 ${o}`, fonte: "Fonte",
     fimAno: (a) => `Fim de ${a}`, ptsAno: (p) => `+${p} pontos`, prox: (a) => `Próximo: ${a}`, verRes: "Ver resultado",
-    resSubiu: (l) => `A taxa registrada subiu em: ${l}. São casos que estavam ocultos.`,
+    resSubiu: (l) => `Os óbitos registrados por 100 mil subiram em: ${l}. São casos que estavam ocultos.`,
     resFila: (l) => `Filas em: ${l}.`,
     resEquil: (n) => `Departamentos com os 3 níveis: ${n} de 18.`,
     resTit: "Seu resultado", pontos: "pontos", recorde: (r) => `Seu recorde neste celular: ${r}`, novoRec: "Novo recorde!",
@@ -597,8 +597,8 @@ const EVENTOS_ALEAT = [
     es: ["Donación de instituciones religiosas", "Instituciones religiosas donan un servicio de cuidados paliativos en {dep}.", "{dep} recibe gratis los cuidados paliativos.", "Ejemplo real: la Fundación San Rafael, fundada y dirigida por el padre Aldo Trento desde 1999, mantiene una clínica de cuidados paliativos con 48 camas, sobre todo para pacientes terminales de cáncer y VIH, sostenida con donaciones (La Nación, 22/11/2021)."],
     pt: ["Doação de instituições religiosas", "Instituições religiosas doam um serviço de cuidados paliativos em {dep}.", "{dep} ganha de graça os cuidados paliativos.", "Exemplo real: a Fundación San Rafael, fundada e dirigida pelo padre Aldo Trento desde 1999, mantém uma clínica de cuidados paliativos com 48 leitos, sobretudo para pacientes terminais de câncer e HIV, sustentada com doações (La Nación, 22/11/2021)."] },
   { id: "academia", alvo: () => alvoSem("registro"), aplicar: (dep) => darGratis(dep, "registro"),
-    es: ["Una universidad cede académicos", "Residentes e investigadores de una universidad organizan el registro de cáncer en {dep}.", "{dep} recibe gratis la notificación y el registro.", "Ejemplo real: un estudio de la mortalidad por cáncer en Itapúa 2003–2012 encontró tasas más bajas en los distritos remotos, señal de falta de diagnóstico y registro, no de menos cáncer (Codas et al., Cancer Epidemiology 2016)."],
-    pt: ["Uma universidade cede acadêmicos", "Residentes e pesquisadores de uma universidade organizam o registro de câncer em {dep}.", "{dep} ganha de graça a notificação e o registro.", "Exemplo real: um estudo da mortalidade por câncer em Itapúa 2003–2012 encontrou taxas mais baixas nos distritos remotos, sinal de falta de diagnóstico e registro, não de menos câncer (Codas et al., Cancer Epidemiology 2016)."] },
+    es: ["Una universidad cede académicos", "Residentes e investigadores de una universidad organizan el registro de cáncer en {dep}.", "{dep} recibe gratis la notificación y el registro.", "Ejemplo real: un estudio de la mortalidad por cáncer en Itapúa 2003–2012 encontró tasas de mortalidad más bajas en los distritos remotos, señal de falta de diagnóstico y registro, no de menos cáncer (Codas et al., Cancer Epidemiology 2016)."],
+    pt: ["Uma universidade cede acadêmicos", "Residentes e pesquisadores de uma universidade organizam o registro de câncer em {dep}.", "{dep} ganha de graça a notificação e o registro.", "Exemplo real: um estudo da mortalidade por câncer em Itapúa 2003–2012 encontrou taxas de mortalidade mais baixas nos distritos remotos, sinal de falta de diagnóstico e registro, não de menos câncer (Codas et al., Cancer Epidemiology 2016)."] },
   { id: "empresa", aplicar: () => { S.orc += 4; },
     es: ["Donación privada", "Empresas y donantes privados aportan dinero para la lucha contra el cáncer.", "+💰 4.", "Ejemplo real: el Hospital Día Oncológico de Encarnación funciona en un edificio donado y con un acuerdo público-privado con el Ministerio de Salud; la atención es gratuita (ABC Color, 10/05/2024)."],
     pt: ["Doação privada", "Empresas e doadores privados dão dinheiro para a luta contra o câncer.", "+💰 4.", "Exemplo real: o Hospital Día Oncológico de Encarnación funciona num prédio doado e com um acordo público-privado com o Ministério da Saúde; o atendimento é gratuito (ABC Color, 10/05/2024)."] },
@@ -843,23 +843,23 @@ const NOTICIAS = {
     es: ["Central trata el cáncer de todo el país, pero le faltan prevención y diagnóstico", "Es el departamento más poblado y ahí está el INCAN, en Capiatá: la única radioterapia pública del país.", "Población (Censo 2022)"],
     pt: ["Central trata o câncer do país inteiro, mas faltam prevenção e diagnóstico", "É o departamento mais populoso e ali está o INCAN, em Capiatá: a única radioterapia pública do país.", "População (Censo 2022)"] },
   colo: { data: "Asunción · 12/03/2025", fonte: "Atlas 2015–2019; MSPBS, 12/03/2025", rank: () => rankSitio(COLO, "colo"), feito: (id) => temSlot(S.deps[id], "vph"),
-    es: ["Cuello uterino: la 1.ª causa de muerte por cáncer de las mujeres en 8 departamentos", "Es un cáncer evitable: la vacuna y el test de VPH lo previenen o lo detectan a tiempo. Estos son los departamentos donde más mata.", "Tasa estandarizada de cuello uterino por 100 mil mujeres, 2015–2019"],
-    pt: ["Colo do útero: a 1ª causa de morte por câncer das mulheres em 8 departamentos", "É um câncer evitável: a vacina e o teste de HPV o previnem ou o detectam a tempo. Estes são os departamentos onde ele mais mata.", "Taxa padronizada de colo do útero por 100 mil mulheres, 2015–2019"] },
+    es: ["Cuello uterino: la 1.ª causa de muerte por cáncer de las mujeres en 8 departamentos", "Es un cáncer evitable: la vacuna y el test de VPH lo previenen o lo detectan a tiempo. Estos son los departamentos donde más mata.", "Muertes por cáncer de cuello uterino por 100 mil mujeres (tasa estandarizada), 2015–2019"],
+    pt: ["Colo do útero: a 1ª causa de morte por câncer das mulheres em 8 departamentos", "É um câncer evitável: a vacina e o teste de HPV o previnem ou o detectam a tempo. Estes são os departamentos onde ele mais mata.", "Óbitos por câncer do colo do útero por 100 mil mulheres (taxa padronizada), 2015–2019"] },
   pulmao: { data: "Asunción · 13/02/2022", fonte: "Atlas 2015–2019; ENFR 2022; ABC Color, 13/02/2022", rank: () => rankSitio(PULMAO, "pulmao_h"), feito: (id) => temSlot(S.deps[id], "tabaco"),
-    es: ["Pulmón: la 1.ª causa de muerte por cáncer de los hombres en 11 departamentos", "12,5% de los adultos fuma cigarrillo y 17% usa tabaco en alguna forma, y el impuesto al tabaco era el más bajo de la región. Estos son los departamentos donde el pulmón más mata a los hombres.", "Tasa estandarizada de pulmón por 100 mil hombres, 2015–2019"],
-    pt: ["Pulmão: a 1ª causa de morte por câncer dos homens em 11 departamentos", "12,5% dos adultos fumam cigarro e 17% usam tabaco de alguma forma, e o imposto sobre o tabaco era o mais baixo da região. Estes são os departamentos onde o pulmão mais mata os homens.", "Taxa padronizada de pulmão por 100 mil homens, 2015–2019"] },
+    es: ["Pulmón: la 1.ª causa de muerte por cáncer de los hombres en 11 departamentos", "12,5% de los adultos fuma cigarrillo y 17% usa tabaco en alguna forma, y el impuesto al tabaco era el más bajo de la región. Estos son los departamentos donde el pulmón más mata a los hombres.", "Muertes por cáncer de pulmón por 100 mil hombres (tasa estandarizada), 2015–2019"],
+    pt: ["Pulmão: a 1ª causa de morte por câncer dos homens em 11 departamentos", "12,5% dos adultos fumam cigarro e 17% usam tabaco de alguma forma, e o imposto sobre o tabaco era o mais baixo da região. Estes são os departamentos onde o pulmão mais mata os homens.", "Óbitos por câncer de pulmão por 100 mil homens (taxa padronizada), 2015–2019"] },
   radio: { data: "Asunción · 23/07/2024", fonte: "MSPBS, INCAN 2024; La Nación, 23/07/2024", rank: () => rankPop(["alto-parana", "itapua"]), feito: (id) => temSlot(S.deps[id], "radio"),
     es: ["Pacientes del interior viajan a Capiatá para la radioterapia", "La radioterapia pública está solo en el INCAN, en Capiatá. En 2024 el Ministerio anunció aceleradores para Alto Paraná e Itapúa.", "Población (Censo 2022)"],
     pt: ["Pacientes do interior viajam a Capiatá para a radioterapia", "A radioterapia pública está só no INCAN, em Capiatá. Em 2024 o Ministério anunciou aceleradores para Alto Paraná e Itapúa.", "População (Censo 2022)"] },
   chaco: { data: "Asunción · 2022", fonte: "Atlas 2015–2019", rank: () => CHACO.map((id) => ({ id, valor: `${fmtInt(DEP[id].obitos)} ${t("muertes")}` })), feito: (id) => equil(id) >= 1,
-    es: ["El Chaco también cuenta", "Los tres departamentos del Chaco registraron {n} muertes por cáncer en 5 años. Con pocos casos, la tasa es inestable: cada diagnóstico cuenta.", "Muertes por cáncer registradas, 2015–2019 (Atlas, Tabla 1)"],
-    pt: ["O Chaco também conta", "Os três departamentos do Chaco registraram {n} óbitos por câncer em 5 anos. Com poucos casos, a taxa é instável: cada diagnóstico conta.", "Óbitos por câncer registrados, 2015–2019 (Atlas, Tabla 1)"] },
+    es: ["El Chaco también cuenta", "Los tres departamentos del Chaco registraron {n} muertes por cáncer en 5 años. Con pocos casos, la tasa de mortalidad es inestable: cada diagnóstico cuenta.", "Muertes por cáncer registradas, 2015–2019 (Atlas, Tabla 1)"],
+    pt: ["O Chaco também conta", "Os três departamentos do Chaco registraram {n} óbitos por câncer em 5 anos. Com poucos casos, a taxa de mortalidade é instável: cada diagnóstico conta.", "Óbitos por câncer registrados, 2015–2019 (Atlas, Tabla 1)"] },
   pesquisa: { data: "Asunción · 05/02/2024", fonte: "DGVS/MSPBS, 05/02/2024; Atlas 2015–2019", rank: () => menoresTee(5), feito: (id) => temPesq(S.deps[id]),
-    es: ["Sin registro de cáncer fuera de la capital", "El único registro de cáncer de base poblacional, creado en 2020, cubre solo Asunción y Central. Donde la tasa es más baja puede faltar diagnóstico y registro.", "Las 5 tasas estandarizadas más bajas, 2015–2019 (por 100 mil)"],
-    pt: ["Sem registro de câncer fora da capital", "O único registro de câncer de base populacional, criado em 2020, cobre só Asunción e Central. Onde a taxa é mais baixa pode faltar diagnóstico e registro.", "As 5 taxas padronizadas mais baixas, 2015–2019 (por 100 mil)"] },
+    es: ["Sin registro de cáncer fuera de la capital", "El único registro de cáncer de base poblacional, creado en 2020, cubre solo Asunción y Central. Donde la tasa de mortalidad es más baja puede faltar diagnóstico y registro.", "Las 5 tasas de mortalidad por cáncer más bajas: muertes por 100 mil (estandarizadas), 2015–2019"],
+    pt: ["Sem registro de câncer fora da capital", "O único registro de câncer de base populacional, criado em 2020, cobre só Asunción e Central. Onde a taxa de mortalidade é mais baixa pode faltar diagnóstico e registro.", "As 5 taxas de mortalidade por câncer mais baixas: óbitos por 100 mil (padronizadas), 2015–2019"] },
   ocultos: { data: "Asunción · 2022", fonte: "Atlas 2015–2019", rank: () => menoresTee(5),
-    es: ["Tasa baja no es riesgo bajo", "En 2017, cerca de 1 de cada 4 muertes no entraba en las estadísticas. Donde la tasa es más baja, diagnosticar puede sacar a la luz casos ocultos.", "Las 5 tasas estandarizadas más bajas, 2015–2019 (por 100 mil)"],
-    pt: ["Taxa baixa não é risco baixo", "Em 2017, cerca de 1 em cada 4 mortes não entrava nas estatísticas. Onde a taxa é mais baixa, diagnosticar pode trazer à luz casos ocultos.", "As 5 taxas padronizadas mais baixas, 2015–2019 (por 100 mil)"] },
+    es: ["Tasa de mortalidad baja no es riesgo bajo", "En 2017, cerca de 1 de cada 4 muertes no entraba en las estadísticas. Donde la tasa de mortalidad es más baja, diagnosticar puede sacar a la luz casos ocultos.", "Las 5 tasas de mortalidad por cáncer más bajas: muertes por 100 mil (estandarizadas), 2015–2019"],
+    pt: ["Taxa de mortalidade baixa não é risco baixo", "Em 2017, cerca de 1 em cada 4 mortes não entrava nas estatísticas. Onde a taxa de mortalidade é mais baixa, diagnosticar pode trazer à luz casos ocultos.", "As 5 taxas de mortalidade por câncer mais baixas: óbitos por 100 mil (padronizadas), 2015–2019"] },
 };
 function noticiaHTML(id) {
   const n = NOTICIAS[id];
@@ -987,8 +987,8 @@ const QUIZ = [
     es: ["La radioterapia pública está en un único lugar del país: el INCAN, en Capiatá.", "Un único lugar para todo el país, con 3 aceleradores lineales."],
     pt: ["A radioterapia pública está num único lugar do país: o INCAN, em Capiatá.", "Um único lugar para o país inteiro, com 3 aceleradores lineares."] },
   { v: false, fonte: "Atlas 2015–2019",
-    es: ["Una tasa de mortalidad por cáncer baja siempre significa riesgo bajo.", "Puede ser subregistro: Canindeyú tiene la menor tasa estandarizada (41,3) y la mayor proporción de muertes femeninas por cuello uterino (36,8%)."],
-    pt: ["Uma taxa de mortalidade por câncer baixa sempre significa risco baixo.", "Pode ser sub-registro: Canindeyú tem a menor taxa padronizada (41,3) e a maior proporção de mortes femininas por colo do útero (36,8%)."] },
+    es: ["Una tasa de mortalidad por cáncer baja siempre significa riesgo bajo.", "Puede ser subregistro: Canindeyú tiene la menor tasa de mortalidad por cáncer (41,3 muertes por 100 mil, estandarizada) y la mayor proporción de muertes femeninas por cuello uterino (36,8%)."],
+    pt: ["Uma taxa de mortalidade por câncer baixa sempre significa risco baixo.", "Pode ser sub-registro: Canindeyú tem a menor taxa de mortalidade por câncer (41,3 óbitos por 100 mil, padronizada) e a maior proporção de mortes femininas por colo do útero (36,8%)."] },
   { v: true, fonte: "IARC, GLOBOCAN 2022",
     es: ["GLOBOCAN 2022 estimó 13.783 casos nuevos de cáncer en Paraguay.", "Y 6.581 muertes por cáncer."],
     pt: ["O GLOBOCAN 2022 estimou 13.783 casos novos de câncer no Paraguai.", "E 6.581 mortes por câncer."] },
@@ -1072,11 +1072,11 @@ const QUIZ = [
     es: ["El primer mamógrafo digital de Concepción, de 2024, atenderá a más de 30.000 mujeres mayores de 40 años.", "Llegó junto con el décimo Hospital Día Oncológico del país."],
     pt: ["O primeiro mamógrafo digital de Concepción, de 2024, atenderá mais de 30.000 mulheres acima de 40 anos.", "Chegou junto com o décimo Hospital Día Oncológico do país."] },
   { v: false, fonte: "Atlas 2015–2019",
-    es: ["Entre 2015 y 2019, Asunción registró más muertes por cáncer que Central.", "Central: 6.670 muertes; Asunción: 2.798. Pero Asunción tiene la tasa estandarizada más alta del país (103,9 por 100.000, contra 91,1 en Central): más muertes no significa mayor tasa."],
-    pt: ["Entre 2015 e 2019, Asunción registrou mais mortes por câncer que Central.", "Central: 6.670 mortes; Asunción: 2.798. Mas Asunción tem a taxa padronizada mais alta do país (103,9 por 100.000, contra 91,1 em Central): mais mortes não significa taxa maior."] },
+    es: ["Entre 2015 y 2019, Asunción registró más muertes por cáncer que Central.", "Central: 6.670 muertes; Asunción: 2.798. Pero Asunción tiene la tasa de mortalidad por cáncer más alta del país (103,9 muertes por 100.000, estandarizada, contra 91,1 en Central): más muertes no significa mayor tasa de mortalidad."],
+    pt: ["Entre 2015 e 2019, Asunción registrou mais mortes por câncer que Central.", "Central: 6.670 mortes; Asunción: 2.798. Mas Asunción tem a taxa de mortalidade por câncer mais alta do país (103,9 óbitos por 100.000, padronizada, contra 91,1 em Central): mais mortes não significa taxa de mortalidade maior."] },
   { v: true, fonte: "Atlas 2015–2019",
-    es: ["Los tres departamentos del Chaco (Boquerón, Presidente Hayes y Alto Paraguay) suman menos de 700 muertes por cáncer en 2015–2019.", "631 muertes en cinco años: Presidente Hayes 351, Boquerón 242 y Alto Paraguay 38. Con números tan pequeños, las tasas oscilan mucho de un año a otro."],
-    pt: ["Os três departamentos do Chaco (Boquerón, Presidente Hayes e Alto Paraguay) somam menos de 700 mortes por câncer em 2015–2019.", "631 mortes em cinco anos: Presidente Hayes 351, Boquerón 242 e Alto Paraguay 38. Com números tão pequenos, as taxas oscilam muito de um ano para outro."] },
+    es: ["Los tres departamentos del Chaco (Boquerón, Presidente Hayes y Alto Paraguay) suman menos de 700 muertes por cáncer en 2015–2019.", "631 muertes en cinco años: Presidente Hayes 351, Boquerón 242 y Alto Paraguay 38. Con números tan pequeños, las tasas de mortalidad oscilan mucho de un año a otro."],
+    pt: ["Os três departamentos do Chaco (Boquerón, Presidente Hayes e Alto Paraguay) somam menos de 700 mortes por câncer em 2015–2019.", "631 mortes em cinco anos: Presidente Hayes 351, Boquerón 242 e Alto Paraguay 38. Com números tão pequenos, as taxas de mortalidade oscilam muito de um ano para outro."] },
   { v: true, fonte: "IARC, GLOBOCAN 2022",
     es: ["Según GLOBOCAN 2022, en Paraguay hay cerca de 1 muerte por cada 2 casos nuevos de cáncer.", "6.581 muertes y 13.783 casos nuevos estimados. Esa proporción (casos ≈ 2,1 × muertes) es la que usa el modelo del juego."],
     pt: ["Segundo o GLOBOCAN 2022, no Paraguai há cerca de 1 morte para cada 2 casos novos de câncer.", "6.581 mortes e 13.783 casos novos estimados. Essa proporção (casos ≈ 2,1 × mortes) é a que o modelo do jogo usa."] },
@@ -1104,14 +1104,14 @@ const QUIZ_GEN = {
   tee: () => {
     const [a, b] = parDeps((x, y) => Math.abs(x.tee - y.tee) >= 8), v = a.tee > b.tee;
     return { v, fonte: "Atlas 2015–2019",
-      es: [`La tasa de mortalidad por cáncer (estandarizada por edad, 2015–2019) es mayor en ${a.nome} que en ${b.nome}.`, `${a.nome}: ${fmtM(a.tee)} · ${b.nome}: ${fmtM(b.tee)} por 100.000 habitantes. Una tasa baja también puede ser subregistro.`],
-      pt: [`A taxa de mortalidade por câncer (padronizada por idade, 2015–2019) é maior em ${a.nome} do que em ${b.nome}.`, `${a.nome}: ${fmtM(a.tee)} · ${b.nome}: ${fmtM(b.tee)} por 100.000 habitantes. Uma taxa baixa também pode ser sub-registro.`] };
+      es: [`La tasa de mortalidad por cáncer (estandarizada por edad, 2015–2019) es mayor en ${a.nome} que en ${b.nome}.`, `${a.nome}: ${fmtM(a.tee)} · ${b.nome}: ${fmtM(b.tee)} muertes por 100.000 habitantes. Una tasa de mortalidad baja también puede ser subregistro.`],
+      pt: [`A taxa de mortalidade por câncer (padronizada por idade, 2015–2019) é maior em ${a.nome} do que em ${b.nome}.`, `${a.nome}: ${fmtM(a.tee)} · ${b.nome}: ${fmtM(b.tee)} óbitos por 100.000 habitantes. Uma taxa de mortalidade baixa também pode ser sub-registro.`] };
   },
   obitos: () => {
     const [a, b] = parDeps((x, y) => Math.max(x.obitos, y.obitos) / Math.min(x.obitos, y.obitos) >= 1.5), v = a.obitos > b.obitos;
     return { v, fonte: "Atlas 2015–2019",
-      es: [`Entre 2015 y 2019, ${a.nome} registró más muertes por cáncer que ${b.nome}.`, `${a.nome}: ${fmtInt(a.obitos)} · ${b.nome}: ${fmtInt(b.obitos)} muertes en cinco años. Para comparar el riesgo se usa la tasa estandarizada, no el número de muertes.`],
-      pt: [`Entre 2015 e 2019, ${a.nome} registrou mais mortes por câncer que ${b.nome}.`, `${a.nome}: ${fmtInt(a.obitos)} · ${b.nome}: ${fmtInt(b.obitos)} mortes em cinco anos. Para comparar o risco usa-se a taxa padronizada, não o número de mortes.`] };
+      es: [`Entre 2015 y 2019, ${a.nome} registró más muertes por cáncer que ${b.nome}.`, `${a.nome}: ${fmtInt(a.obitos)} · ${b.nome}: ${fmtInt(b.obitos)} muertes en cinco años. Para comparar el riesgo se usa la tasa estandarizada de mortalidad, no el número de muertes.`],
+      pt: [`Entre 2015 e 2019, ${a.nome} registrou mais mortes por câncer que ${b.nome}.`, `${a.nome}: ${fmtInt(a.obitos)} · ${b.nome}: ${fmtInt(b.obitos)} mortes em cinco anos. Para comparar o risco usa-se a taxa padronizada de mortalidade, não o número de mortes.`] };
   },
   primH: () => {
     const a = sorteio(DEPS.filter((d) => NOMES_SITIO.es[d.primH])), certo = Math.random() < 0.5;
@@ -1224,8 +1224,8 @@ function mostrarTitulares(a) {
     ${lista ? `<ul class="linhas titulares">${lista}</ul><p class="meta">${esc(tx.dica)}</p>` : `<p class="meta">${esc(tx.nada)}</p>`}
     <button class="btn" type="button" data-fechar>${esc(t("voltar"))}</button>`);
 }
-/* ---------- «Luz»: o que o mapa mostra (beta12, pedido do Gi em 28/10/2026). Abre no 1.º toque em Luz | Tasas, no «?» ao lado e na ajuda.
-   Três quadros: névoa (casos ocultos) → diagnóstico (a névoa se dissipa e a taxa sobe) → luz (equilíbrio das três funções, níveis 0 a 3). ---------- */
+/* ---------- «Luz»: o que o mapa mostra (beta12, pedido do Gi em 28/10/2026). Abre no 1.º toque em Luz | Mortalidad (era «Tasas» até a beta14) e na ajuda.
+   Três quadros: névoa (casos ocultos) → diagnóstico (a névoa se dissipa e sobem os óbitos registrados por 100 mil) → luz (equilíbrio das três funções, níveis 0 a 3). ---------- */
 function luzSVG() {
   const blob = (x, cor, extra = "") => `<path d="M${x - 46},-14 L${x - 22},-46 L${x + 24},-46 L${x + 46},-10 L${x + 40},40 L${x + 8},56 L${x - 36},44 Z" fill="var(${cor})" stroke="rgba(255,255,255,.18)" stroke-width="2"${extra}/>`;
   const nevoa = (x, w, op) => `<ellipse cx="${x}" cy="4" rx="${w}" ry="38" fill="url(#g-nevoa-luz)" opacity="${op}"/>`;
@@ -1296,7 +1296,7 @@ const LICOES = {
   habitos: { es: ["Solo 3,9% comen 5 porciones de frutas y verduras por día. El colorrectal es el cáncer que más crece: cerca de 3% por año desde 1990.", "ENFR 2022; Leite et al., 2025"], pt: ["Só 3,9% comem 5 porções de frutas e verduras por dia. O colorretal é o câncer que mais cresce: cerca de 3% ao ano desde 1990.", "ENFR 2022; Leite et al., 2025"] },
   vph: { es: ["En 2024 el Ministerio de Salud hizo 72.133 tests de VPH y encontró 9.863 positivos (13,7%). Diagnosticar hace subir los casos visibles.", "MSPBS, 12/03/2025"], pt: ["Em 2024 o Ministério da Saúde fez 72.133 testes de HPV e encontrou 9.863 positivos (13,7%). Diagnosticar faz subir os casos visíveis.", "MSPBS, 12/03/2025"] },
   mamo: { es: ["La mama es la 1.ª causa de muerte por cáncer en las mujeres (1.945 muertes, 20,2%). 51,1% de las mujeres ya se hicieron una mamografía.", "Atlas 2015–2019; ENFR 2023"], pt: ["A mama é a 1ª causa de morte por câncer nas mulheres (1.945 mortes, 20,2%). 51,1% das mulheres já fizeram mamografia.", "Atlas 2015–2019; ENFR 2023"] },
-  registro: { es: ["Tasa baja no es riesgo bajo: Canindeyú tiene la menor tasa estandarizada (41,3) y la mayor proporción de muertes femeninas por cuello uterino (36,8%).", "Atlas 2015–2019"], pt: ["Taxa baixa não é risco baixo: Canindeyú tem a menor taxa padronizada (41,3) e a maior proporção de mortes femininas por colo do útero (36,8%).", "Atlas 2015–2019"] },
+  registro: { es: ["Tasa de mortalidad baja no es riesgo bajo: Canindeyú tiene la menor tasa de mortalidad por cáncer (41,3 muertes por 100 mil, estandarizada) y la mayor proporción de muertes femeninas por cuello uterino (36,8%).", "Atlas 2015–2019"], pt: ["Taxa de mortalidade baixa não é risco baixo: Canindeyú tem a menor taxa de mortalidade por câncer (41,3 óbitos por 100 mil, padronizada) e a maior proporção de mortes femininas por colo do útero (36,8%).", "Atlas 2015–2019"] },
   quimio: { es: ["Los Hospitales Día oncológicos llevan la quimioterapia al interior; el 10.º se inauguró en Concepción en 2024.", "MSPBS, 21/11/2024"], pt: ["Os Hospitais Día oncológicos levam a quimioterapia ao interior; o 10º foi inaugurado em Concepción em 2024.", "MSPBS, 21/11/2024"] },
   radio: { es: ["Radioterapia pública: un único lugar para todo el país, el INCAN, en Capiatá, con 3 aceleradores lineales.", "MSPBS, INCAN 2024"], pt: ["Radioterapia pública: um único lugar para o país inteiro, o INCAN, em Capiatá, com 3 aceleradores lineares.", "MSPBS, INCAN 2024"] },
   privado: { es: ["El IPS contrata servicios de radioterapia de prestadores privados por licitación pública, con contratos que se renuevan.", "DNCP, licitación de radioterapia del IPS"], pt: ["O IPS contrata serviços de radioterapia de prestadores privados por licitação pública, com contratos que se renovam.", "DNCP, licitação de radioterapia do IPS"] },
@@ -1305,7 +1305,7 @@ const LICOES = {
   fila: { es: ["Diagnosticar sin tratar crea filas: en Ciudad del Este, de cada 10 pacientes diagnosticados, 6 necesitarán radioterapia y deben viajar.", "La Nación, 23/07/2024"], pt: ["Diagnosticar sem tratar cria filas: em Ciudad del Este, de cada 10 pacientes diagnosticados, 6 vão precisar de radioterapia e precisam viajar.", "La Nación, 23/07/2024"] },
   colo: { es: ["En 8 de los 18 departamentos, el cuello uterino es la 1.ª causa de muerte por cáncer en las mujeres: un cáncer evitable.", "Atlas 2015–2019"], pt: ["Em 8 dos 18 departamentos, o colo do útero é a 1ª causa de morte por câncer nas mulheres: um câncer evitável.", "Atlas 2015–2019"] },
   jovens: { es: ["La mortalidad por cuello uterino en mujeres de 20 a 44 años sube 3,7% por año (1997–2017).", "Torres-Roman et al., BMC Public Health 2022"], pt: ["A mortalidade por colo do útero em mulheres de 20 a 44 anos sobe 3,7% ao ano (1997–2017).", "Torres-Roman et al., BMC Public Health 2022"] },
-  mapa: { es: ["El mapa del cáncer también es un mapa del acceso al diagnóstico: Asunción tiene tasa estandarizada de 103,9 y Canindeyú de 41,3 por 100 mil (2015–2019).", "Atlas 2015–2019"], pt: ["O mapa do câncer também é um mapa do acesso ao diagnóstico: Asunción tem taxa padronizada de 103,9 e Canindeyú de 41,3 por 100 mil (2015–2019).", "Atlas 2015–2019"] },
+  mapa: { es: ["El mapa del cáncer también es un mapa del acceso al diagnóstico: Asunción tiene una tasa de mortalidad por cáncer de 103,9 y Canindeyú de 41,3 muertes por 100 mil (estandarizada, 2015–2019).", "Atlas 2015–2019"], pt: ["O mapa do câncer também é um mapa do acesso ao diagnóstico: Asunción tem uma taxa de mortalidade por câncer de 103,9 e Canindeyú de 41,3 óbitos por 100 mil (padronizada, 2015–2019).", "Atlas 2015–2019"] },
 };
 const LICOES_GERAIS = ["mapa", "colo", "registro", "jovens"];
 
@@ -1892,6 +1892,7 @@ function pintarMapa() {
   }).join("");
   $("#legenda").innerHTML = legendaHTML();
   $("#legenda").classList.toggle("q4", S.modo === "cob");   // 0 1 2 3 cabem numa linha só
+  $("#legenda").classList.toggle("vivo-leg", MODOS_VIVOS.includes(S.modo));   // beta15: o botão da camada ao vivo já traz o nome; o título da legenda some até 390 px
   document.querySelectorAll("[data-modo]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.modo === S.modo)));
 }
 

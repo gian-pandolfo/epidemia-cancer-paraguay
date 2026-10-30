@@ -25,7 +25,7 @@ Para que den ganas de volver a jugar: **misiones** con premio (por ejemplo, test
 
 ## Qué es real y qué es simulación
 
-- **Real, con fuente:** las tasas y las muertes de partida de cada departamento (Atlas de Mortalidad por Cáncer en Paraguay 2015–2019), la población (Censo 2022), la proporción entre casos y muertes (GLOBOCAN 2022: 13.783 casos y 6.581 muertes) y el hecho de cada año (ley, decreto, pandemia, misiones, servicios inaugurados). Los imprevistos y demandas que traen «ejemplo real» o «inspirado en» citan su fuente.
+- **Real, con fuente:** las muertes por cáncer de partida de cada departamento, en total y por 100.000 habitantes (tasa estandarizada de mortalidad; Atlas de Mortalidad por Cáncer en Paraguay 2015–2019), la población (Censo 2022), la proporción entre casos y muertes (GLOBOCAN 2022: 13.783 casos y 6.581 muertes) y el hecho de cada año (ley, decreto, pandemia, misiones, servicios inaugurados). Los imprevistos y demandas que traen «ejemplo real» o «inspirado en» citan su fuente.
 - **Simulación (ilustrativa):** el efecto de cada acción, los personajes y sus habilidades, los casos ocultos (subregistro), la incidencia, la prevalencia, las muertes y las curas, los imprevistos, las demandas, el prestigio y los puntos. Sirven para enseñar, no son estimaciones epidemiológicas.
 - **Fuentes con enlace:** cada fuente citada en el juego tiene un enlace ↗ al lado. Cuando existe, abre una copia guardada en el Internet Archive (no depende de que el sitio original esté en línea); si no, abre la página original. Los enlaces se conferieron el 26/10/2026 (`links.js`).
 
@@ -106,7 +106,7 @@ Pedido do Gi: revisar o código e jogar 10 partidas como uma pessoa no celular, 
 Pedidos do Gi na noite de 27/10, com os colegas já testando: «os jogadores estão ficando sem dinheiro», «os campos demoram a habilitar», «mais moedas nos desafios», «perguntas baseadas nos tabloides», «assimetria nas habilidades» e «dopamina».
 
 - **Manutenção = 20% do custo** (era de 25% a 50%): vacina 0,4 · antitabaco 0,2 · hábitos 0,2 · teste de HPV 0,4 · mamógrafo 0,6 · registro 0,2 · Hospital Día 0,8 · acelerador 1,6 · paliativos 0,4 · centro de pesquisa 1,0 por ano. As habilidades que dividem a manutenção continuam valendo em cima.
-- **Desafío relámpago:** 💰 4 por acerto (era 2), além de ⭐ 100 e 🎖️ 1. **27 perguntas novas:** 19 fixas, para interpretar os dados dos recortes de imprensa e do Atlas (impostos do tabaco, Hospital Día, INCAN, teste de HPV, ENFR, BID, registro…), e 8 **geradas dos dados** a cada partida: população (Censo 2022), taxa padronizada, óbitos, 1.ª causa por sexo, vizinhos no mapa, Chaco e causas mal definidas. Cada partida alterna pergunta fixa e gerada. Partidas salvas recebem as perguntas novas a partir do próximo desafio.
+- **Desafío relámpago:** 💰 4 por acerto (era 2), além de ⭐ 100 e 🎖️ 1. **27 perguntas novas:** 19 fixas, para interpretar os dados dos recortes de imprensa e do Atlas (impostos do tabaco, Hospital Día, INCAN, teste de HPV, ENFR, BID, registro…), e 8 **geradas dos dados** a cada partida: população (Censo 2022), taxa padronizada de mortalidade (óbitos por 100 mil), óbitos, 1.ª causa por sexo, vizinhos no mapa, Chaco e causas mal definidas. Cada partida alterna pergunta fixa e gerada. Partidas salvas recebem as perguntas novas a partir do próximo desafio.
 - **Carreira:** o cargo sobe por ⭐ pontos + 🎯 500 por missão cumprida + ⚡ 250 por desafio acertado; cargos em 1.000 / 3.000 / 6.000 / 9.000 (eram 1.200 / 4.000 / 7.500 / 11.000, só por pontos). O ranking não muda. Cada promoção dá 💰 2.
 - **Árvore 4/3/3:** cada personagem tem um ramo principal com 4 habilidades e dois com 3; um nível só abre depois do anterior do mesmo ramo (uma escolha por cargo). Quem se especializa chega ao 4.º nível (Predicción con IA, Gran alianza, Centro oncológico regional); quem espalha ganha amplitude. Saíram da árvore (mas valem nas partidas salvas): Publicación internacional, APS 4.0, Mecenas, Polo regional, Liderazgo médico, Excelencia científica.
 - **Ranking:** abaixo do QR, botões «Abrir el juego» e «Copiar enlace» (também no modo `#estande`).
@@ -135,3 +135,15 @@ Pedido do Gi: «zerar o ranking» e «contar o jogador que acessa sem logar, par
 - **Zerar sem apagar:** menu «Zerar ranking» na planilha; Partidas e Visitas vão para abas de arquivo e recomeçam vazias. O menu da LGPD (30/11) apaga nome e e-mail também nessas abas.
 - **Evento novo:** mudar `edicao` no `config.js` para os aparelhos contarem de novo.
 - **Compatível:** com a planilha ainda na versão 2, o jogo continua funcionando; a visita é recusada e o aparelho tenta de novo na próxima abertura. Partidas salvas continuam (mesma chave `epidemia-py-v4`).
+
+## Toda taxa diz o que conta (beta15, 29/10/2026)
+
+Guardada no ramo `taxas-com-contexto` em 30/10/2026, **sem publicar**: o jogo foi encerrado nesse dia (o `main` mostra o aviso). Para uma próxima edição, juntar este ramo (e o `dificuldade-e-moedas`, beta16) ao `main`.
+
+Regra do Gi (28/10): «sempre que tivermos a palavra taxa», dizer o que ela conta (mortes, casos novos, prevalência, curas), a unidade e se é padronizada.
+
+- **Botão do mapa:** «Luz | Tasas» virou «Luz | Mortalidad» («Luz | Mortalidade» em PT), como no mapa do congresso.
+- **Legenda e painel:** a legenda diz «Muertes/100 mil» (numa linha só: com duas, a caixa do canto cobria «Concepción» de 375 a 390 px na camada Mortalidad, defeito que já existia na beta14) e o quadro do departamento, «Muertes/100 mil (estand., Atlas 2015–19): 78,4 → 78,4» (Atlas → valor registrado no jogo); nos departamentos com poucos óbitos, «Pocas muertes: tasa inestable.». Textos curtos de propósito, medidos em 360, 375, 390 e 412 px: o texto longo fazia a tela rolar e a caixa do canto cobrir «Concepción». O aviso de poucos óbitos numa linha só e o quadro do departamento 8 px mais baixo acabaram com a rolagem de 3–5 px que Alto Paraguay e Boquerón já tinham em 360/375 px.
+- **Botão do mapa mais largo:** «Mortalidad» ganhou 3/5 da largura (antes metade), para não encostar na borda.
+- **Textos:** ajuda, explicação do Luz, resumo do ano, matérias das missões, desafio relâmpago (fixas e geradas), lições e o estudo de Itapúa passam a dizer «muertes por 100 mil» ou «tasa de mortalidad». As camadas ao vivo já diziam o que contam (incidência, prevalência, mortes e curas por 100 mil, do modelo).
+- Partidas salvas continuam (mesma chave `epidemia-py-v4`).

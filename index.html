@@ -101,14 +101,14 @@ main { max-width: 640px; margin: 0 auto; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
 .seg button { border: 0; background: transparent; border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: .88rem; cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-.seg.mini { display: grid; grid-template-columns: 1fr 1fr; border-radius: 10px; padding: 2px; }
+.seg.mini { display: grid; grid-template-columns: 2fr 3fr; border-radius: 10px; padding: 2px; }   /* «Mortalidad» é mais longo que «Luz» (beta15) */
 .seg.mini button { padding: 6px 2px; font-size: .68rem; border-radius: 8px; }   /* um pouco mais alto que antes, sem a caixa do canto cobrir «Concepción» */
 .legenda { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 6px; font-size: .64rem; color: var(--muted); padding: 4px 6px; border-radius: 8px; background: color-mix(in srgb, var(--bg) 80%, transparent); }
 .legenda .leg-tit { grid-column: 1 / -1; font-weight: 700; color: var(--ink); line-height: 1.2; white-space: normal; }
 .legenda span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
 .legenda.q4 { grid-template-columns: repeat(4, auto); justify-content: start; }
 .legenda i { width: 12px; height: 9px; border-radius: 3px; border: 1px solid var(--line); display: inline-block; flex: none; }
-/* Números do país em tempo real, logo abaixo de Equilíbrio | Taxas: cada um também vira a camada do mapa */
+/* Números do país em tempo real, logo abaixo de Luz | Mortalidad: cada um também vira a camada do mapa */
 .vivo { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
 .vivo button { display: grid; text-align: left; min-width: 0; padding: 2px 5px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); cursor: pointer; line-height: 1.1; }
 .vivo span { font-size: .56rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -126,7 +126,7 @@ main { max-width: 640px; margin: 0 auto; }
 
 /* Departamento: informações no canto sudoeste, ao lado do mapa; ações logo abaixo do mapa, na largura toda */
 .painel-info {
-  grid-column: 1; grid-row: 2; align-self: start; z-index: 2; min-width: 0; display: grid; gap: 4px; padding: 7px 8px;
+  grid-column: 1; grid-row: 2; align-self: start; z-index: 2; min-width: 0; display: grid; gap: 3px; padding: 6px 8px;   /* 8 px mais baixo (beta15): Alto Paraguay e Boquerón estouravam a tela em 360/375 px */
   border: 1px solid var(--line); border-radius: 12px; background: color-mix(in srgb, var(--surface) 94%, transparent); font-size: .68rem; line-height: 1.25;
 }
 .painel-acoes { grid-column: 1 / -1; grid-row: 3; display: grid; gap: 6px; margin-top: 8px; }
@@ -136,7 +136,7 @@ main { max-width: 640px; margin: 0 auto; }
   background: transparent linear-gradient(45deg, transparent 50%, var(--accent) 50%) no-repeat calc(100% - 9px) 55% / 7px 7px,
               transparent linear-gradient(135deg, var(--accent) 50%, transparent 50%) no-repeat calc(100% - 2px) 55% / 7px 7px;
 }
-.info { margin: 0; color: var(--muted); display: grid; gap: 2px; }
+.info { margin: 0; color: var(--muted); display: grid; gap: 1px; }
 .info b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .meta { margin: 2px 0 0; color: var(--muted); font-size: .9rem; }
 .fila { margin: 0; padding: 5px 6px; border-radius: 8px; background: var(--warn-soft); color: var(--warn); font-weight: 700; }
@@ -558,8 +558,9 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
 .nivel[data-n="X"] { --nv: var(--ouro); }
 .missao-mini .m-tit span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* celulares estreitos (360 px): o botão "Luz" já nomeia a camada; ações um pouco mais baixas para caber sem rolar */
+@media (max-width: 390px) { #legenda.vivo-leg .leg-tit { display: none; } }   /* beta15: nas camadas ao vivo o título ocupava 2 linhas em 375 px e a caixa cobria «Concepción» */
 @media (max-width: 370px) {
-  .legenda.q4 .leg-tit { display: none; }
+  #legenda .leg-tit { display: none; }   /* em todas as camadas (beta15): na «Mortalidad» e nas camadas ao vivo o título fazia a caixa do canto cobrir «Concepción» em 360 px */
   .nivel h3 { font-size: .78rem; }
   .acao { min-height: 38px; padding: 4px 5px; }
   .painel-acoes { gap: 4px; }
@@ -620,11 +621,11 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
 <div id="faixa" class="faixa" role="status" aria-live="polite" hidden></div>
 </div>
 
-<script src="config.js?v=15"></script>
-<script src="dados.js?v=15"></script>
-<script src="links.js?v=15"></script>
-<script src="icones.js?v=15"></script>
-<script src="jogo.js?v=15"></script>
-<script src="musica.js?v=15"></script>
+<script src="config.js?v=16"></script>
+<script src="dados.js?v=16"></script>
+<script src="links.js?v=16"></script>
+<script src="icones.js?v=16"></script>
+<script src="jogo.js?v=16"></script>
+<script src="musica.js?v=16"></script>
 </body>
 </html>
