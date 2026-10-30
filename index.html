@@ -263,6 +263,14 @@ main { max-width: 640px; margin: 0 auto; }
 .pers-teaser { display: flex; align-items: center; gap: 8px; }
 .pers-teaser .avatar { width: 40px; height: 40px; font-size: 1.3rem; }
 .pers-teaser > span:last-child { font-size: .85rem; color: var(--muted); }
+/* dificuldade (beta16): três botões abaixo dos personagens */
+.dif-tit { margin: 2px 0 -6px; font: 800 .9rem var(--f-display); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.dif-lista { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.dif { display: grid; gap: 3px; padding: 8px 5px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); color: var(--ink); text-align: center; cursor: pointer; min-width: 0; }
+.dif b { font: 900 .95rem/1.1 var(--f-display); text-transform: uppercase; letter-spacing: .02em; }
+.dif small { font-size: .68rem; line-height: 1.25; color: var(--muted); }
+.dif.sel { border-color: var(--accent); box-shadow: inset 0 0 0 2px var(--accent); }
+.dif.sel small { color: var(--ink); }
 .perfil { display: flex; gap: 12px; align-items: center; }
 .arvore { display: grid; gap: 6px; }
 .cargos-cab, .ramo-cels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
@@ -621,11 +629,11 @@ button.chip { cursor: pointer; font: inherit; color: inherit; }
 <div id="faixa" class="faixa" role="status" aria-live="polite" hidden></div>
 </div>
 
-<script src="config.js?v=16"></script>
-<script src="dados.js?v=16"></script>
-<script src="links.js?v=16"></script>
-<script src="icones.js?v=16"></script>
-<script src="jogo.js?v=16"></script>
-<script src="musica.js?v=16"></script>
+<script src="config.js?v=17"></script>
+<script src="dados.js?v=17"></script>
+<script src="links.js?v=17"></script>
+<script src="icones.js?v=17"></script>
+<script src="jogo.js?v=17"></script>
+<script src="musica.js?v=17"></script>
 </body>
 </html>

@@ -6,11 +6,15 @@
 
 const $ = (s) => document.querySelector(s);
 const ANOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
-const ORC_BASE = 15;   // receita por ano, que entra mês a mês
+const ORC_BASE = 15;   // receita por ano (beta16: a dificuldade multiplica; a manutenção caiu para ~15% do custo, ver ACOES)
 const RAZAO_INC = 2.1;             // incidência ≈ 2,1 × óbitos (GLOBOCAN 2022: 13.783 casos / 6.581 óbitos)
 const CHAVE = "epidemia-py-v4";    // v4: personagens, habilidades, prestígio e manutenção (partidas salvas de versões anteriores não continuam)
 const RANKS = [0, 1000, 3000, 6000, 9000];   // carreira (pontos + méritos) de cada cargo; cada promoção libera uma habilidade (beta11)
 const BONUS_CARGO = 2;   // 💰 ao subir de cargo (beta11: «dopamina», pedido do Gi em 28/10/2026)
+/* Dificuldade (beta16, pedido do Gi em 29/10/2026): escolhida junto com o personagem. «renda» multiplica o orçamento de cada
+   ano; «pts» multiplica os pontos do ano (antes do teto de 3.000 e fora do +100 do desafio): fácil pontua menos, difícil pontua mais */
+const DIF = { facil: { renda: 1.25, pts: 0.8 }, medio: { renda: 1, pts: 1 }, dificil: { renda: 0.8, pts: 1.25 } };
+function dif() { return DIF[S && S.dif] || DIF.medio; }
 const CONV_DESDE = 2016;   // convênios a partir de 2016 (Don Patrón desde o começo)
 const CHAVE_LOGROS = "epidemia-py-logros";   // conquistas deste celular, entre partidas
 const MODOS_VIVOS = ["inc", "prev", "mort", "cura"];
@@ -197,6 +201,9 @@ const T = {
     linksNota: "«ver ↗» abre el recorte del juego (PDF con resumen y enlace); si no hay, la copia guardada en el Internet Archive; si no, la página original.", verFonte: "ver",
     persTeaser: "Bob, Don Patrón o la Dra. Beatriz: elige quién lidera la lucha contra el cáncer en Paraguay.",
     pers: { escolher: "Elige tu personaje", jogarCom: (n) => `Jugar con ${n}`, passiva: "Lo que ya sabe hacer", lado: "Contactos" },
+    dif: { tit: "Dificultad", nomes: { facil: "Fácil", medio: "Media", dificil: "Difícil" },
+      desc: (d) => `${d.renda === 1 ? "presupuesto normal" : `${d.renda > 1 ? "+" : "−"}${Math.round(Math.abs(d.renda - 1) * 100)}% de presupuesto`} · puntos ×${fmtX(d.pts)}` },
+    difConta: (m) => `dificultad ×${m}`,
     cargos: ["Coordinador/a local", "Director/a regional", "Director/a nacional", "Viceministro/a", "Ministro/a de Salud"],
     arvTit: "Personaje y habilidades", arvAscenso: (c) => `¡Ascenso a ${c}! Elige una habilidad de esa columna.`,
     arvProx: (c, f) => `Próximo cargo: ${c} · faltan ⭐ ${f}`, arvTopo: "Llegaste al cargo más alto.",
@@ -267,7 +274,7 @@ const T = {
     demAgora: (p, pr) => `+⭐ ${p}${pr ? ` · +🎖️ ${pr}` : ""}`,
     demSe: (p, pr, pf, prf) => `si cumples: +⭐ ${p} · +🎖️ ${pr}\nsi no cumples: −⭐ ${pf} · −🎖️ ${prf}`,
     demRegra: "Cumplir da puntos y prestigio; rechazar cuesta poco. Prometer y no cumplir cuesta más: cuanto mayor la promesa, mayor el premio y la pena.",
-    contaTit: "Puntos del año: 🏗️ ¼ de la estructura, ❤️ 1 por vida salvada, 🍎 ½ por caso evitado, 🕯️ meta de menos de 400 muertes sin diagnóstico al año (−½ por cada una por encima, +½ por debajo), 📣 demanda y ⚡ desafío (de 0 a 3.000 por año).", demReq: (r) => `requisito: ${r}`,
+    contaTit: "Puntos del año: 🏗️ ¼ de la estructura, ❤️ 1 por vida salvada, 🍎 ½ por caso evitado, 🕯️ meta de menos de 400 muertes sin diagnóstico al año (−½ por cada una por encima, +½ por debajo), 📣 demanda y ⚡ desafío; dificultad fácil ×0,8 y difícil ×1,25 (de 0 a 3.000 por año).", demReq: (r) => `requisito: ${r}`,
     resPais: (c, m, k) => `País este año (modelo): ${c} casos diagnosticados, ${m} muertes y ${k} curas.`,
     resComp: (ok, tot) => `Compromisos cumplidos: <b>${ok}</b> de ${tot}`,
     resTot: (c, m, k) => `En 10 años (modelo del juego): <b>${c}</b> casos diagnosticados, <b>${m}</b> muertes y <b>${k}</b> curas.`,
@@ -427,6 +434,9 @@ const T = {
     linksNota: "«ver ↗» abre o recorte do jogo (PDF com resumo e link); se não houver, a cópia guardada no Internet Archive; se não, a página original.", verFonte: "ver",
     persTeaser: "Bob, Don Patrón ou a Dra. Beatriz: escolha quem lidera a luta contra o câncer no Paraguai.",
     pers: { escolher: "Escolha seu personagem", jogarCom: (n) => `Jogar com ${n}`, passiva: "O que já sabe fazer", lado: "Contatos" },
+    dif: { tit: "Dificuldade", nomes: { facil: "Fácil", medio: "Média", dificil: "Difícil" },
+      desc: (d) => `${d.renda === 1 ? "orçamento normal" : `${d.renda > 1 ? "+" : "−"}${Math.round(Math.abs(d.renda - 1) * 100)}% de orçamento`} · pontos ×${fmtX(d.pts)}` },
+    difConta: (m) => `dificuldade ×${m}`,
     cargos: ["Coordenador/a local", "Diretor/a regional", "Diretor/a nacional", "Vice-ministro/a", "Ministro/a da Saúde"],
     arvTit: "Personagem e habilidades", arvAscenso: (c) => `Promoção a ${c}! Escolha uma habilidade dessa coluna.`,
     arvProx: (c, f) => `Próximo cargo: ${c} · faltam ⭐ ${f}`, arvTopo: "Você chegou ao cargo mais alto.",
@@ -497,7 +507,7 @@ const T = {
     demAgora: (p, pr) => `+⭐ ${p}${pr ? ` · +🎖️ ${pr}` : ""}`,
     demSe: (p, pr, pf, prf) => `se cumprir: +⭐ ${p} · +🎖️ ${pr}\nse não cumprir: −⭐ ${pf} · −🎖️ ${prf}`,
     demRegra: "Cumprir dá pontos e prestígio; recusar custa pouco. Prometer e não cumprir custa mais: quanto maior a promessa, maior o prêmio e a pena.",
-    contaTit: "Pontos do ano: 🏗️ ¼ da estrutura, ❤️ 1 por vida salva, 🍎 ½ por caso evitado, 🕯️ meta de menos de 400 óbitos sem diagnóstico por ano (−½ por cada um acima, +½ abaixo), 📣 demanda e ⚡ desafio (de 0 a 3.000 por ano).", demReq: (r) => `requisito: ${r}`,
+    contaTit: "Pontos do ano: 🏗️ ¼ da estrutura, ❤️ 1 por vida salva, 🍎 ½ por caso evitado, 🕯️ meta de menos de 400 óbitos sem diagnóstico por ano (−½ por cada um acima, +½ abaixo), 📣 demanda e ⚡ desafio; dificuldade fácil ×0,8 e difícil ×1,25 (de 0 a 3.000 por ano).", demReq: (r) => `requisito: ${r}`,
     resPais: (c, m, k) => `País neste ano (modelo): ${c} casos diagnosticados, ${m} óbitos e ${k} curas.`,
     resComp: (ok, tot) => `Compromissos cumpridos: <b>${ok}</b> de ${tot}`,
     resTot: (c, m, k) => `Em 10 anos (modelo do jogo): <b>${c}</b> casos diagnosticados, <b>${m}</b> óbitos e <b>${k}</b> curas.`,
@@ -1162,6 +1172,7 @@ function perguntaAtual() {
 }
 /* Partida salva por uma versão anterior (beta8 a beta10): a lista de perguntas cresceu; as novas entram a partir do próximo desafio */
 function migrar(s) {
+  if (!s.dif || !DIF[s.dif]) s.dif = "medio";   // partidas começadas antes da beta16
   if (s.quiz && s.quiz.ordem && s.quiz.ordem.length < QUIZ.length) {
     const tem = new Set(s.quiz.ordem), novas = embaralhar(QUIZ.map((q, i) => i).filter((i) => !tem.has(i)));
     const feitas = s.quiz.ordem.slice(0, s.quiz.i), resto = s.quiz.ordem.slice(s.quiz.i), mix = [];
@@ -1407,7 +1418,7 @@ function novoEstado(pers = "bob") {
   deps.asuncion.feitas.quimio = -1;
   const fila = ["central", "colo", "pulmao", MISSOES_PESSOAIS[pers].id, "radio", "chaco", "pesquisa", "ocultos", "eq9", "prest", "pop75"];
   return {
-    deps, pers, hab: [], habSel: null, cargoAvisado: 0, abrirArvore: false, fichaAtual: null,
+    deps, pers, dif: escolhaDif, hab: [], habSel: null, cargoAvisado: 0, abrirArvore: false, fichaAtual: null,
     id: Math.random().toString(36).slice(2, 10) + Date.now().toString(36), enviado: null,
     anoIdx: 0, mes: 0, orc: 0, orcExtra: 0, pontos: 0, ptsAno: 0, demPts: 0, prest: 5, prestInicio: 5,
     mod: {}, modProx: {}, cupons: [], regiao: null, descTrat: null, comp: [], usadas: [], aleatUsados: [], evAleat: null, demanda: null,
@@ -1528,7 +1539,7 @@ function partesAno(estr, inds) {
 /* Saldo do ano antes do piso: pode ser negativo (mostrado no rodapé e no resumo, para o jogador ver cada compra contar) */
 function saldoAno(p, mult, dem) {
   const b = p.estr + p.vidas + p.evit + p.semdx;
-  return (b > 0 ? b * mult : b) + dem;
+  return ((b > 0 ? b * mult : b) + dem) * dif().pts;   // beta16: fácil ×0,8 · difícil ×1,25
 }
 const totalAno = (p, mult, dem) => Math.min(3000, Math.max(0, Math.round(saldoAno(p, mult, dem))));
 /* Pontos que o ano vai dar com o que já está feito (a mesma conta do fim do ano, sem o desafio relâmpago) */
@@ -1544,6 +1555,7 @@ function previsaoAno() {
 /* ---------- formatação ---------- */
 const fmtInt = (n) => new Intl.NumberFormat(lang === "pt" ? "pt-BR" : "es-PY", { maximumFractionDigits: 0 }).format(n);
 const fmt1 = (n) => new Intl.NumberFormat(lang === "pt" ? "pt-BR" : "es-PY", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n);
+const fmtX = (n) => new Intl.NumberFormat(lang === "pt" ? "pt-BR" : "es-PY", { maximumFractionDigits: 2 }).format(n);   // multiplicadores: ×0,8 · ×1,25
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const lista = (xs) => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")}${t("e")}${xs[xs.length - 1]}` : xs[0] || "");
 const redondo = (x) => { const p = 10 ** Math.max(0, Math.floor(Math.log10(Math.max(x, 1))) - 1); return Math.round(x / p) * p; };
@@ -1677,7 +1689,7 @@ function fecharAno() {
   const dem = S.demPts || 0;
   const pts = totalAno(partes, S.multAno, dem) + (S.quizOk ? BONUS_QUIZ : 0);   // teto do ano no ranking + acerto do desafio
   S.pontos += pts;
-  const parc = { estr: Math.round(partes.estr), vidas: Math.round(partes.vidas), evit: Math.round(partes.evit), semdx: Math.round(partes.semdx), mult: S.multAno, dem,
+  const parc = { estr: Math.round(partes.estr), vidas: Math.round(partes.vidas), evit: Math.round(partes.evit), semdx: Math.round(partes.semdx), mult: S.multAno, dem, dif: dif().pts,
     piso: saldoAno(partes, S.multAno, dem) < 0 };
   ganharPrest(novosEq);
   ganharPrest(-Math.round(filas.length * (num("filaMeia") ? 0.5 : 1)));   // fila tira prestígio
@@ -2080,7 +2092,7 @@ function mostrarFim() {
     <h1>${esc(t("resTit"))}</h1>
     <div class="cartao"><div class="topo-res"><div class="placar">⭐ ${fmtInt(S.pontos)}</div>${estrelasHTML(estrelas(popEqPct()))}</div>
       <p class="cargo">${esc(t("cargo")(cargo))}</p>
-      <p class="meta"><span class="retrato-mini" style="--cor:${P.cor}" aria-hidden="true"><img src="arte/${S.pers}.svg" alt=""></span> ${esc(P[lang].nome)}${S.hab.length ? ` · ${S.hab.map((id) => ico(HAB_ICO[id])).join(" ")}` : ""}</p>
+      <p class="meta"><span class="retrato-mini" style="--cor:${P.cor}" aria-hidden="true"><img src="arte/${S.pers}.svg" alt=""></span> ${esc(P[lang].nome)} · ${esc(t("dif").nomes[S.dif] || t("dif").nomes.medio)}${S.hab.length ? ` · ${S.hab.map((id) => ico(HAB_ICO[id])).join(" ")}` : ""}</p>
       <p class="meta">${esc(t("pontos"))} · ${novo ? esc(t("novoRec")) : esc(t("recorde")(fmtInt(Math.max(recAnt, S.pontos))))}</p></div>
     <div class="cartao"><div class="metricas">${metrica("❤️", Math.abs(S.tot.vidas), S.tot.vidas >= 0 ? t("metVidas") : t("vidasPerd"), "ok")}${metrica("🍎", S.tot.evit, t("metEvit"), "ok")}${metrica("🕯️", S.tot.semdx, t("metSemDx"))}</div>
       <p class="fonte">${esc(t("metModelo"))}</p></div>
@@ -2105,6 +2117,7 @@ const num = (k) => efeitos().reduce((s, e) => s + (typeof e[k] === "number" ? e[
 const mul = (k) => efeitos().reduce((f, e) => f * (typeof e[k] === "number" ? e[k] : 1), 1);                              // multiplicadores simples
 const fmtM = (x) => fmt1(Math.round(x * 10) / 10);   // dinheiro: sempre com vírgula e 1 casa decimal (15,0 · 13,5)
 let escolhaPers = ["bob", "patron", "beatriz"].includes(ler("epidemia-py-pers")) ? ler("epidemia-py-pers") : "beatriz";
+let escolhaDif = DIF[ler("epidemia-py-dif")] ? ler("epidemia-py-dif") : "medio";   // beta16
 function ganharPrest(n) {
   if (n > 0) n = Math.round(n * mul("ganhoPrest"));
   S.prest = Math.max(0, Math.min(99, S.prest + n));
@@ -2136,7 +2149,8 @@ function bloqueio(id, a) {
 }
 
 /* ---------- economia do ano: em janeiro entra a receita e se paga a manutenção e os convênios; sem dinheiro, fecha o mais caro ---------- */
-function rendaAno() {
+function rendaAno() { return dec(rendaBase() * dif().renda); }   // beta16: a dificuldade multiplica a receita do ano
+function rendaBase() {
   const nPesq = DEPS.filter((d) => temPesq(S.deps[d.id])).length, P = S.pol || {}, i = S.anoIdx;
   return ORC_BASE + S.orcExtra + nPesq * num("rendaPesq") + 12 * num("renda")
     + (P.tabaco !== undefined && i > P.tabaco ? 2 : 0)                                   // imposto sobre o tabaco
@@ -2234,6 +2248,7 @@ function escolherHab(id) {
 /* ---------- escolha do personagem ---------- */
 function mostrarPersonagens() {
   janela = "pers";
+  const difBotao = (k) => `<button type="button" class="dif${k === escolhaDif ? " sel" : ""}" data-dif="${k}" aria-pressed="${k === escolhaDif}"><b>${esc(t("dif").nomes[k])}</b><small>${esc(t("dif").desc(DIF[k]))}</small></button>`;
   const cartao = (k) => {
     const P = PERSONAGENS[k], tx = P[lang];
     return `<button type="button" class="pers${k === escolhaPers ? " sel" : ""}" style="--cor:${P.cor}" data-pers="${k}" aria-pressed="${k === escolhaPers}">${avatarHTML(k)}
@@ -2242,6 +2257,8 @@ function mostrarPersonagens() {
   abrirModal(`
     <h2>${esc(t("pers").escolher)}</h2>
     <div class="pers-lista">${Object.keys(PERSONAGENS).map(cartao).join("")}</div>
+    <p class="dif-tit">${esc(t("dif").tit)}</p>
+    <div class="dif-lista" role="group" aria-label="${esc(t("dif").tit)}">${Object.keys(DIF).map(difBotao).join("")}</div>
     <button class="btn" type="button" id="btn-pers-ok">${esc(t("pers").jogarCom(PERSONAGENS[escolhaPers][lang].nome))}</button>
     <button class="btn sec" type="button" data-fechar>${esc(t("fichaCancelar"))}</button>`);
 }
@@ -2546,7 +2563,7 @@ async function avisarVisita() {
 }
 function avisar(acao) {
   if (!CFG.rankingUrl || !S) return;
-  const ev = { acao, id: S.id, idioma: lang, versao: CFG.versao || "" };
+  const ev = { acao, id: S.id, idioma: lang, versao: CFG.versao || "", dificuldade: S.dif || "medio" };
   if (S.jogador) { ev.dados = S.jogador; ev.termos = S.termos; }
   if (acao === "fim") { ev.pontos = S.pontos; ev.anos = S.log.map((x) => x.pts); }
   const fila = (ler(FILA) || []).filter((x) => !(x.acao === acao && x.id === ev.id)).slice(-19);   // até 20 avisos guardados
@@ -2712,7 +2729,7 @@ function escolherOpcao(i) {
 function contaAno(r) {
   const p = r.parc, s = (x) => `${x < 0 ? "−" : "+"}${fmtInt(Math.abs(x))}`;
   return [`🏗️ ${s(p.estr)}`, `❤️ ${s(p.vidas)}`, `🍎 ${s(p.evit)}`, `🕯️ ${s(p.semdx)}`, p.mult > 1 ? `⭐×${fmt1(p.mult)}` : "",
-    p.dem ? `📣 ${s(p.dem)}` : "", p.piso ? t("contaPiso") : "", r.quiz ? `⚡ +${BONUS_QUIZ}` : ""].filter(Boolean).join(" · ");
+    p.dem ? `📣 ${s(p.dem)}` : "", p.dif && p.dif !== 1 ? t("difConta")(fmtX(p.dif)) : "", p.piso ? t("contaPiso") : "", r.quiz ? `⚡ +${BONUS_QUIZ}` : ""].filter(Boolean).join(" · ");
 }
 
 function mostrarResumo(r) {
@@ -2871,6 +2888,8 @@ document.addEventListener("click", (ev) => {
   }
   const pc = alvo.closest("[data-pers]");
   if (pc) { escolhaPers = pc.dataset.pers; mostrarPersonagens(); return; }
+  const pd = alvo.closest("[data-dif]");
+  if (pd) { escolhaDif = pd.dataset.dif; mostrarPersonagens(); return; }
   const fin = alvo.closest("[data-fin]");
   if (fin && S && !S.fim) { executarOpcao("fin", fin.dataset.fin); return; }
   const fav = alvo.closest("[data-favor]");
@@ -2921,7 +2940,7 @@ document.addEventListener("click", (ev) => {
   if (alvo.id === "btn-dados-sem") { dadosDigitados = valoresDados(); mostrarSemDados(); return; }
   if (alvo.id === "btn-sem-voltar") { mostrarDados(dadosDigitados || ler("epidemia-py-jogador") || {}); return; }
   if (alvo.id === "btn-sem-ok") { jogadorEscolhido = null; mostrarPersonagens(); return; }
-  if (alvo.id === "btn-pers-ok") { guardar("epidemia-py-pers", escolhaPers); fecharModal(); novoJogo(escolhaPers); return; }
+  if (alvo.id === "btn-pers-ok") { guardar("epidemia-py-pers", escolhaPers); guardar("epidemia-py-dif", escolhaDif); fecharModal(); novoJogo(escolhaPers); return; }
   if (alvo.id === "btn-continuar") { continuar(); return; }
   if (alvo.id === "btn-fechar") { fecharAno(); return; }
   if (alvo.closest("#btn-ajuda")) { if (S && !S.fim && !$("#tela-jogo").hidden) mostrarArvore(); else mostrarAjuda(); return; }
