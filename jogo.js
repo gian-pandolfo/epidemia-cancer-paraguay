@@ -30,19 +30,20 @@ const ler = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (
 
 /* ---------- ações: 3 por nível + centro de pesquisa. "conv" = anuidade do convênio que cumpre o mesmo papel ---------- */
 const SLOTS = { P: ["vacuna", "tabaco", "habitos"], D: ["vph", "mamo", "registro"], T: ["quimio", "radio", "paliativos"] };
-/* at = nível de atenção (1ª primária, 2ª secundária, 3ª terciária); manut = manutenção por ano (20% do custo desde a beta11, pedido do Gi em 27/10/2026); prest = prestígio para aprovar;
+/* at = nível de atenção (1ª primária, 2ª secundária, 3ª terciária); manut = manutenção por ano (≈15% do custo desde a beta16, decisão do Gi em 30/10/2026; 20% da beta11 à beta15); prest = prestígio para aprovar;
    desde = ano em que fica disponível; conv = anuidade do convênio que cumpre o mesmo papel */
+/* manutenção ≈ 15% do custo, arredondada a 0,1 (beta16, 30/10/2026; era 20% desde a beta11) */
 const ACOES = {
-  vacuna: { nivel: "P", at: 1, custo: 2, manut: 0.4, prest: 0, ico: "💉" },
-  tabaco: { nivel: "P", at: 1, custo: 1, manut: 0.2, prest: 0, ico: "🚭" },
-  habitos: { nivel: "P", at: 1, custo: 1, manut: 0.2, prest: 0, ico: "🍎" },
-  vph: { nivel: "D", at: 1, custo: 2, manut: 0.4, prest: 0, ico: "🔬", vis: 0.06, conv: 1 },
-  mamo: { nivel: "D", at: 2, custo: 3, manut: 0.6, prest: 1, ico: "🎗️", vis: 0.06, conv: 2 },
-  registro: { nivel: "D", at: 2, custo: 1, manut: 0.2, prest: 0, ico: "📋", vis: 0.08 },
-  quimio: { nivel: "T", at: 2, custo: 4, manut: 0.8, prest: 1, ico: "💊", conv: 2 },
-  radio: { nivel: "T", at: 3, custo: 8, manut: 1.6, prest: 3, ico: "☢️", conv: 3, desde: 2020 },
-  paliativos: { nivel: "T", at: 1, custo: 2, manut: 0.4, prest: 0, ico: "🤲", conv: 1 },
-  pesquisa: { nivel: "X", at: 3, custo: 5, manut: 1, prest: 2, ico: "🎓", conv: 2, desde: 2016 },
+  vacuna: { nivel: "P", at: 1, custo: 2, manut: 0.3, prest: 0, ico: "💉" },
+  tabaco: { nivel: "P", at: 1, custo: 1, manut: 0.1, prest: 0, ico: "🚭" },
+  habitos: { nivel: "P", at: 1, custo: 1, manut: 0.1, prest: 0, ico: "🍎" },
+  vph: { nivel: "D", at: 1, custo: 2, manut: 0.3, prest: 0, ico: "🔬", vis: 0.06, conv: 1 },
+  mamo: { nivel: "D", at: 2, custo: 3, manut: 0.4, prest: 1, ico: "🎗️", vis: 0.06, conv: 2 },
+  registro: { nivel: "D", at: 2, custo: 1, manut: 0.1, prest: 0, ico: "📋", vis: 0.08 },
+  quimio: { nivel: "T", at: 2, custo: 4, manut: 0.6, prest: 1, ico: "💊", conv: 2 },
+  radio: { nivel: "T", at: 3, custo: 8, manut: 1.2, prest: 3, ico: "☢️", conv: 3, desde: 2020 },
+  paliativos: { nivel: "T", at: 1, custo: 2, manut: 0.3, prest: 0, ico: "🤲", conv: 1 },
+  pesquisa: { nivel: "X", at: 3, custo: 5, manut: 0.7, prest: 2, ico: "🎓", conv: 2, desde: 2016 },
 };
 
 /* ---------- textos ---------- */

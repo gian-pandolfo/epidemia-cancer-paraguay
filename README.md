@@ -105,7 +105,7 @@ Pedido do Gi: revisar o código e jogar 10 partidas como uma pessoa no celular, 
 
 Pedidos do Gi na noite de 27/10, com os colegas já testando: «os jogadores estão ficando sem dinheiro», «os campos demoram a habilitar», «mais moedas nos desafios», «perguntas baseadas nos tabloides», «assimetria nas habilidades» e «dopamina».
 
-- **Manutenção = 20% do custo** (era de 25% a 50%): vacina 0,4 · antitabaco 0,2 · hábitos 0,2 · teste de HPV 0,4 · mamógrafo 0,6 · registro 0,2 · Hospital Día 0,8 · acelerador 1,6 · paliativos 0,4 · centro de pesquisa 1,0 por ano. As habilidades que dividem a manutenção continuam valendo em cima.
+- **Manutenção = 20% do custo** (era de 25% a 50%; na beta16 caiu para ≈15%): vacina 0,4 · antitabaco 0,2 · hábitos 0,2 · teste de HPV 0,4 · mamógrafo 0,6 · registro 0,2 · Hospital Día 0,8 · acelerador 1,6 · paliativos 0,4 · centro de pesquisa 1,0 por ano. As habilidades que dividem a manutenção continuam valendo em cima.
 - **Desafío relámpago:** 💰 4 por acerto (era 2), além de ⭐ 100 e 🎖️ 1. **27 perguntas novas:** 19 fixas, para interpretar os dados dos recortes de imprensa e do Atlas (impostos do tabaco, Hospital Día, INCAN, teste de HPV, ENFR, BID, registro…), e 8 **geradas dos dados** a cada partida: população (Censo 2022), taxa padronizada de mortalidade (óbitos por 100 mil), óbitos, 1.ª causa por sexo, vizinhos no mapa, Chaco e causas mal definidas. Cada partida alterna pergunta fixa e gerada. Partidas salvas recebem as perguntas novas a partir do próximo desafio.
 - **Carreira:** o cargo sobe por ⭐ pontos + 🎯 500 por missão cumprida + ⚡ 250 por desafio acertado; cargos em 1.000 / 3.000 / 6.000 / 9.000 (eram 1.200 / 4.000 / 7.500 / 11.000, só por pontos). O ranking não muda. Cada promoção dá 💰 2.
 - **Árvore 4/3/3:** cada personagem tem um ramo principal com 4 habilidades e dois com 3; um nível só abre depois do anterior do mesmo ramo (uma escolha por cargo). Quem se especializa chega ao 4.º nível (Predicción con IA, Gran alianza, Centro oncológico regional); quem espalha ganha amplitude. Saíram da árvore (mas valem nas partidas salvas): Publicación internacional, APS 4.0, Mecenas, Polo regional, Liderazgo médico, Excelencia científica.
@@ -147,3 +147,12 @@ Regra do Gi (28/10): «sempre que tivermos a palavra taxa», dizer o que ela con
 - **Botão do mapa mais largo:** «Mortalidad» ganhou 3/5 da largura (antes metade), para não encostar na borda.
 - **Textos:** ajuda, explicação do Luz, resumo do ano, matérias das missões, desafio relâmpago (fixas e geradas), lições e o estudo de Itapúa passam a dizer «muertes por 100 mil» ou «tasa de mortalidad». As camadas ao vivo já diziam o que contam (incidência, prevalência, mortes e curas por 100 mil, do modelo).
 - Partidas salvas continuam (mesma chave `epidemia-py-v4`).
+
+## Dificuldade e moedas (beta16, 30/10–01/11/2026; guardada no ramo `dificuldade-e-moedas`, sem publicar)
+
+Pedido do Gi (29/10): rebalancear as moedas, «intermediário, inclinado levemente para o fácil: precisamos de dopamina», e uma dificuldade escolhida junto com o personagem (fácil pontua menos, média equilibrada, difícil pontua mais). Decisões por cartões (30/10): «Orçamento e pontos», «Manutenção menor».
+
+- **Dificuldade:** três botões abaixo dos personagens, lembrados no aparelho. Fácil: +25% de orçamento por ano e pontos ×0,8. Média: normal. Difícil: −20% de orçamento e pontos ×1,25. O multiplicador vale sobre o saldo do ano, antes do teto de 3.000; o +100 do desafio fica de fora. A conta do ano mostra «dificultad ×0,8»; o fim de jogo mostra a dificuldade ao lado do personagem; o envio ao ranking leva `dificuldade` (a planilha v3 ignora o campo).
+- **Manutenção ≈ 14% do custo** (era 20%): vacuna 0,3 · antitabaco 0,1 · hábitos 0,1 · teste de HPV 0,3 · mamógrafo 0,4 · registro 0,1 · Hospital Día 0,6 · acelerador 1,2 · paliativos 0,3 · centro de pesquisa 0,7 por ano.
+- **Simulação (42 partidas, dificuldade média, sem rede):** o jogador equilibrado passa de 77 para 90 estruturas no fim, de 9,2 para 10,8 missões e de 20.400 para 22.000 pontos; estruturas fechadas por falta de dinheiro só aparecem nos dois últimos anos (antes, a partir de 2018). Não fazer nada continua em ≈470 pontos.
+- **Compatível:** partida salva na beta14 continua e vira «média» (10 anos válidos para o servidor, sem erro).
